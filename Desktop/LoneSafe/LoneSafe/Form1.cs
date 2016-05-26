@@ -10,16 +10,12 @@ using System.Windows.Forms;
 
 namespace LoneSafe
 {
-    public partial class Form1 : Form
+    public partial class MainActivity : Form
     {
-        public Form1()
+        public MainActivity()
         {
             InitializeComponent();
         }
 
-        private void Form1_Load(object sender, EventArgs e)
-        {
-
-        }
     }
 }

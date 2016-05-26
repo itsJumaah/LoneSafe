@@ -1,8 +1,9 @@
 C:\Users\buzz\Documents\LoneSafe\Desktop\LoneSafe\LoneSafe\bin\Release\LoneSafe.exe.config
 C:\Users\buzz\Documents\LoneSafe\Desktop\LoneSafe\LoneSafe\bin\Release\LoneSafe.exe
 C:\Users\buzz\Documents\LoneSafe\Desktop\LoneSafe\LoneSafe\bin\Release\LoneSafe.pdb
-C:\Users\buzz\Documents\LoneSafe\Desktop\LoneSafe\LoneSafe\obj\Release\LoneSafe.Form1.resources
 C:\Users\buzz\Documents\LoneSafe\Desktop\LoneSafe\LoneSafe\obj\Release\LoneSafe.Properties.Resources.resources
 C:\Users\buzz\Documents\LoneSafe\Desktop\LoneSafe\LoneSafe\obj\Release\LoneSafe.csproj.GenerateResource.Cache
 C:\Users\buzz\Documents\LoneSafe\Desktop\LoneSafe\LoneSafe\obj\Release\LoneSafe.exe
 C:\Users\buzz\Documents\LoneSafe\Desktop\LoneSafe\LoneSafe\obj\Release\LoneSafe.pdb
+C:\Users\buzz\Documents\LoneSafe\Desktop\LoneSafe\LoneSafe\obj\Release\LoneSafe.csprojResolveAssemblyReference.cache
+C:\Users\buzz\Documents\LoneSafe\Desktop\LoneSafe\LoneSafe\obj\Release\LoneSafe.MainActivity.resources
