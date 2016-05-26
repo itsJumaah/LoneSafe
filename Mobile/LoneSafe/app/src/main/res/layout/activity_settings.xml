@@ -13,36 +13,98 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="Welcome"
-        android:id="@+id/tvWelcome"
+        android:text="Settings"
+        android:id="@+id/tvSettingtitle"
+        android:textStyle="bold"
+        android:textSize="@dimen/abc_text_size_display_1_material"
+        android:layout_below="@+id/tvUser"
+        android:layout_centerHorizontal="true" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Level of risk:"
+        android:id="@+id/tvRiskLvl"
+        android:layout_below="@+id/tvSettingtitle"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginTop="48dp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Working hours:"
+        android:id="@+id/tvWorkingHours"
+        android:layout_below="@+id/tvRiskLvl"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginTop="84dp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="User"
+        android:id="@+id/tvUser"
         android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
-        android:hint="WELCOME" />
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true" />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="tvName"
-        android:id="@+id/tvName"
-        android:layout_below="@+id/tvWelcome"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true" />
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="8:00 AM"
+        android:id="@+id/tvStartTime"
+        android:layout_alignTop="@+id/btnStart"
+        android:layout_alignLeft="@+id/tvEndTime"
+        android:layout_alignStart="@+id/tvEndTime"
+        android:layout_alignRight="@+id/tvEndTime"
+        android:layout_alignEnd="@+id/tvEndTime" />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="tvUsername"
-        android:id="@+id/tvUsername"
-        android:layout_below="@+id/tvName"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="05:00 PM"
+        android:id="@+id/tvEndTime"
+        android:layout_marginLeft="45dp"
+        android:layout_marginStart="45dp"
+        android:layout_alignTop="@+id/btnFinish"
+        android:layout_toRightOf="@+id/btnFinish"
+        android:layout_toEndOf="@+id/btnFinish" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="set start time"
+        android:id="@+id/btnStart"
+        android:layout_marginTop="28dp"
+        android:layout_below="@+id/tvWorkingHours"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true" />
 
-    <TextView
+    <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="tvAge"
-        android:id="@+id/tvAge"
-        android:layout_below="@+id/tvUsername"
+        android:text="set finish time"
+        android:id="@+id/btnFinish"
+        android:layout_below="@+id/btnStart"
         android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true" />
+        android:layout_alignParentStart="true"
+        android:layout_marginTop="29dp" />
+
+    <Spinner
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/riskLvlDropdown"
+        android:entries="@array/risk_levels"
+        android:prompt="@string/RL_prompt"
+        android:layout_alignBaseline="@+id/tvRiskLvl"
+        android:layout_alignBottom="@+id/tvRiskLvl"
+        android:layout_toRightOf="@+id/tvWorkingHours"
+        android:layout_toEndOf="@+id/tvWorkingHours"
+        android:spinnerMode="dropdown" />
+
+
+
 </RelativeLayout>

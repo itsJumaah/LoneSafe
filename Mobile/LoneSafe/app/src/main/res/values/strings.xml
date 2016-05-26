@@ -1,3 +1,13 @@
 <resources>
     <string name="app_name">LoneSafe</string>
+    <string name="RL_prompt">Select your Risk Level</string>
+
+    <string-array name="risk_levels">
+        <item>5 - Very High</item>
+        <item>4 - High</item>
+        <item>3 - Medium</item>
+        <item>2 - Low</item>
+        <item>1 - Very Low</item>
+    </string-array>
+
 </resources>
