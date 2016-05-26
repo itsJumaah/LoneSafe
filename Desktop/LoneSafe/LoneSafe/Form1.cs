@@ -17,5 +17,11 @@ namespace LoneSafe
             InitializeComponent();
         }
 
+        private void MainActivity_Load(object sender, EventArgs e)
+        {
+
+        }
+
+
     }
 }
