@@ -43,7 +43,8 @@
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:layout_alignRight="@+id/etUser"
-        android:layout_alignEnd="@+id/etUser" />
+        android:layout_alignEnd="@+id/etUser"
+        />
 
     <Button
         style="?android:attr/buttonStyleSmall"
