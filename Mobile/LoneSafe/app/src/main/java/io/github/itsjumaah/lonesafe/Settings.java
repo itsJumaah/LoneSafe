@@ -20,12 +20,8 @@ import android.widget.Toast;
 
 public class Settings extends AppCompatActivity {
 
-
-    public static TextView tvStartTime;
-    public static TextView tvFinishTime;
-    public static String riskLevel;
-
-
+    public static String strStartTime;
+    public static String strFinishTime;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,10 +30,7 @@ public class Settings extends AppCompatActivity {
 
 
         Intent intent = getIntent();
-
         String name = intent.getStringExtra("name");
-        String username = intent.getStringExtra("username");
-        int age = intent.getIntExtra("age", -1);
 
         final TextView tvWelcomeMsg = (TextView) findViewById(R.id.tvUser);
         // Display user details
@@ -62,8 +55,8 @@ public class Settings extends AppCompatActivity {
                         "Risk Level : " + parent.getItemAtPosition(position).toString(),
                         Toast.LENGTH_SHORT).show();
                 //saves selected risk level as STRING
-                riskLevel = riskSelector.getSelectedItem().toString();
-
+               // riskLevelTxt = riskSelector.getSelectedItem().toString();
+               // riskLevelTxt = parent.getItemAtPosition(position).toString();
             }
 
             @Override
@@ -77,98 +70,105 @@ public class Settings extends AppCompatActivity {
         //------------------------------------- TIME SELECTION ---------------
 
 
-        tvStartTime = (TextView) findViewById(R.id.tvStartTime);
-        tvFinishTime = (TextView) findViewById(R.id.tvEndTime);
         final Button btnStartTime = (Button) findViewById(R.id.btnStartTime);
-        final Button btnFinishTime = (Button) findViewById(R.id.btnFinishTime);
-
         assert btnStartTime != null;
         btnStartTime.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                final Calendar calendar = Calendar.getInstance();
-                int hour = calendar.get(Calendar.HOUR_OF_DAY);
-                int minute = calendar.get(Calendar.MINUTE);
-                TimePickerDialog mTimePicker;
-
-                mTimePicker = new TimePickerDialog(Settings.this, new TimePickerDialog.OnTimeSetListener() {
-                    @Override
-                    public void onTimeSet(TimePicker timePicker, int selectedHour, int selectedMinute) {
-                        String format = "";
-                        if (selectedHour == 0) {
-                            selectedHour += 12;
-                            format = "AM";
-                        }
-                        else if (selectedHour == 12) {
-                            format = "PM";
-                        } else if (selectedHour > 12) {
-                            selectedHour -= 12;
-                            format = "PM";
-                        } else {
-                            format = "AM";
-                        }
-
-                        tvStartTime.setText(new StringBuilder().append(String.format("%02d:%02d ",selectedHour,selectedMinute)).append(format));
-
-                    }
-                }, hour, minute, false);//No 24 hour time
-                mTimePicker.setTitle("Select START Time");
-                mTimePicker.show();
-
+                startTimePicker();
             }
         });
 
+        final Button btnFinishTime = (Button) findViewById(R.id.btnFinishTime);
         assert btnFinishTime != null;
         btnFinishTime.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Calendar calendar = Calendar.getInstance();
-                int hour = calendar.get(Calendar.HOUR_OF_DAY);
-                int minute = calendar.get(Calendar.MINUTE);
-                TimePickerDialog mTimePicker;
-
-                mTimePicker = new TimePickerDialog(Settings.this, new TimePickerDialog.OnTimeSetListener() {
-                    @Override
-                    public void onTimeSet(TimePicker timePicker, int selectedHour, int selectedMinute) {
-                        String format = "";
-                        if (selectedHour == 0) {
-                            selectedHour += 12;
-                            format = "AM";
-                        }
-                        else if (selectedHour == 12) {
-                            format = "PM";
-                        } else if (selectedHour > 12) {
-                            selectedHour -= 12;
-                            format = "PM";
-                        } else {
-                            format = "AM";
-                        }
-                        tvFinishTime.setText(new StringBuilder().append(String.format("%02d:%02d ",selectedHour,selectedMinute)).append(format));
-                    }
-                }, hour, minute, false);//No 24 hour time
-                mTimePicker.setTitle("Select FINISH Time");
-                mTimePicker.show();
-
+                finishTimePicker();
             }
         });
 
         final Button btnStart = (Button) findViewById(R.id.btnStart);
-
         assert btnStart !=null;
-
         btnStart.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(Settings.this, Home.class);
-                intent.putExtra("riskLevel", riskLevel);
-                Settings.this.startActivity(intent);
+                Intent i = new Intent(Settings.this, Home.class);
+                String selectedItem = riskSelector.getSelectedItem().toString();
+                i.putExtra("getdata", selectedItem);
+                i.putExtra("getStartTime",strStartTime);
+                i.putExtra("getFinishTime", strFinishTime);
+
+                startActivity(i);
+            }
+        });
+    }
+
+    void startTimePicker (){
+        final TextView tvStartTime = (TextView) findViewById(R.id.tvStartTime);
+        final Calendar calendar = Calendar.getInstance();
+        int hour = calendar.get(Calendar.HOUR_OF_DAY);
+        int minute = calendar.get(Calendar.MINUTE);
+        TimePickerDialog mTimePicker;
+
+        mTimePicker = new TimePickerDialog(Settings.this, new TimePickerDialog.OnTimeSetListener() {
+            @Override
+            public void onTimeSet(TimePicker timePicker, int selectedHour, int selectedMinute) {
+                String format = "";
+                if (selectedHour == 0) {
+                    selectedHour += 12;
+                    format = "AM";
+                }
+                else if (selectedHour == 12) {
+                    format = "PM";
+                } else if (selectedHour > 12) {
+                    selectedHour -= 12;
+                    format = "PM";
+                } else {
+                    format = "AM";
+                }
+
+                // tvStartTime.setText(new StringBuilder().append(String.format("%02d:%02d ",selectedHour,selectedMinute)).append(format));
+                tvStartTime.setText(String.format("%02d:%02d ",selectedHour,selectedMinute)+ format);
+                strStartTime = tvStartTime.getText().toString();
 
             }
+        }, hour, minute, false);//No 24 hour time
+        mTimePicker.setTitle("Select START Time");
+        mTimePicker.show();
 
-        });
+    }
 
+    void finishTimePicker() {
+        final TextView tvFinishTime = (TextView) findViewById(R.id.tvEndTime);
+        final Calendar calendar = Calendar.getInstance();
+        int hour = calendar.get(Calendar.HOUR_OF_DAY);
+        int minute = calendar.get(Calendar.MINUTE);
+        TimePickerDialog mTimePicker;
 
+        mTimePicker = new TimePickerDialog(Settings.this, new TimePickerDialog.OnTimeSetListener() {
+            @Override
+            public void onTimeSet(TimePicker timePicker, int selectedHour, int selectedMinute) {
+                String format = "";
+                if (selectedHour == 0) {
+                    selectedHour += 12;
+                    format = "AM";
+                }
+                else if (selectedHour == 12) {
+                    format = "PM";
+                } else if (selectedHour > 12) {
+                    selectedHour -= 12;
+                    format = "PM";
+                } else {
+                    format = "AM";
+                }
+                tvFinishTime.setText(String.format("%02d:%02d ",selectedHour,selectedMinute)+ format);
+                strFinishTime = tvFinishTime.getText().toString();
 
+            }
+        }, hour, minute, false);//No 24 hour time
+        mTimePicker.setTitle("Select FINISH Time");
+        mTimePicker.show();
     }
     /*
     // Also need to return int for correct hour format -- so can't use function
