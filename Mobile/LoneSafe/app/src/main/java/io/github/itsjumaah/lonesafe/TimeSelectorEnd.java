@@ -9,12 +9,11 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.TimePicker;
 
-import java.sql.Time;
 import java.util.Calendar;
 
-public class TimeSelector extends AppCompatActivity {
-    private TimePicker timePicker1;
-    private TextView tvTime;
+public class TimeSelectorEnd extends AppCompatActivity {
+    private TimePicker timePicker2;
+    private TextView tvTime2;
     private Calendar calendar;
     private String format = "";
     private String time;
@@ -22,10 +21,10 @@ public class TimeSelector extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_time_picker);
+        setContentView(R.layout.activity_time_selector_end);
 
-        timePicker1 = (TimePicker) findViewById(R.id.timePicker1);
-        tvTime = (TextView) findViewById(R.id.tvTime);
+        timePicker2 = (TimePicker) findViewById(R.id.timePicker2);
+        tvTime2 = (TextView) findViewById(R.id.tvTime2);
         calendar = Calendar.getInstance();
 
         int hour = calendar.get(Calendar.HOUR_OF_DAY);
@@ -41,38 +40,36 @@ public class TimeSelector extends AppCompatActivity {
                 int hour = 0;
                 int min = 0;
                 if (Build.VERSION.SDK_INT >= 23 ){
-                    hour = timePicker1.getHour();
+                    hour = timePicker2.getHour();
                 } else {
-                    hour = timePicker1.getCurrentHour();
+                    hour = timePicker2.getCurrentHour();
                 }
                 if (Build.VERSION.SDK_INT >= 23 ){
-                    min = timePicker1.getMinute();
+                    min = timePicker2.getMinute();
                 } else {
-                    min = timePicker1.getCurrentMinute();
+                    min = timePicker2.getCurrentMinute();
                 }
                 showTime(hour, min);
 
-                Intent timeIntent = new Intent(TimeSelector.this, Settings.class);
-                TimeSelector.this.startActivity(timeIntent);
-                timeIntent.putExtra("starttime", time);
-                startActivity(timeIntent);
+                Intent endTimeIntent = new Intent(TimeSelectorEnd.this, Settings.class);
+                TimeSelectorEnd.this.startActivity(endTimeIntent);
+                endTimeIntent.putExtra("endtime", time);
+                startActivity(endTimeIntent);
 
             }
         });
-
-
     }
     public void setTime(View view) {
         int hour = 0;
         int min = 0;
         if (Build.VERSION.SDK_INT >= 23 )
-             hour = timePicker1.getHour();
+            hour = timePicker2.getHour();
         else
-           hour = timePicker1.getCurrentHour();
+            hour = timePicker2.getCurrentHour();
         if (Build.VERSION.SDK_INT >= 23 )
-            min = timePicker1.getMinute();
+            min = timePicker2.getMinute();
         else
-           min = timePicker1.getCurrentMinute();
+            min = timePicker2.getCurrentMinute();
         showTime(hour, min);
     }
 
@@ -89,15 +86,12 @@ public class TimeSelector extends AppCompatActivity {
         } else {
             format = "AM";
         }
-        tvTime.setText(new StringBuilder().append(String.format("%02d:%02d ",hour,min)).append(format));
-       // tvTime.setText(new StringBuilder().append(hour).append(" : ").append(min)
-         //      .append(" ").append(format));
-        return time = tvTime.getText().toString();
+        tvTime2.setText(new StringBuilder().append(String.format("%02d:%02d ",hour,min)).append(format));
+        // tvTime.setText(new StringBuilder().append(hour).append(" : ").append(min)
+        //      .append(" ").append(format));
+        return time = tvTime2.getText().toString();
         // return time = Integer.parseInt(tvTime.getText().toString());
         //Need send time to server from this class. As Int
         //Maybe another function similar to this, but returns int and send that to server?
     }
-
-
-
 }

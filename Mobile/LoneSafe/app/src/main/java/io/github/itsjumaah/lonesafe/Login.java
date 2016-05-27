@@ -40,31 +40,71 @@ public class Login extends AppCompatActivity {
         final Button btnLogin = (Button) findViewById(R.id.btnLogin);
         loadPreferences();
 
+            assert btnLogin != null;
+            btnLogin.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    final String username = etUser.getText().toString();
+                    final String password = etPassword.getText().toString();
+
+                    // Hardcoded user and password incase server doesn't work
+                    if (username.equals("johndoe") && password.equals("pass")) {
+
+                        String name = ("John");
+
+                        Intent intent = new Intent(Login.this, Settings.class);
+                        intent.putExtra("username", username);
+                        intent.putExtra("name", name);
+                        Login.this.startActivity(intent);
+                    } else {
+                        //Get user data from DB
+
+                        // }
+
+                        // Response received from the server
+                        Response.Listener<String> responseListener = new Response.Listener<String>() {
+                            @Override
+                            public void onResponse(String response) {
+
+                                try {
+
+                                    JSONObject jsonResponse = new JSONObject(response);
+                                    boolean success = jsonResponse.getBoolean("success");
 
 
+                                    if (success) {
+                                        savePreferences();
 
-        assert btnLogin != null;
-        btnLogin.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                final String username = etUser.getText().toString();
-                final String password = etPassword.getText().toString();
 
-                // Hardcoded user and password incase server doesn't work
-                if (username.equals("johndoe") && password.equals("pass")) {
+                                        String name = jsonResponse.getString("name");
+                                        int age = jsonResponse.getInt("age");
 
-                    String name = ("John");
+                                        Intent intent = new Intent(Login.this, Settings.class);
+                                        intent.putExtra("name", name);
+                                        intent.putExtra("age", age);
+                                        intent.putExtra("username", username);
+                                        Login.this.startActivity(intent);
 
-                    Intent intent = new Intent(Login.this, Settings.class);
-                    intent.putExtra("username", username);
-                    intent.putExtra("name", name);
-                    Login.this.startActivity(intent);
+                                    } else {
+                                        AlertDialog.Builder builder = new AlertDialog.Builder(Login.this);
+                                        builder.setMessage("Login Failed")
+                                                .setNegativeButton("Retry", null)
+                                                .create()
+                                                .show();
+                                    }
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
+
+                            }
+                        };
+
+                        LoginRequest loginRequest = new LoginRequest(username, password, responseListener);
+                        RequestQueue queue = Volley.newRequestQueue(Login.this);
+                        queue.add(loginRequest);
+                    }
                 }
-                else { provokeDatabase(); }
-
-            }
-        });
-
+            });
     }
 
     // --- Info button
@@ -118,66 +158,21 @@ public class Login extends AppCompatActivity {
         else { Toast.makeText(this,"Data Loaded Sucessfully",Toast.LENGTH_LONG).show();
             etUser.setText(Name);
             etPassword.setText(Password);
-            btnLogin.performClick();
-
         }
 
-    }
-
-    public void provokeDatabase() {
-
-        final EditText etUser = (EditText) findViewById(R.id.etUser);
-        final EditText etPassword = (EditText) findViewById(R.id.etPassword);
-
-        final String username = etUser.getText().toString();
-        final String password = etPassword.getText().toString();
-        //Get user data from DB
-
-        // }
-
-        // Response received from the server
-        Response.Listener<String> responseListener = new Response.Listener<String>() {
-            @Override
-            public void onResponse(String response) {
-                loadPreferences();
-                try {
-
-
-                    JSONObject jsonResponse = new JSONObject(response);
-                    boolean success = jsonResponse.getBoolean("success");
+        // et pass
 
 
 
-                    if (success) {
-                        savePreferences();
 
 
-                        String name = jsonResponse.getString("name");
-                        int age = jsonResponse.getInt("age");
 
-                        Intent intent = new Intent(Login.this, Settings.class);
-                        intent.putExtra("name", name);
-                        intent.putExtra("age", age);
-                        intent.putExtra("username", username);
-                        Login.this.startActivity(intent);
 
-                    } else {
-                        AlertDialog.Builder builder = new AlertDialog.Builder(Login.this);
-                        builder.setMessage("Login Failed")
-                                .setNegativeButton("Retry", null)
-                                .create()
-                                .show();
-                    }
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
 
-            }
-        };
 
-        LoginRequest loginRequest = new LoginRequest(username, password, responseListener);
-        RequestQueue queue = Volley.newRequestQueue(Login.this);
-        queue.add(loginRequest);
+
+
+
 
 
     }
