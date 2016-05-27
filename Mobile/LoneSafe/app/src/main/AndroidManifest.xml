@@ -19,9 +19,7 @@
         </activity>
         <activity android:name=".Home" />
         <activity android:name=".Settings" />
-        <activity android:name=".TimeSelector" />
-        <activity android:name=".TimeSelectorEnd" />
-        <activity android:name=".TimeSelectorStart"></activity>
+        <activity android:name=".TimeSelector"></activity>
     </application>
 
 </manifest>

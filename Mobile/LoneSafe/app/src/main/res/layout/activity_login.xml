@@ -44,7 +44,7 @@
         android:layout_alignParentStart="true"
         android:layout_alignRight="@+id/etUser"
         android:layout_alignEnd="@+id/etUser"
-        android:inputType="textPassword" />
+        />
 
     <Button
         style="?android:attr/buttonStyleSmall"
