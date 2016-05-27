@@ -38,7 +38,7 @@ public class Login extends AppCompatActivity {
         final EditText etUser = (EditText) findViewById(R.id.etUser);
         final EditText etPassword = (EditText) findViewById(R.id.etPassword);
         final Button btnLogin = (Button) findViewById(R.id.btnLogin);
-        loadPreferences();
+//        loadPreferences();
 
 
 
@@ -85,7 +85,7 @@ public class Login extends AppCompatActivity {
 
     public static final String DEFAULT = "N/A";
 
-
+/*
     public void savePreferences() {
 
         final EditText etUser = (EditText) findViewById(R.id.etUser);
@@ -123,6 +123,7 @@ public class Login extends AppCompatActivity {
         }
 
     }
+    */
 
     public void provokeDatabase() {
 
@@ -139,7 +140,7 @@ public class Login extends AppCompatActivity {
         Response.Listener<String> responseListener = new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
-                loadPreferences();
+               // loadPreferences();
                 try {
 
 
@@ -149,7 +150,7 @@ public class Login extends AppCompatActivity {
 
 
                     if (success) {
-                        savePreferences();
+                      //  savePreferences();
 
 
                         String name = jsonResponse.getString("name");

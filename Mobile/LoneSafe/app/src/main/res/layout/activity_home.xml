@@ -9,4 +9,85 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="io.github.itsjumaah.lonesafe.Home">
 
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Status:"
+        android:id="@+id/tvStatusLabel"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginTop="29dp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Risk Level:"
+        android:id="@+id/tvRiskLevelLabel"
+        android:layout_below="@+id/tvStatusLabel"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginTop="21dp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="On Field Hours:"
+        android:id="@+id/tvHoursLabel"
+        android:layout_below="@+id/tvRiskLevelLabel"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginTop="23dp" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Check In"
+        android:id="@+id/btnCheckIn"
+        android:layout_centerVertical="true"
+        android:layout_toRightOf="@+id/tvHoursLabel"
+        android:layout_toEndOf="@+id/tvHoursLabel" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Settings"
+        android:id="@+id/btnSettings"
+        android:layout_below="@+id/btnCheckIn"
+        android:layout_toRightOf="@+id/tvHoursLabel"
+        android:layout_toEndOf="@+id/tvHoursLabel"
+        android:layout_marginTop="40dp" />
+
+    <Button
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="    S.O.S    "
+        android:id="@+id/btnSOS"
+        android:layout_below="@+id/btnSettings"
+        android:layout_alignRight="@+id/btnCheckIn"
+        android:layout_alignEnd="@+id/btnCheckIn"
+        android:layout_marginTop="39dp" />
+
+    <ProgressBar
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/progressBar"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/tvHoursLabel"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="Large Text"
+        android:id="@+id/tvRiskLvl"
+        android:layout_above="@+id/tvHoursLabel"
+        android:layout_alignLeft="@+id/btnSOS"
+        android:layout_alignStart="@+id/btnSOS" />
+
 </RelativeLayout>

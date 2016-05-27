@@ -24,7 +24,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Level of risk:"
-        android:id="@+id/tvRiskLvl"
+        android:id="@+id/tvRiskLvlLabel"
         android:layout_below="@+id/tvSettingtitle"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
@@ -35,7 +35,7 @@
         android:layout_height="wrap_content"
         android:text="Working hours:"
         android:id="@+id/tvWorkingHours"
-        android:layout_below="@+id/tvRiskLvl"
+        android:layout_below="@+id/tvRiskLvlLabel"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:layout_marginTop="84dp" />
@@ -49,35 +49,11 @@
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true" />
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="8:00 AM"
-        android:id="@+id/tvStartTime"
-        android:layout_alignTop="@+id/btnStart"
-        android:layout_alignLeft="@+id/tvEndTime"
-        android:layout_alignStart="@+id/tvEndTime"
-        android:layout_alignRight="@+id/tvEndTime"
-        android:layout_alignEnd="@+id/tvEndTime" />
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="05:00 PM"
-        android:id="@+id/tvEndTime"
-        android:layout_marginLeft="45dp"
-        android:layout_marginStart="45dp"
-        android:layout_alignTop="@+id/btnFinish"
-        android:layout_toRightOf="@+id/btnFinish"
-        android:layout_toEndOf="@+id/btnFinish" />
-
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="set start time"
-        android:id="@+id/btnStart"
+        android:id="@+id/btnStartTime"
         android:layout_marginTop="28dp"
         android:layout_below="@+id/tvWorkingHours"
         android:layout_alignParentLeft="true"
@@ -87,11 +63,11 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="set finish time"
-        android:id="@+id/btnFinish"
-        android:layout_below="@+id/btnStart"
+        android:id="@+id/btnFinishTime"
+        android:layout_marginTop="18dp"
+        android:layout_below="@+id/btnStartTime"
         android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_marginTop="29dp" />
+        android:layout_alignParentStart="true" />
 
     <Spinner
         android:layout_width="wrap_content"
@@ -99,12 +75,38 @@
         android:id="@+id/riskLvlDropdown"
         android:entries="@array/risk_levels"
         android:prompt="@string/RL_prompt"
-        android:layout_alignBaseline="@+id/tvRiskLvl"
-        android:layout_alignBottom="@+id/tvRiskLvl"
-        android:layout_toRightOf="@+id/tvWorkingHours"
-        android:layout_toEndOf="@+id/tvWorkingHours"
-        android:spinnerMode="dropdown" />
+        android:spinnerMode="dropdown"
+        android:layout_alignTop="@+id/tvRiskLvlLabel"
+        android:layout_centerHorizontal="true" />
 
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Start"
+        android:id="@+id/btnStart"
+        android:layout_alignParentBottom="true"
+        android:layout_toRightOf="@+id/btnFinishTime"
+        android:layout_toEndOf="@+id/btnFinishTime" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="__:__"
+        android:id="@+id/tvStartTime"
+        android:layout_alignTop="@+id/btnStartTime"
+        android:layout_toRightOf="@+id/btnStart"
+        android:layout_toEndOf="@+id/btnStart" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="__:__"
+        android:id="@+id/tvEndTime"
+        android:layout_alignTop="@+id/btnFinishTime"
+        android:layout_alignLeft="@+id/tvStartTime"
+        android:layout_alignStart="@+id/tvStartTime" />
 
 
 </RelativeLayout>
