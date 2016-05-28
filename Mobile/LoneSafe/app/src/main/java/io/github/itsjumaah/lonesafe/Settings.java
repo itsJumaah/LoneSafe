@@ -1,9 +1,13 @@
 package io.github.itsjumaah.lonesafe;
 
+import android.app.Activity;
 import android.app.TimePickerDialog;
 import android.content.Intent;
+import android.support.v4.app.NavUtils;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -12,6 +16,8 @@ import android.widget.Spinner;
 import android.widget.TextClock;
 import android.widget.TextView;
 import java.util.Calendar;
+import java.util.prefs.Preferences;
+
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.TimePicker;
 import android.widget.Toast;
@@ -20,21 +26,33 @@ import android.widget.Toast;
 
 public class Settings extends AppCompatActivity {
 
-    public static String strStartTime;
-    public static String strFinishTime;
+    private static String strStartTime = "__:__";
+    private static String strFinishTime = "__:__";
+    int id = 0;
+
+    private SharedPreference sharedPreference;
+    Activity context = this; //For shared Pref
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_settings);
 
+        sharedPreference = new SharedPreference();
 
-        Intent intent = getIntent();
-        String name = intent.getStringExtra("name");
+        //Add back button on action bar
+        ActionBar actionBar = getSupportActionBar();
+        actionBar.setIcon(R.mipmap.ic_launcher);
+
+
+       // Intent intent = getIntent();
+       // String name = intent.getStringExtra("name");
 
         final TextView tvWelcomeMsg = (TextView) findViewById(R.id.tvUser);
+        String message = "You are logged in as " + sharedPreference.getValue(context,"Name");
+
         // Display user details
-        String message ="You are logged in as " + name;
+      //  String message ="You are logged in as " + name;
         tvWelcomeMsg.setText(message);
 
         //------------------------------------- SPINNER ---------------
@@ -48,12 +66,21 @@ public class Settings extends AppCompatActivity {
 
         riskSelector.setAdapter(adapter);
 
+        id = sharedPreference.getRLPos(context);
+        riskSelector.setSelection(id);
+
+
         riskSelector.setOnItemSelectedListener(new OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 Toast.makeText(parent.getContext(),
                         "Risk Level : " + parent.getItemAtPosition(position).toString(),
                         Toast.LENGTH_SHORT).show();
+
+                sharedPreference.setRLPos(context, position);
+
+
+
                 //saves selected risk level as STRING
                // riskLevelTxt = riskSelector.getSelectedItem().toString();
                // riskLevelTxt = parent.getItemAtPosition(position).toString();
@@ -61,16 +88,20 @@ public class Settings extends AppCompatActivity {
 
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
-
                 //Maybe select the highest OR lowest as default if no selection made ??
 
             }
         });
 
+
+
         //------------------------------------- TIME SELECTION ---------------
 
 
         final Button btnStartTime = (Button) findViewById(R.id.btnStartTime);
+        final TextView tvStartTime = (TextView) findViewById(R.id.tvStartTime);
+        tvStartTime.setText(strStartTime);
+
         assert btnStartTime != null;
         btnStartTime.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -80,6 +111,9 @@ public class Settings extends AppCompatActivity {
         });
 
         final Button btnFinishTime = (Button) findViewById(R.id.btnFinishTime);
+        final TextView tvFinishTime = (TextView) findViewById(R.id.tvEndTime);
+        tvFinishTime.setText(strFinishTime);
+
         assert btnFinishTime != null;
         btnFinishTime.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -95,21 +129,33 @@ public class Settings extends AppCompatActivity {
             public void onClick(View v) {
                 Intent i = new Intent(Settings.this, Home.class);
                 String selectedItem = riskSelector.getSelectedItem().toString();
-                i.putExtra("getdata", selectedItem);
-                i.putExtra("getStartTime",strStartTime);
-                i.putExtra("getFinishTime", strFinishTime);
+                sharedPreference.saveRL(context, selectedItem);
+
+            //    i.putExtra("getdata", selectedItem);
+            //    i.putExtra("getStartTime",strStartTime);
+               // i.putExtra("getFinishTime", strFinishTime);
+
+              //  Intent intent = new Intent(context, Home.class);
+                // Start next activity
+               // startActivity(intent);
 
                 startActivity(i);
             }
         });
+
+        // Save startup Time in SavedPreference
+       // sharedPreference = new SharedPreference();
+       // sharedPreference.save(context, strStartTime);
+
     }
 
     void startTimePicker (){
+        final String title = "Select Start Time";
         final TextView tvStartTime = (TextView) findViewById(R.id.tvStartTime);
         final Calendar calendar = Calendar.getInstance();
         int hour = calendar.get(Calendar.HOUR_OF_DAY);
         int minute = calendar.get(Calendar.MINUTE);
-        TimePickerDialog mTimePicker;
+        final TimePickerDialog mTimePicker;
 
         mTimePicker = new TimePickerDialog(Settings.this, new TimePickerDialog.OnTimeSetListener() {
             @Override
@@ -131,6 +177,10 @@ public class Settings extends AppCompatActivity {
                 // tvStartTime.setText(new StringBuilder().append(String.format("%02d:%02d ",selectedHour,selectedMinute)).append(format));
                 tvStartTime.setText(String.format("%02d:%02d ",selectedHour,selectedMinute)+ format);
                 strStartTime = tvStartTime.getText().toString();
+
+               // sharedPreference = new SharedPreference();
+                sharedPreference.saveTimeStart(context, strStartTime);
+
 
             }
         }, hour, minute, false);//No 24 hour time
@@ -164,6 +214,9 @@ public class Settings extends AppCompatActivity {
                 }
                 tvFinishTime.setText(String.format("%02d:%02d ",selectedHour,selectedMinute)+ format);
                 strFinishTime = tvFinishTime.getText().toString();
+
+                //sharedPreference = new SharedPreference();
+                sharedPreference.saveTimeEnd(context, strFinishTime);
 
             }
         }, hour, minute, false);//No 24 hour time

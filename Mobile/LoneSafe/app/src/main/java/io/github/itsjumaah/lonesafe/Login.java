@@ -1,5 +1,6 @@
 package io.github.itsjumaah.lonesafe;
 
+import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -21,11 +22,16 @@ import org.json.JSONObject;
 
 public class Login extends AppCompatActivity {
 
+    private SharedPreference sharedPreference;
+    Activity context = this;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+
+        sharedPreference = new SharedPreference();
 
         //--- action bar icon
 
@@ -33,6 +39,8 @@ public class Login extends AppCompatActivity {
         actionBar.setDisplayShowHomeEnabled(true);
         actionBar.setIcon(R.mipmap.ic_launcher);
         actionBar.setTitle(" LoneSafe");
+
+
 
 
         final EditText etUser = (EditText) findViewById(R.id.etUser);
@@ -59,11 +67,20 @@ public class Login extends AppCompatActivity {
                     intent.putExtra("username", username);
                     intent.putExtra("name", name);
                     Login.this.startActivity(intent);
+
+
                 }
                 else { provokeDatabase(); }
 
+
+
             }
+
+
+
         });
+
+
 
     }
 
@@ -83,9 +100,11 @@ public class Login extends AppCompatActivity {
         myAlert.show();
     }
 
-    public static final String DEFAULT = "N/A";
 
 /*
+    public static final String DEFAULT = "N/A";
+
+
     public void savePreferences() {
 
         final EditText etUser = (EditText) findViewById(R.id.etUser);
@@ -147,19 +166,22 @@ public class Login extends AppCompatActivity {
                     JSONObject jsonResponse = new JSONObject(response);
                     boolean success = jsonResponse.getBoolean("success");
 
-
-
                     if (success) {
                       //  savePreferences();
 
-
                         String name = jsonResponse.getString("name");
+                        String pass = jsonResponse.getString("password");
+                        String user = jsonResponse.getString("username");
                         int age = jsonResponse.getInt("age");
 
+                        sharedPreference.saveName(context, name);
+                        sharedPreference.saveUser(context, user);
+                        sharedPreference.savePass(context, pass);
+
                         Intent intent = new Intent(Login.this, Settings.class);
-                        intent.putExtra("name", name);
-                        intent.putExtra("age", age);
-                        intent.putExtra("username", username);
+                   //     intent.putExtra("name", name);
+                    //    intent.putExtra("age", age);
+                    //    intent.putExtra("username", username);
                         Login.this.startActivity(intent);
 
                     } else {

@@ -44,7 +44,7 @@
         android:layout_alignParentStart="true"
         android:layout_alignRight="@+id/etUser"
         android:layout_alignEnd="@+id/etUser"
-        />
+        android:password="true" />
 
     <Button
         style="?android:attr/buttonStyleSmall"
@@ -52,6 +52,7 @@
         android:layout_width="35dp"
         android:layout_height="35dp"
         android:text=" ? "
+        android:color="#3852b7"
         android:textColor="#ffffff"
         android:id="@+id/btnInfo"
         android:onClick="showAlert"
