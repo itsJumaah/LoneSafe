@@ -16,6 +16,7 @@ import android.widget.Spinner;
 import android.widget.TextClock;
 import android.widget.TextView;
 import java.util.Calendar;
+import java.util.concurrent.TimeUnit;
 import java.util.prefs.Preferences;
 
 import android.widget.AdapterView.OnItemSelectedListener;
@@ -29,6 +30,8 @@ public class Settings extends AppCompatActivity {
     private static String strStartTime = "__:__";
     private static String strFinishTime = "__:__";
     int id = 0;
+    private static long militime1;
+    private static long militime2;
 
     private SharedPreference sharedPreference;
     Activity context = this; //For shared Pref
@@ -40,19 +43,18 @@ public class Settings extends AppCompatActivity {
 
         sharedPreference = new SharedPreference();
 
-        //Add back button on action bar
+        strStartTime = sharedPreference.getValue(context,"TimeStart");
+        strFinishTime = sharedPreference.getValue(context,"TimeEnd");
+
+        //Add icon to action bar
         ActionBar actionBar = getSupportActionBar();
+        actionBar.setDisplayShowHomeEnabled(true);
         actionBar.setIcon(R.mipmap.ic_launcher);
-
-
-       // Intent intent = getIntent();
-       // String name = intent.getStringExtra("name");
-
-        final TextView tvWelcomeMsg = (TextView) findViewById(R.id.tvUser);
-        String message = "You are logged in as " + sharedPreference.getValue(context,"Name");
+        actionBar.setTitle(" LoneSafe");
 
         // Display user details
-      //  String message ="You are logged in as " + name;
+        final TextView tvWelcomeMsg = (TextView) findViewById(R.id.tvUser);
+        String message = "You are logged in as " + sharedPreference.getValue(context,"Name");
         tvWelcomeMsg.setText(message);
 
         //------------------------------------- SPINNER ---------------
@@ -65,10 +67,9 @@ public class Settings extends AppCompatActivity {
 
 
         riskSelector.setAdapter(adapter);
-
+        //Gets last risklevel if available
         id = sharedPreference.getRLPos(context);
         riskSelector.setSelection(id);
-
 
         riskSelector.setOnItemSelectedListener(new OnItemSelectedListener() {
             @Override
@@ -78,22 +79,13 @@ public class Settings extends AppCompatActivity {
                         Toast.LENGTH_SHORT).show();
 
                 sharedPreference.setRLPos(context, position);
-
-
-
-                //saves selected risk level as STRING
-               // riskLevelTxt = riskSelector.getSelectedItem().toString();
-               // riskLevelTxt = parent.getItemAtPosition(position).toString();
             }
-
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
-                //Maybe select the highest OR lowest as default if no selection made ??
+                //DO Nothing
 
             }
         });
-
-
 
         //------------------------------------- TIME SELECTION ---------------
 
@@ -127,25 +119,14 @@ public class Settings extends AppCompatActivity {
         btnStart.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
-                Intent i = new Intent(Settings.this, Home.class);
                 String selectedItem = riskSelector.getSelectedItem().toString();
                 sharedPreference.saveRL(context, selectedItem);
 
-            //    i.putExtra("getdata", selectedItem);
-            //    i.putExtra("getStartTime",strStartTime);
-               // i.putExtra("getFinishTime", strFinishTime);
-
-              //  Intent intent = new Intent(context, Home.class);
-                // Start next activity
-               // startActivity(intent);
-
-                startActivity(i);
+                Intent intent = new Intent(Settings.this, Home.class);
+                intent.putExtra("getdata", militime2);
+                startActivity(intent);
             }
         });
-
-        // Save startup Time in SavedPreference
-       // sharedPreference = new SharedPreference();
-       // sharedPreference.save(context, strStartTime);
 
     }
 
@@ -173,14 +154,14 @@ public class Settings extends AppCompatActivity {
                 } else {
                     format = "AM";
                 }
-
-                // tvStartTime.setText(new StringBuilder().append(String.format("%02d:%02d ",selectedHour,selectedMinute)).append(format));
                 tvStartTime.setText(String.format("%02d:%02d ",selectedHour,selectedMinute)+ format);
                 strStartTime = tvStartTime.getText().toString();
-
-               // sharedPreference = new SharedPreference();
                 sharedPreference.saveTimeStart(context, strStartTime);
 
+                //Calculate millisec for progress bar on home -- Might not need this once we have server --
+                long hour = TimeUnit.MILLISECONDS.convert(selectedHour,TimeUnit.HOURS);
+                long min = TimeUnit.MILLISECONDS.convert(selectedMinute,TimeUnit.MINUTES);
+                militime1 = hour + min;
 
             }
         }, hour, minute, false);//No 24 hour time
@@ -214,34 +195,18 @@ public class Settings extends AppCompatActivity {
                 }
                 tvFinishTime.setText(String.format("%02d:%02d ",selectedHour,selectedMinute)+ format);
                 strFinishTime = tvFinishTime.getText().toString();
-
-                //sharedPreference = new SharedPreference();
                 sharedPreference.saveTimeEnd(context, strFinishTime);
+
+                //Calculate millisec for progress bar on home -- Might not need this once we have server --
+                long hour = TimeUnit.MILLISECONDS.convert(selectedHour,TimeUnit.HOURS);
+                long min = TimeUnit.MILLISECONDS.convert(selectedMinute,TimeUnit.MINUTES);
+                militime2 = (hour + min) - militime1;
 
             }
         }, hour, minute, false);//No 24 hour time
         mTimePicker.setTitle("Select FINISH Time");
         mTimePicker.show();
     }
-    /*
-    // Also need to return int for correct hour format -- so can't use function
-    public String timeFormat(int hour){
-        String format = "";
-        if (hour == 0) {
-            hour += 12;
-            format = "AM";
-        }
-        else if (hour == 12) {
-            format = "PM";
-        } else if (hour > 12) {
-            hour -= 12;
-            format = "PM";
-        } else {
-            format = "AM";
-        }
-        return format;
-    }
-    */
 
 }
 

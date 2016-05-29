@@ -1,6 +1,7 @@
 <resources>
     <string name="app_name">LoneSafe</string>
     <string name="RL_prompt">Select your Risk Level</string>
+    <string name="yes_send_help">YES! Send Help</string>
 
     <string-array name="risk_levels">
         <item>5 - Very High</item>

@@ -50,7 +50,6 @@ public class Login extends AppCompatActivity {
 
 
 
-
         assert btnLogin != null;
         btnLogin.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -98,6 +97,8 @@ public class Login extends AppCompatActivity {
                 .setTitle("Information")
                 .create();
         myAlert.show();
+
+
     }
 
 

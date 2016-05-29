@@ -8,7 +8,6 @@
         android:id="@+id/appwidget_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:contentDescription="@string/appwidget_text"
         android:text="LoneSafe"
         android:textColor="#ffffff"
         android:textSize="24sp"

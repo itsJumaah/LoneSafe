@@ -64,6 +64,7 @@
         android:layout_height="wrap_content"
         android:text="    S.O.S    "
         android:id="@+id/btnSOS"
+        android:onClick="showSosAlert"
         android:background="#990202"
         android:textColor="#eeeeee"
         android:layout_below="@+id/btnSettings"
@@ -113,5 +114,24 @@
         android:layout_below="@+id/tvHoursLabel"
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Stop"
+        android:id="@+id/btnStop"
+        android:layout_alignTop="@+id/btnCheckIn"
+        android:layout_toLeftOf="@+id/btnCheckIn"
+        android:layout_toStartOf="@+id/btnCheckIn" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="MilVal"
+        android:id="@+id/tvMil"
+        android:layout_below="@+id/progressBar"
+        android:layout_toRightOf="@+id/btnStop"
+        android:layout_toEndOf="@+id/btnStop" />
 
 </RelativeLayout>

@@ -15,16 +15,17 @@ public class SharedPreference {
 
     public static final String User = "User";
     public static final String Name = "Name";
-    public static final String Pass = "pass";
+    public static final String Pass = "Pass";
 
     public static final String TimeStart = "TimeStart";
     public static final String TimeEnd = "TimeEnd";
     public static final String RiskLevel = "RiskLevel";
 
+
+
     public SharedPreference() {
         super();
     }
-
 
     public void saveName (Context context, String text) {
         save(context,Name,text);
