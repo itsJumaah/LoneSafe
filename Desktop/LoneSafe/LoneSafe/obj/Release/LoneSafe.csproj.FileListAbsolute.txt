@@ -7,3 +7,5 @@ C:\Users\buzz\Documents\LoneSafe\Desktop\LoneSafe\LoneSafe\obj\Release\LoneSafe.
 C:\Users\buzz\Documents\LoneSafe\Desktop\LoneSafe\LoneSafe\obj\Release\LoneSafe.pdb
 C:\Users\buzz\Documents\LoneSafe\Desktop\LoneSafe\LoneSafe\obj\Release\LoneSafe.csprojResolveAssemblyReference.cache
 C:\Users\buzz\Documents\LoneSafe\Desktop\LoneSafe\LoneSafe\obj\Release\LoneSafe.MainActivity.resources
+C:\Users\buzz\Documents\LoneSafe\Desktop\LoneSafe\LoneSafe\obj\Release\LoneSafe.LoadingScreen.resources
+C:\Users\buzz\Documents\LoneSafe\Desktop\LoneSafe\LoneSafe\obj\Release\LoneSafe.About.resources

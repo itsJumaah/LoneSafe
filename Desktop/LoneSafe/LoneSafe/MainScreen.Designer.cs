@@ -51,11 +51,11 @@
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.toolStripStatusLabel1 = new System.Windows.Forms.ToolStripStatusLabel();
             this.spreadSheet = new System.Windows.Forms.DataGridView();
-            this.riskL5 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.riskL4 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.riskL3 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.riskL2 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.riskL1 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.riskL2 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.riskL3 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.riskL4 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.riskL5 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.TickerBox = new System.Windows.Forms.ListBox();
             this.OnlineListBox = new System.Windows.Forms.ListBox();
             this.tableLayout = new System.Windows.Forms.TableLayoutPanel();
@@ -116,7 +116,7 @@
             this.removeToolStripMenuItem,
             this.editToolStripMenuItem});
             this.usersToolStripMenuItem.Name = "usersToolStripMenuItem";
-            this.usersToolStripMenuItem.Size = new System.Drawing.Size(115, 22);
+            this.usersToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.usersToolStripMenuItem.Text = "Users";
             // 
             // addToolStripMenuItem
@@ -144,7 +144,7 @@
             this.removeToolStripMenuItem1,
             this.editToolStripMenuItem1});
             this.adminsToolStripMenuItem.Name = "adminsToolStripMenuItem";
-            this.adminsToolStripMenuItem.Size = new System.Drawing.Size(115, 22);
+            this.adminsToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.adminsToolStripMenuItem.Text = "Admins";
             // 
             // addToolStripMenuItem1
@@ -171,7 +171,7 @@
             this.viewToolStripMenuItem,
             this.exportToolStripMenuItem});
             this.reportToolStripMenuItem.Name = "reportToolStripMenuItem";
-            this.reportToolStripMenuItem.Size = new System.Drawing.Size(115, 22);
+            this.reportToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.reportToolStripMenuItem.Text = "Report";
             // 
             // viewToolStripMenuItem
@@ -198,14 +198,15 @@
             // userGuideToolStripMenuItem
             // 
             this.userGuideToolStripMenuItem.Name = "userGuideToolStripMenuItem";
-            this.userGuideToolStripMenuItem.Size = new System.Drawing.Size(131, 22);
+            this.userGuideToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.userGuideToolStripMenuItem.Text = "User Guide";
             // 
             // aboutToolStripMenuItem
             // 
             this.aboutToolStripMenuItem.Name = "aboutToolStripMenuItem";
-            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(131, 22);
+            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.aboutToolStripMenuItem.Text = "About";
+            this.aboutToolStripMenuItem.Click += new System.EventHandler(this.aboutToolStripMenuItem_Click);
             // 
             // statusStrip1
             // 
@@ -241,30 +242,30 @@
             this.spreadSheet.Size = new System.Drawing.Size(961, 323);
             this.spreadSheet.TabIndex = 2;
             // 
-            // riskL5
+            // riskL1
             // 
-            this.riskL5.HeaderText = "Risk Level 5";
-            this.riskL5.Name = "riskL5";
-            // 
-            // riskL4
-            // 
-            this.riskL4.HeaderText = "Risk Level 4";
-            this.riskL4.Name = "riskL4";
-            // 
-            // riskL3
-            // 
-            this.riskL3.HeaderText = "Risk Level 3";
-            this.riskL3.Name = "riskL3";
+            this.riskL1.HeaderText = "Risk Level 1";
+            this.riskL1.Name = "riskL1";
             // 
             // riskL2
             // 
             this.riskL2.HeaderText = "Risk Level 2";
             this.riskL2.Name = "riskL2";
             // 
-            // riskL1
+            // riskL3
             // 
-            this.riskL1.HeaderText = "Risk Level 1";
-            this.riskL1.Name = "riskL1";
+            this.riskL3.HeaderText = "Risk Level 3";
+            this.riskL3.Name = "riskL3";
+            // 
+            // riskL4
+            // 
+            this.riskL4.HeaderText = "Risk Level 4";
+            this.riskL4.Name = "riskL4";
+            // 
+            // riskL5
+            // 
+            this.riskL5.HeaderText = "Risk Level 5";
+            this.riskL5.Name = "riskL5";
             // 
             // TickerBox
             // 
