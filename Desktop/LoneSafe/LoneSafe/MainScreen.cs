@@ -42,6 +42,8 @@ namespace LoneSafe
             About about = new About();
 
             about.Show();
+
+            //toby
         }
 
 
