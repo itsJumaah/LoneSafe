@@ -37,7 +37,7 @@ namespace LoneSafe
         public void linkDatabase()
         {
           
-            string connString = "server=mysql8.000webhost.com;database=a2076561_DB;uid=root;pwd=LonesafeDB16";
+            string connString = "server=sql8.000webhost.com;database=a2076561_DB;uid=a2076561_ash;pwd=LonesafeDB16";
 
             MySqlConnection conn = new MySqlConnection(connString);
             MySqlCommand command = conn.CreateCommand();
@@ -45,6 +45,7 @@ namespace LoneSafe
             try
             {
                 conn.Open();
+                
             }
             catch(Exception ex)
             {
@@ -55,13 +56,13 @@ namespace LoneSafe
             while (reader.Read())
             {
 
+               
 
-                button1.Text = reader["name"].ToString();
-
+                //test
+  
          
             }
-            Console.ReadLine();
-          
+         
 
         }
         private void MainActivity_Load(object sender, EventArgs e)

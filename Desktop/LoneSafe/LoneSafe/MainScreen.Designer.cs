@@ -48,6 +48,7 @@
             this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.userGuideToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.label1 = new System.Windows.Forms.Label();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.toolStripStatusLabel1 = new System.Windows.Forms.ToolStripStatusLabel();
             this.spreadSheet = new System.Windows.Forms.DataGridView();
@@ -59,7 +60,7 @@
             this.TickerBox = new System.Windows.Forms.ListBox();
             this.OnlineListBox = new System.Windows.Forms.ListBox();
             this.tableLayout = new System.Windows.Forms.TableLayoutPanel();
-            this.label1 = new System.Windows.Forms.Label();
+            this.webBrowser1 = new System.Windows.Forms.WebBrowser();
             this.button1 = new System.Windows.Forms.Button();
             this.menuStrip.SuspendLayout();
             this.statusStrip1.SuspendLayout();
@@ -210,6 +211,14 @@
             this.aboutToolStripMenuItem.Text = "About";
             this.aboutToolStripMenuItem.Click += new System.EventHandler(this.aboutToolStripMenuItem_Click);
             // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(383, 0);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(0, 13);
+            this.label1.TabIndex = 2;
+            // 
             // statusStrip1
             // 
             this.statusStrip1.Dock = System.Windows.Forms.DockStyle.Top;
@@ -218,7 +227,7 @@
             this.statusStrip1.Location = new System.Drawing.Point(0, 0);
             this.statusStrip1.Name = "statusStrip1";
             this.statusStrip1.RenderMode = System.Windows.Forms.ToolStripRenderMode.Professional;
-            this.statusStrip1.Size = new System.Drawing.Size(967, 22);
+            this.statusStrip1.Size = new System.Drawing.Size(958, 22);
             this.statusStrip1.TabIndex = 3;
             this.statusStrip1.Text = "statusBar";
             // 
@@ -239,9 +248,9 @@
             this.riskL5});
             this.spreadSheet.Dock = System.Windows.Forms.DockStyle.Fill;
             this.spreadSheet.GridColor = System.Drawing.SystemColors.ActiveCaption;
-            this.spreadSheet.Location = new System.Drawing.Point(3, 331);
+            this.spreadSheet.Location = new System.Drawing.Point(3, 169);
             this.spreadSheet.Name = "spreadSheet";
-            this.spreadSheet.Size = new System.Drawing.Size(961, 323);
+            this.spreadSheet.Size = new System.Drawing.Size(952, 161);
             this.spreadSheet.TabIndex = 2;
             // 
             // riskL1
@@ -281,10 +290,10 @@
             "Ashneel check-in due 10 minutes ago.",
             "Bilal checked-in 15 minutes ago.",
             "Toby checked-in 30 minutes ago."});
-            this.TickerBox.Location = new System.Drawing.Point(970, 3);
+            this.TickerBox.Location = new System.Drawing.Point(961, 3);
             this.TickerBox.Name = "TickerBox";
             this.TickerBox.ScrollAlwaysVisible = true;
-            this.TickerBox.Size = new System.Drawing.Size(291, 322);
+            this.TickerBox.Size = new System.Drawing.Size(288, 160);
             this.TickerBox.TabIndex = 1;
             // 
             // OnlineListBox
@@ -298,10 +307,10 @@
             "Toby Garner",
             "Ashneel Kumar",
             "Indy Singh"});
-            this.OnlineListBox.Location = new System.Drawing.Point(970, 331);
+            this.OnlineListBox.Location = new System.Drawing.Point(961, 169);
             this.OnlineListBox.Name = "OnlineListBox";
             this.OnlineListBox.ScrollAlwaysVisible = true;
-            this.OnlineListBox.Size = new System.Drawing.Size(291, 323);
+            this.OnlineListBox.Size = new System.Drawing.Size(288, 161);
             this.OnlineListBox.TabIndex = 0;
             // 
             // tableLayout
@@ -313,30 +322,30 @@
             this.tableLayout.Controls.Add(this.TickerBox, 1, 0);
             this.tableLayout.Controls.Add(this.spreadSheet, 0, 1);
             this.tableLayout.Controls.Add(this.statusStrip1, 0, 0);
-            this.tableLayout.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tableLayout.Location = new System.Drawing.Point(0, 24);
+            this.tableLayout.Location = new System.Drawing.Point(12, 348);
             this.tableLayout.Name = "tableLayout";
             this.tableLayout.RowCount = 2;
             this.tableLayout.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.tableLayout.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tableLayout.Size = new System.Drawing.Size(1264, 657);
+            this.tableLayout.Size = new System.Drawing.Size(1252, 333);
             this.tableLayout.TabIndex = 0;
             this.tableLayout.Paint += new System.Windows.Forms.PaintEventHandler(this.tableLayout_Paint);
             // 
-            // label1
+            // webBrowser1
             // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(383, 0);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(0, 13);
-            this.label1.TabIndex = 2;
+            this.webBrowser1.Location = new System.Drawing.Point(3, 31);
+            this.webBrowser1.MinimumSize = new System.Drawing.Size(20, 20);
+            this.webBrowser1.Name = "webBrowser1";
+            this.webBrowser1.Size = new System.Drawing.Size(1261, 480);
+            this.webBrowser1.TabIndex = 4;
+            this.webBrowser1.Url = new System.Uri("http://wikimapia.org/#lang=en&lat=-36.897194&lon=174.880371&z=7&m=b", System.UriKind.Absolute);
             // 
             // button1
             // 
-            this.button1.Location = new System.Drawing.Point(573, -2);
+            this.button1.Location = new System.Drawing.Point(262, 182);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(75, 23);
-            this.button1.TabIndex = 3;
+            this.button1.TabIndex = 5;
             this.button1.Text = "button1";
             this.button1.UseVisualStyleBackColor = true;
             // 
@@ -347,6 +356,7 @@
             this.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.ClientSize = new System.Drawing.Size(1264, 681);
             this.Controls.Add(this.button1);
+            this.Controls.Add(this.webBrowser1);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.tableLayout);
             this.Controls.Add(this.menuStrip);
@@ -389,6 +399,7 @@
         private System.Windows.Forms.ToolStripMenuItem helpToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem userGuideToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem aboutToolStripMenuItem;
+        private System.Windows.Forms.Label label1;
         private System.Windows.Forms.StatusStrip statusStrip1;
         private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel1;
         private System.Windows.Forms.DataGridView spreadSheet;
@@ -400,7 +411,7 @@
         private System.Windows.Forms.ListBox TickerBox;
         private System.Windows.Forms.ListBox OnlineListBox;
         private System.Windows.Forms.TableLayoutPanel tableLayout;
-        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.WebBrowser webBrowser1;
         private System.Windows.Forms.Button button1;
     }
 }
