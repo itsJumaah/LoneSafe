@@ -61,7 +61,6 @@
             this.OnlineListBox = new System.Windows.Forms.ListBox();
             this.tableLayout = new System.Windows.Forms.TableLayoutPanel();
             this.webBrowser1 = new System.Windows.Forms.WebBrowser();
-            this.button1 = new System.Windows.Forms.Button();
             this.menuStrip.SuspendLayout();
             this.statusStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.spreadSheet)).BeginInit();
@@ -340,22 +339,12 @@
             this.webBrowser1.TabIndex = 4;
             this.webBrowser1.Url = new System.Uri("http://wikimapia.org/#lang=en&lat=-36.897194&lon=174.880371&z=7&m=b", System.UriKind.Absolute);
             // 
-            // button1
-            // 
-            this.button1.Location = new System.Drawing.Point(262, 182);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(75, 23);
-            this.button1.TabIndex = 5;
-            this.button1.Text = "button1";
-            this.button1.UseVisualStyleBackColor = true;
-            // 
             // MainActivity
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.ClientSize = new System.Drawing.Size(1264, 681);
-            this.Controls.Add(this.button1);
             this.Controls.Add(this.webBrowser1);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.tableLayout);
@@ -412,7 +401,6 @@
         private System.Windows.Forms.ListBox OnlineListBox;
         private System.Windows.Forms.TableLayoutPanel tableLayout;
         private System.Windows.Forms.WebBrowser webBrowser1;
-        private System.Windows.Forms.Button button1;
     }
 }
 

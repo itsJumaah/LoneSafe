@@ -120,6 +120,7 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="splash.png" />
     <None Include="baitlogo.png" />
     <Content Include="logo.ico" />
     <None Include="logo.png" />

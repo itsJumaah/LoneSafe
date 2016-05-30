@@ -8,7 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Threading;
-using MySql.Data.MySqlClient;
+//using MySql.Data.MySqlClient;
 
 
 namespace LoneSafe
@@ -34,7 +34,7 @@ namespace LoneSafe
         }
 
 
-        public void linkDatabase()
+      /*  public void linkDatabase()
         {
           
             string connString = "server=sql8.000webhost.com;database=a2076561_DB;uid=a2076561_ash;pwd=LonesafeDB16";
@@ -64,7 +64,7 @@ namespace LoneSafe
             }
          
 
-        }
+        } */
         private void MainActivity_Load(object sender, EventArgs e)
         {
 
