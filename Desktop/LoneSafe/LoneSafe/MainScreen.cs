@@ -17,7 +17,7 @@ namespace LoneSafe
         {
             Thread loading = new Thread(new ThreadStart(StartLoading));
             loading.Start();
-            Thread.Sleep(1500);
+            Thread.Sleep(1000);
 
 
             InitializeComponent();
