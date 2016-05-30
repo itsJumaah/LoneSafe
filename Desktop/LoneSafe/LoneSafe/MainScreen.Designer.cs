@@ -59,6 +59,8 @@
             this.TickerBox = new System.Windows.Forms.ListBox();
             this.OnlineListBox = new System.Windows.Forms.ListBox();
             this.tableLayout = new System.Windows.Forms.TableLayoutPanel();
+            this.label1 = new System.Windows.Forms.Label();
+            this.button1 = new System.Windows.Forms.Button();
             this.menuStrip.SuspendLayout();
             this.statusStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.spreadSheet)).BeginInit();
@@ -116,7 +118,7 @@
             this.removeToolStripMenuItem,
             this.editToolStripMenuItem});
             this.usersToolStripMenuItem.Name = "usersToolStripMenuItem";
-            this.usersToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.usersToolStripMenuItem.Size = new System.Drawing.Size(115, 22);
             this.usersToolStripMenuItem.Text = "Users";
             // 
             // addToolStripMenuItem
@@ -144,7 +146,7 @@
             this.removeToolStripMenuItem1,
             this.editToolStripMenuItem1});
             this.adminsToolStripMenuItem.Name = "adminsToolStripMenuItem";
-            this.adminsToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.adminsToolStripMenuItem.Size = new System.Drawing.Size(115, 22);
             this.adminsToolStripMenuItem.Text = "Admins";
             // 
             // addToolStripMenuItem1
@@ -171,7 +173,7 @@
             this.viewToolStripMenuItem,
             this.exportToolStripMenuItem});
             this.reportToolStripMenuItem.Name = "reportToolStripMenuItem";
-            this.reportToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.reportToolStripMenuItem.Size = new System.Drawing.Size(115, 22);
             this.reportToolStripMenuItem.Text = "Report";
             // 
             // viewToolStripMenuItem
@@ -198,13 +200,13 @@
             // userGuideToolStripMenuItem
             // 
             this.userGuideToolStripMenuItem.Name = "userGuideToolStripMenuItem";
-            this.userGuideToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.userGuideToolStripMenuItem.Size = new System.Drawing.Size(131, 22);
             this.userGuideToolStripMenuItem.Text = "User Guide";
             // 
             // aboutToolStripMenuItem
             // 
             this.aboutToolStripMenuItem.Name = "aboutToolStripMenuItem";
-            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(131, 22);
             this.aboutToolStripMenuItem.Text = "About";
             this.aboutToolStripMenuItem.Click += new System.EventHandler(this.aboutToolStripMenuItem_Click);
             // 
@@ -319,6 +321,24 @@
             this.tableLayout.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.tableLayout.Size = new System.Drawing.Size(1264, 657);
             this.tableLayout.TabIndex = 0;
+            this.tableLayout.Paint += new System.Windows.Forms.PaintEventHandler(this.tableLayout_Paint);
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(383, 0);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(0, 13);
+            this.label1.TabIndex = 2;
+            // 
+            // button1
+            // 
+            this.button1.Location = new System.Drawing.Point(573, -2);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(75, 23);
+            this.button1.TabIndex = 3;
+            this.button1.Text = "button1";
+            this.button1.UseVisualStyleBackColor = true;
             // 
             // MainActivity
             // 
@@ -326,6 +346,8 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.ClientSize = new System.Drawing.Size(1264, 681);
+            this.Controls.Add(this.button1);
+            this.Controls.Add(this.label1);
             this.Controls.Add(this.tableLayout);
             this.Controls.Add(this.menuStrip);
             this.HelpButton = true;
@@ -378,6 +400,8 @@
         private System.Windows.Forms.ListBox TickerBox;
         private System.Windows.Forms.ListBox OnlineListBox;
         private System.Windows.Forms.TableLayoutPanel tableLayout;
+        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.Button button1;
     }
 }
 

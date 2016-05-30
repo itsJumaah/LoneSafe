@@ -8,6 +8,8 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Threading;
+using MySql.Data.MySqlClient;
+
 
 namespace LoneSafe
 {
@@ -23,6 +25,7 @@ namespace LoneSafe
             InitializeComponent();
 
             loading.Abort();
+          
         }
 
         public void StartLoading()
@@ -30,6 +33,37 @@ namespace LoneSafe
             Application.Run(new LoadingScreen());
         }
 
+
+        public void linkDatabase()
+        {
+          
+            string connString = "server=mysql8.000webhost.com;database=a2076561_DB;uid=root;pwd=LonesafeDB16";
+
+            MySqlConnection conn = new MySqlConnection(connString);
+            MySqlCommand command = conn.CreateCommand();
+            command.CommandText = "SELECT name FROM user WHERE id =2";
+            try
+            {
+                conn.Open();
+            }
+            catch(Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+
+            MySqlDataReader reader = command.ExecuteReader();
+            while (reader.Read())
+            {
+
+
+                button1.Text = reader["name"].ToString();
+
+         
+            }
+            Console.ReadLine();
+          
+
+        }
         private void MainActivity_Load(object sender, EventArgs e)
         {
 
@@ -42,13 +76,12 @@ namespace LoneSafe
             About about = new About();
 
             about.Show();
-
-            //toby
-            //bilal alalala
-            // aight g
            
         }
 
+        private void tableLayout_Paint(object sender, PaintEventArgs e)
+        {
 
+        }
     }
 }
