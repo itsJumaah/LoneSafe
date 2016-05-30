@@ -148,29 +148,3 @@ public class SharedPreference {
         editor.commit();
     }
 }
-/*
-
-public class SavedPreference {
-    public static final String PREF_NAME = "your preferences name";
-    public static final int MODE = Context.MODE_ENABLE_WRITE_AHEAD_LOGGING;
-
-    public static final String DEFAULT = "N/A";
-
-    public static void writeString(Context context, String key, String value) {
-        getEditor(context).putString(key, value).commit();
-
-    }
-
-    public static String readString(Context context, String key, String defValue) {
-        return getPreferences(context).getString(key, defValue);
-    }
-    public static SharedPreferences getPreferences(Context context) {
-        return context.getSharedPreferences(PREF_NAME, MODE);
-    }
-
-    public static SharedPreferences.Editor getEditor(Context context) {
-        return getPreferences(context).edit();
-    }
-
-}
-*/

@@ -3,6 +3,7 @@ package io.github.itsjumaah.lonesafe;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
@@ -16,20 +17,23 @@ public class Launcher extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_launcher);
 
-        sharedPreference = new SharedPreference();
+       new Handler().postDelayed(new Runnable(){
+           @Override
+           public void run() {
+               sharedPreference = new SharedPreference();
+               String Username = sharedPreference.getValue(context,"User");
+               String Password = sharedPreference.getValue(context,"Pass");
 
-        String Username = sharedPreference.getValue(context,"User");
-        String Password = sharedPreference.getValue(context,"Pass");
-
-        if(Username != null && Password != null){
-           Intent intent = new Intent(this,Settings.class);
-            startActivity(intent);
-            finish();
-        } else {
-            Intent intent = new Intent(this, Login.class);
-            startActivity(intent);
-            finish();
-        }
-
+               if(Username != null && Password != null){
+                   Intent intent = new Intent(Launcher.this,Settings.class);
+                   startActivity(intent);
+                   finish();
+               } else {
+                   Intent intent = new Intent(Launcher.this, Login.class);
+                   startActivity(intent);
+                   finish();
+               }
+           }
+       },2500);
     }
 }

@@ -16,8 +16,7 @@
         android:id="@+id/tvStatusLabel"
         android:layout_alignParentTop="true"
         android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_marginTop="29dp" />
+        android:layout_alignParentStart="true" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -27,7 +26,7 @@
         android:layout_below="@+id/tvStatusLabel"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:layout_marginTop="21dp" />
+        android:layout_marginTop="25dp" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -45,55 +44,58 @@
         android:text="Check In"
         android:id="@+id/btnCheckIn"
         android:textColor="#228d0d"
-        android:layout_centerVertical="true"
-        android:layout_centerHorizontal="true" />
+        android:layout_alignTop="@+id/btnStop"
+        android:layout_alignLeft="@+id/btnSOS"
+        android:layout_alignStart="@+id/btnSOS"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp" />
 
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Settings"
         android:id="@+id/btnSettings"
-        android:layout_marginTop="34dp"
-        android:layout_below="@+id/btnCheckIn"
-        android:layout_alignRight="@+id/btnCheckIn"
-        android:layout_alignEnd="@+id/btnCheckIn" />
+        android:layout_alignTop="@+id/btnCheckIn"
+        android:layout_toEndOf="@+id/btnSOS"
+        android:layout_toRightOf="@+id/btnSOS"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp" />
 
     <Button
         style="?android:attr/buttonStyleSmall"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
         android:text="    S.O.S    "
         android:id="@+id/btnSOS"
         android:onClick="showSosAlert"
-        android:background="#990202"
+        android:background="@drawable/roundsosbutton"
         android:textColor="#eeeeee"
-        android:layout_below="@+id/btnSettings"
-        android:layout_alignRight="@+id/btnCheckIn"
-        android:layout_alignEnd="@+id/btnCheckIn"
-        android:layout_marginTop="39dp"
-        android:layout_alignLeft="@+id/btnCheckIn"
-        android:layout_alignStart="@+id/btnCheckIn" />
+        android:textStyle="bold"
+        android:ellipsize="start"
+        android:layout_below="@+id/progressBar"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="46dp" />
 
     <ProgressBar
         style="?android:attr/progressBarStyleHorizontal"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/progressBar"
-        android:layout_below="@+id/tvStTime"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
+        android:layout_below="@+id/tvNextCheckLbl"
         android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true" />
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="Risk Level"
         android:id="@+id/tvRiskLvl"
+        android:hint="Select Risk Level"
+        android:textColor="@color/lonesafeBackground"
         android:layout_above="@+id/tvHoursLabel"
-        android:layout_toRightOf="@+id/tvHoursLabel"
-        android:layout_toEndOf="@+id/tvHoursLabel" />
+        android:layout_centerHorizontal="true" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -101,9 +103,11 @@
         android:textAppearance="?android:attr/textAppearanceSmall"
         android:text="00:00"
         android:id="@+id/tvStTime"
+        android:textColor="@color/lonesafeBackground"
         android:layout_below="@+id/tvHoursLabel"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true" />
+        android:layout_toRightOf="@+id/tvStatusLabel"
+        android:layout_toEndOf="@+id/tvStartLbl"
+        android:layout_marginLeft="30dp" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -111,27 +115,72 @@
         android:textAppearance="?android:attr/textAppearanceSmall"
         android:text="00:00"
         android:id="@+id/tvFnTime"
-        android:layout_below="@+id/tvHoursLabel"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true" />
+        android:textColor="@color/lonesafeBackground"
+        android:layout_alignTop="@+id/tvFinishLbl"
+        android:layout_toRightOf="@+id/btnCheckIn"
+        android:layout_toEndOf="@+id/tvFinishLbl"
+        android:layout_marginLeft="30dp" />
 
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Stop"
         android:id="@+id/btnStop"
-        android:layout_alignTop="@+id/btnCheckIn"
-        android:layout_toLeftOf="@+id/btnCheckIn"
-        android:layout_toStartOf="@+id/btnCheckIn" />
+        android:layout_marginTop="66dp"
+        android:layout_below="@+id/btnSOS"
+        android:layout_alignRight="@+id/tvHoursLabel"
+        android:layout_alignEnd="@+id/tvHoursLabel" />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="MilVal"
-        android:id="@+id/tvMil"
-        android:layout_below="@+id/progressBar"
-        android:layout_toRightOf="@+id/btnStop"
-        android:layout_toEndOf="@+id/btnStop" />
+        android:text="Time Till Next CheckIn:"
+        android:id="@+id/tvNextCheckLbl"
+        android:layout_below="@+id/tvHoursLabel"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginTop="39dp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Start:"
+        android:id="@+id/tvStartLbl"
+        android:layout_below="@+id/tvHoursLabel"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Finish:"
+        android:id="@+id/tvFinishLbl"
+        android:layout_below="@+id/tvHoursLabel"
+        android:layout_toRightOf="@+id/tvNextCheckLbl"
+        android:layout_toEndOf="@+id/tvNextCheckLbl" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:text="00:30"
+        android:id="@+id/textView3"
+        android:textColor="@color/lonesafeBackground"
+        android:layout_above="@+id/progressBar"
+        android:layout_toRightOf="@+id/tvFinishLbl"
+        android:layout_toEndOf="@+id/tvFinishLbl" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:text="ONLINE"
+        android:id="@+id/textView4"
+        android:textColor="@color/onlinegreen"
+        android:layout_alignParentTop="true"
+        android:layout_alignLeft="@+id/tvRiskLvl"
+        android:layout_alignStart="@+id/tvRiskLvl"
+        android:layout_toLeftOf="@+id/tvFnTime"
+        android:layout_toStartOf="@+id/tvFnTime" />
 
 </RelativeLayout>

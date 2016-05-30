@@ -11,6 +11,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.RequestQueue;
@@ -40,15 +41,23 @@ public class Login extends AppCompatActivity {
         actionBar.setIcon(R.mipmap.ic_launcher);
         actionBar.setTitle(" LoneSafe");
 
-
-
+        
 
         final EditText etUser = (EditText) findViewById(R.id.etUser);
         final EditText etPassword = (EditText) findViewById(R.id.etPassword);
         final Button btnLogin = (Button) findViewById(R.id.btnLogin);
-//        loadPreferences();
 
+        final TextView tnc = (TextView) findViewById(R.id.tvTnc);
 
+        assert tnc != null;
+        tnc.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(Login.this, Terms.class);
+                Login.this.startActivity(intent);
+
+            }
+        });
 
         assert btnLogin != null;
         btnLogin.setOnClickListener(new View.OnClickListener() {
@@ -80,7 +89,6 @@ public class Login extends AppCompatActivity {
         });
 
 
-
     }
 
     // --- Info button
@@ -100,50 +108,6 @@ public class Login extends AppCompatActivity {
 
 
     }
-
-
-/*
-    public static final String DEFAULT = "N/A";
-
-
-    public void savePreferences() {
-
-        final EditText etUser = (EditText) findViewById(R.id.etUser);
-        final EditText etPassword = (EditText) findViewById(R.id.etPassword);
-        final Button btnLogin = (Button) findViewById(R.id.btnLogin);
-
-        SharedPreferences sharedPreferences = getSharedPreferences("Data", MODE_PRIVATE);
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putString("Name", etUser.getText().toString());
-        editor.putString("Password", etPassword.getText().toString());
-        editor.commit();
-        Toast.makeText(this, "Login was saved succesfully", Toast.LENGTH_LONG).show();
-    }
-
-    public void loadPreferences() {
-
-        final EditText etUser = (EditText) findViewById(R.id.etUser);
-        final EditText etPassword = (EditText) findViewById(R.id.etPassword);
-        final Button btnLogin = (Button) findViewById(R.id.btnLogin);
-
-        SharedPreferences sharedPreferences=getSharedPreferences("Data",MODE_PRIVATE);
-        String Name = sharedPreferences.getString("Name",DEFAULT);
-        String Password = sharedPreferences.getString("Password",DEFAULT);
-
-        //Error Checking
-        if(Name.equals(DEFAULT) || Password.equals(DEFAULT)) {
-            Toast.makeText(this,"No Data Was Found",Toast.LENGTH_LONG).show();
-
-    }
-        else { Toast.makeText(this,"Data Loaded Sucessfully",Toast.LENGTH_LONG).show();
-            etUser.setText(Name);
-            etPassword.setText(Password);
-            btnLogin.performClick();
-
-        }
-
-    }
-    */
 
     public void provokeDatabase() {
 
@@ -195,7 +159,6 @@ public class Login extends AppCompatActivity {
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
-
             }
         };
 

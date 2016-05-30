@@ -2,23 +2,24 @@ package io.github.itsjumaah.lonesafe;
 
 import android.app.Activity;
 import android.app.TimePickerDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
-import android.support.v4.app.NavUtils;
+import android.graphics.Color;
 import android.support.v7.app.ActionBar;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.Spinner;
-import android.widget.TextClock;
 import android.widget.TextView;
 import java.util.Calendar;
 import java.util.concurrent.TimeUnit;
-import java.util.prefs.Preferences;
-
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.TimePicker;
 import android.widget.Toast;
@@ -52,6 +53,7 @@ public class Settings extends AppCompatActivity {
         actionBar.setIcon(R.mipmap.ic_launcher);
         actionBar.setTitle(" LoneSafe");
 
+
         // Display user details
         final TextView tvWelcomeMsg = (TextView) findViewById(R.id.tvUser);
         String message = "You are logged in as " + sharedPreference.getValue(context,"Name");
@@ -65,8 +67,8 @@ public class Settings extends AppCompatActivity {
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(Settings.this,
                   R.array.risk_levels, android.R.layout.simple_spinner_item);
 
-
         riskSelector.setAdapter(adapter);
+
         //Gets last risklevel if available
         id = sharedPreference.getRLPos(context);
         riskSelector.setSelection(id);
@@ -74,6 +76,10 @@ public class Settings extends AppCompatActivity {
         riskSelector.setOnItemSelectedListener(new OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+
+                ((TextView) parent.getChildAt(0)).setTextColor(Color.rgb(24,143,251));
+                ((TextView) parent.getChildAt(0)).setTextSize(20);
+
                 Toast.makeText(parent.getContext(),
                         "Risk Level : " + parent.getItemAtPosition(position).toString(),
                         Toast.LENGTH_SHORT).show();
@@ -131,7 +137,6 @@ public class Settings extends AppCompatActivity {
     }
 
     void startTimePicker (){
-        final String title = "Select Start Time";
         final TextView tvStartTime = (TextView) findViewById(R.id.tvStartTime);
         final Calendar calendar = Calendar.getInstance();
         int hour = calendar.get(Calendar.HOUR_OF_DAY);
@@ -207,6 +212,48 @@ public class Settings extends AppCompatActivity {
         mTimePicker.setTitle("Select FINISH Time");
         mTimePicker.show();
     }
+    //Menu Items on Action bar -- Logout Button
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+
+        inflater.inflate(R.menu.activity_bar, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_logout:
+
+                final AlertDialog.Builder logoutcheck = new AlertDialog.Builder(this);
+                logoutcheck.setMessage("Once you logout, you preferences will be deleted. You'll need to log back in to use the application again");
+                logoutcheck.setPositiveButton("Logout", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        sharedPreference.clearSharedPreference(context);
+                        Intent logoutIntent = new Intent(Settings.this, Login.class);
+                        Settings.this.startActivity(logoutIntent);
+                    }
+                });
+                logoutcheck.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                });
+                logoutcheck.setTitle("Do you want to logout?").create().show();
+
+                return true;
+
+            default:
+                // If we got here, the user's action was not recognized.
+                // Invoke the superclass to handle it.
+                return super.onOptionsItemSelected(item);
+
+        }
+    }
+
 
 }
 

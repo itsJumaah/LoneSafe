@@ -1,6 +1,7 @@
 package io.github.itsjumaah.lonesafe;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.CountDownTimer;
@@ -9,6 +10,9 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ProgressBar;
@@ -39,6 +43,8 @@ public class Home extends AppCompatActivity {
         actionBar.setDisplayShowHomeEnabled(true);
         actionBar.setIcon(R.mipmap.ic_launcher);
         actionBar.setTitle(" LoneSafe");
+
+
 
         sharedPreference = new SharedPreference();
 
@@ -88,15 +94,15 @@ public class Home extends AppCompatActivity {
 
 
 //------------------ Countdown Timer and Progress bar -- temp only until server is working ---
-        Intent intent = getIntent();
-        long time = intent.getLongExtra("getdata",1);
+       // Intent intent = getIntent();
+       // long time = intent.getLongExtra("getdata",1);
         //      long time = sharedPreference.getTimeMiliSec(context,"TimeKey");
-        final TextView milVal = (TextView) findViewById(R.id.tvMil);
-        milVal.setText(String.valueOf(time));
+    //    final TextView milVal = (TextView) findViewById(R.id.tvMil);
+     //   milVal.setText(String.valueOf(time));
 
         progressBar = (ProgressBar) findViewById(R.id.progressBar);
         progressBar.setProgress(i);
-        countDownTimer = new CountDownTimer(time, 1000) {
+        countDownTimer = new CountDownTimer(7200000, 10000) {
             @Override
             public void onTick(long millisUntilFinished) {
                 Log.v("Log_tag", "Tick of Progress"+ i+ millisUntilFinished);
@@ -108,7 +114,7 @@ public class Home extends AppCompatActivity {
             public void onFinish() {
                 i++;
                 progressBar.setProgress(i);
-                Toast.makeText(Home.this,"Progress bar done",Toast.LENGTH_LONG).show();
+                Toast.makeText(Home.this,"Job Stopped",Toast.LENGTH_LONG).show();
             }
         };
         countDownTimer.start();
@@ -132,6 +138,49 @@ public class Home extends AppCompatActivity {
         sosAlert.setTitle("S.O.S").create().show();
 
     }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+
+        inflater.inflate(R.menu.activity_bar, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_logout:
+
+                final AlertDialog.Builder logoutcheck = new AlertDialog.Builder(this);
+                logoutcheck.setMessage("Once you logout, you preferences will be deleted. You'll need to log back in to use the application again");
+                logoutcheck.setPositiveButton("Logout", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        sharedPreference.clearSharedPreference(context);
+                        Intent logoutIntent = new Intent(Home.this, Login.class);
+                        Home.this.startActivity(logoutIntent);
+                    }
+                });
+                logoutcheck.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                });
+                logoutcheck.setTitle("Do you want to logout?").create().show();
+
+                return true;
+
+            default:
+                // If we got here, the user's action was not recognized.
+                // Invoke the superclass to handle it.
+                return super.onOptionsItemSelected(item);
+
+        }
+    }
+
+
 }
 
 

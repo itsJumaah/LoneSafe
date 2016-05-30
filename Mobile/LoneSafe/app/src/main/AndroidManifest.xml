@@ -45,8 +45,8 @@
         </activity>
         <activity
             android:name=".SosActivity"
-            android:theme="@style/Theme.UserDialog">
-    </activity>
-</application>
+            android:theme="@style/Theme.UserDialog" />
+        <activity android:name=".Terms"></activity>
+    </application>
 
 </manifest>
