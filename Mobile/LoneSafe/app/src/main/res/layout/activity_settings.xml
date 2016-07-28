@@ -94,7 +94,8 @@
         android:id="@+id/btnStart"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
-        android:layout_marginBottom="32dp" />
+        android:layout_marginBottom="32dp"
+        android:enabled="true" />
 
     <TextView
         android:layout_width="250dp"

@@ -8,6 +8,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Gravity;
 import android.view.View;
+import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
 
@@ -18,13 +19,14 @@ public class SosActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sos);
 
-        this.setFinishOnTouchOutside(false);
+      //  this.setFinishOnTouchOutside(false);
         //Custom size for the dialog --- Delete if not using
-        WindowManager.LayoutParams params = getWindow().getAttributes();
-        params.height = 2000;
-        params.width = 1200;
-        getWindow().setGravity(Gravity.CENTER);
-        getWindow().setAttributes(params);
+        //WindowManager.LayoutParams params = getWindow().getAttributes();
+        //params.height = 2000;
+        //params.width = 1200;
+        //getWindow().setGravity(Gravity.CENTER);
+       // getWindow().setAttributes(params);
+
 
         final Button btnCancel = (Button) findViewById(R.id.btnCancel);
 
@@ -49,9 +51,13 @@ public class SosActivity extends AppCompatActivity {
                 sosAlert.setPositiveButton("Dismiss!", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        dialog.dismiss();
+                        //dialog.dismiss();
+                        Intent intent = new Intent(SosActivity.this,Home.class);
+                        startActivity(intent);
                     }
                 });
+                sosAlert.setIcon(R.mipmap.ic_launcher);
+                sosAlert.setCancelable(false);
                 sosAlert.setTitle("S.O.S").create().show();
             }
         });

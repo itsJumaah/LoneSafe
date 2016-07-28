@@ -183,4 +183,14 @@
         android:layout_toLeftOf="@+id/tvFnTime"
         android:layout_toStartOf="@+id/tvFnTime" />
 
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="User"
+        android:id="@+id/tvUser1"
+        android:textColor="@color/lonesafeBackground"
+        android:layout_above="@+id/tvRiskLevelLabel"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true" />
+
 </RelativeLayout>

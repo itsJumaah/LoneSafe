@@ -14,7 +14,7 @@ import java.util.Map;
 
 public class LoginRequest extends StringRequest {
 
-    private static final String LOGIN_REQUEST_URL = "http://lonesafe.netne.net/login.php";
+    private static final String LOGIN_REQUEST_URL = "http://202.89.41.210/login.php";
     private Map<String, String> params;
 
     public LoginRequest(String username, String password, Response.Listener<String> listener) {

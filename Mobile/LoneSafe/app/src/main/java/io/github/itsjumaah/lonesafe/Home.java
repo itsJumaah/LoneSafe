@@ -44,9 +44,12 @@ public class Home extends AppCompatActivity {
         actionBar.setIcon(R.mipmap.ic_launcher);
         actionBar.setTitle(" LoneSafe");
 
-
-
         sharedPreference = new SharedPreference();
+
+        // Display user details
+        final TextView tvWelcome = (TextView) findViewById(R.id.tvUser1);
+        String message = "Welcome " + sharedPreference.getValue(context,"Name");
+        tvWelcome.setText(message);
 
         String Value = sharedPreference.getValue(context,"RiskLevel");
 
@@ -87,8 +90,11 @@ public class Home extends AppCompatActivity {
         btnSOS.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent GotoCustomActivityDialog = new Intent(Home.this, SosActivity.class);
-                startActivity(GotoCustomActivityDialog);
+               // Intent GotoCustomActivityDialog = new Intent(Home.this, SosActivity.class);
+               // startActivity(GotoCustomActivityDialog);
+                Intent sosintent = new Intent(Home.this, SosActivity.class);
+                Home.this.startActivity(sosintent);
+
             }
         });
 

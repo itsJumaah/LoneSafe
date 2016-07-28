@@ -19,6 +19,7 @@ import android.widget.Button;
 import android.widget.Spinner;
 import android.widget.TextView;
 import java.util.Calendar;
+import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.TimePicker;
@@ -33,6 +34,7 @@ public class Settings extends AppCompatActivity {
     int id = 0;
     private static long militime1;
     private static long militime2;
+    private static String time;
 
     private SharedPreference sharedPreference;
     Activity context = this; //For shared Pref
@@ -56,10 +58,10 @@ public class Settings extends AppCompatActivity {
 
         // Display user details
         final TextView tvWelcomeMsg = (TextView) findViewById(R.id.tvUser);
-        String message = "You are logged in as " + sharedPreference.getValue(context,"Name");
+        String message = "Welcome " + sharedPreference.getValue(context,"Name");
         tvWelcomeMsg.setText(message);
 
-        //------------------------------------- SPINNER ---------------
+        //------------------------------------- SPINNER --------------------------------------------
 
         final Spinner riskSelector = (Spinner) findViewById(R.id.riskLvlDropdown);
 
@@ -93,7 +95,7 @@ public class Settings extends AppCompatActivity {
             }
         });
 
-        //------------------------------------- TIME SELECTION ---------------
+        //------------------------------------- TIME SELECTION -------------------------------------
 
 
         final Button btnStartTime = (Button) findViewById(R.id.btnStartTime);
@@ -128,12 +130,18 @@ public class Settings extends AppCompatActivity {
                 String selectedItem = riskSelector.getSelectedItem().toString();
                 sharedPreference.saveRL(context, selectedItem);
 
-                Intent intent = new Intent(Settings.this, Home.class);
-                intent.putExtra("getdata", militime2);
-                startActivity(intent);
+                if (strStartTime != null && strFinishTime != null){
+                    Intent intent = new Intent(Settings.this, Home.class);
+                    intent.putExtra("getdata", militime2);
+                    startActivity(intent);
+                }
+                else {
+                    Toast.makeText(Settings.this, "Please select start and finish time", Toast.LENGTH_SHORT).show();
+                    // TODO: change this toast to alertdialog?
+                }
+
             }
         });
-
     }
 
     void startTimePicker (){
@@ -164,6 +172,7 @@ public class Settings extends AppCompatActivity {
                 sharedPreference.saveTimeStart(context, strStartTime);
 
                 //Calculate millisec for progress bar on home -- Might not need this once we have server --
+                //TODO Remove?
                 long hour = TimeUnit.MILLISECONDS.convert(selectedHour,TimeUnit.HOURS);
                 long min = TimeUnit.MILLISECONDS.convert(selectedMinute,TimeUnit.MINUTES);
                 militime1 = hour + min;
@@ -203,6 +212,7 @@ public class Settings extends AppCompatActivity {
                 sharedPreference.saveTimeEnd(context, strFinishTime);
 
                 //Calculate millisec for progress bar on home -- Might not need this once we have server --
+                //TODO Remove?
                 long hour = TimeUnit.MILLISECONDS.convert(selectedHour,TimeUnit.HOURS);
                 long min = TimeUnit.MILLISECONDS.convert(selectedMinute,TimeUnit.MINUTES);
                 militime2 = (hour + min) - militime1;
@@ -212,6 +222,7 @@ public class Settings extends AppCompatActivity {
         mTimePicker.setTitle("Select FINISH Time");
         mTimePicker.show();
     }
+    //------------------------------------- Menu Item - Logout Button ------------------------------
     //Menu Items on Action bar -- Logout Button
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
