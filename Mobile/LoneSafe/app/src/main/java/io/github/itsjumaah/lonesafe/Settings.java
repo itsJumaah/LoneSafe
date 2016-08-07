@@ -19,18 +19,23 @@ import android.widget.Button;
 import android.widget.Spinner;
 import android.widget.TextView;
 import java.util.Calendar;
-import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.toolbox.Volley;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 
 public class Settings extends AppCompatActivity {
 
-    private static String strStartTime = "__:__";
-    private static String strFinishTime = "__:__";
+    private static String strStartTime = "";
+    private static String strFinishTime = "";
     int id = 0;
     private static long militime1;
     private static long militime2;
@@ -46,7 +51,7 @@ public class Settings extends AppCompatActivity {
 
         sharedPreference = new SharedPreference();
 
-        strStartTime = sharedPreference.getValue(context,"TimeStart");
+       // strStartTime = sharedPreference.getValue(context,"TimeStart"); <-- always current time so redundant
         strFinishTime = sharedPreference.getValue(context,"TimeEnd");
 
         //Add icon to action bar
@@ -61,7 +66,7 @@ public class Settings extends AppCompatActivity {
         String message = "Welcome " + sharedPreference.getValue(context,"Name");
         tvWelcomeMsg.setText(message);
 
-        //------------------------------------- SPINNER --------------------------------------------
+        //------------------------------------- RISK LEVEL SPINNER ---------------------------------
 
         final Spinner riskSelector = (Spinner) findViewById(R.id.riskLvlDropdown);
 
@@ -79,8 +84,8 @@ public class Settings extends AppCompatActivity {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
 
-                ((TextView) parent.getChildAt(0)).setTextColor(Color.rgb(24,143,251));
-                ((TextView) parent.getChildAt(0)).setTextSize(20);
+              //  ((TextView) parent.getChildAt(0)).setTextColor(Color.rgb(24,143,251));
+              //  ((TextView) parent.getChildAt(0)).setTextSize(20);
 
                 Toast.makeText(parent.getContext(),
                         "Risk Level : " + parent.getItemAtPosition(position).toString(),
@@ -97,18 +102,20 @@ public class Settings extends AppCompatActivity {
 
         //------------------------------------- TIME SELECTION -------------------------------------
 
+        startTimeSet();
 
         final Button btnStartTime = (Button) findViewById(R.id.btnStartTime);
-        final TextView tvStartTime = (TextView) findViewById(R.id.tvStartTime);
-        tvStartTime.setText(strStartTime);
-
+      //  final TextView tvStartTime = (TextView) findViewById(R.id.tvStartTime);
+        //  tvStartTime.setText(strStartTime);
         assert btnStartTime != null;
         btnStartTime.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startTimePicker();
+                startTimeSet();
             }
         });
+
+
 
         final Button btnFinishTime = (Button) findViewById(R.id.btnFinishTime);
         final TextView tvFinishTime = (TextView) findViewById(R.id.tvEndTime);
@@ -127,23 +134,90 @@ public class Settings extends AppCompatActivity {
         btnStart.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
-                String selectedItem = riskSelector.getSelectedItem().toString();
+                final String selectedItem = riskSelector.getSelectedItem().toString();
                 sharedPreference.saveRL(context, selectedItem);
+                final String User_id =  sharedPreference.getValue(context,"UserID");
+               final String startTime = sharedPreference.getValue(context,"TimeStart");
+                final String endTime = sharedPreference.getValue(context,"TimeEnd");
+               // final String rskLevel = sharedPreference.getValue(context,"RiskLevel");
+
 
                 if (strStartTime != null && strFinishTime != null){
-                    Intent intent = new Intent(Settings.this, Home.class);
-                    intent.putExtra("getdata", militime2);
-                    startActivity(intent);
+                    Response.Listener<String> responseListener = new Response.Listener<String>() {
+                        @Override
+                        public void onResponse(String response) {
+                            try {
+                                JSONObject jsonResponse = new JSONObject(response);
+                                boolean success = jsonResponse.getBoolean("success");
+                                if (success) {
+
+                                    final AlertDialog.Builder confirm = new AlertDialog.Builder(Settings.this);
+                                    confirm.setMessage("Start: " +  strStartTime + "\nFinish: " + strFinishTime
+                                    +"\nRisk Level: " + selectedItem);
+                                    confirm.setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            Intent intent = new Intent(Settings.this, Home.class);
+                                            Settings.this.startActivity(intent);
+                                        }
+                                    });
+                                    confirm.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            dialog.dismiss();
+                                        }
+                                    });
+                                    confirm.setTitle("Confirm").create().show();
+                                } else {
+                                    AlertDialog.Builder builder = new AlertDialog.Builder(Settings.this);
+                                    builder.setMessage("Something went wrong!")
+                                            .setNegativeButton("Retry", null)
+                                            .create()
+                                            .show();
+                                }
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    };
+
+                    InsertDataRequest registerRequest = new InsertDataRequest(User_id, strStartTime, endTime, selectedItem, responseListener);
+                    RequestQueue queue = Volley.newRequestQueue(Settings.this);
+                    queue.add(registerRequest);
                 }
                 else {
                     Toast.makeText(Settings.this, "Please select start and finish time", Toast.LENGTH_SHORT).show();
                     // TODO: change this toast to alertdialog?
                 }
-
             }
         });
     }
 
+    void startTimeSet (){
+        final TextView tvStartTime = (TextView) findViewById(R.id.tvStartTime);
+        final Calendar calendar = Calendar.getInstance();
+        int hour = calendar.get(Calendar.HOUR_OF_DAY);
+        int minute = calendar.get(Calendar.MINUTE);
+        String format;
+        if (hour == 0) {
+            hour += 12;
+            format = "AM";
+        }
+        else if (hour == 12) {
+            format = "PM";
+        } else if (hour > 12) {
+            hour -= 12;
+            format = "PM";
+        } else {
+            format = "AM";
+        }
+        tvStartTime.setText(String.format("%02d:%02d ",hour,minute)+ format);
+        strStartTime = tvStartTime.getText().toString();
+        sharedPreference.saveTimeStart(context, strStartTime);
+
+    }
+
+    /*
     void startTimePicker (){
         final TextView tvStartTime = (TextView) findViewById(R.id.tvStartTime);
         final Calendar calendar = Calendar.getInstance();
@@ -154,7 +228,7 @@ public class Settings extends AppCompatActivity {
         mTimePicker = new TimePickerDialog(Settings.this, new TimePickerDialog.OnTimeSetListener() {
             @Override
             public void onTimeSet(TimePicker timePicker, int selectedHour, int selectedMinute) {
-                String format = "";
+                String format;
                 if (selectedHour == 0) {
                     selectedHour += 12;
                     format = "AM";
@@ -183,6 +257,7 @@ public class Settings extends AppCompatActivity {
         mTimePicker.show();
 
     }
+    */
 
     void finishTimePicker() {
         final TextView tvFinishTime = (TextView) findViewById(R.id.tvEndTime);
@@ -194,7 +269,7 @@ public class Settings extends AppCompatActivity {
         mTimePicker = new TimePickerDialog(Settings.this, new TimePickerDialog.OnTimeSetListener() {
             @Override
             public void onTimeSet(TimePicker timePicker, int selectedHour, int selectedMinute) {
-                String format = "";
+                String format;
                 if (selectedHour == 0) {
                     selectedHour += 12;
                     format = "AM";
@@ -238,7 +313,7 @@ public class Settings extends AppCompatActivity {
             case R.id.action_logout:
 
                 final AlertDialog.Builder logoutcheck = new AlertDialog.Builder(this);
-                logoutcheck.setMessage("Once you logout, you preferences will be deleted. You'll need to log back in to use the application again");
+                logoutcheck.setMessage("Are you sure you want to Logout?");
                 logoutcheck.setPositiveButton("Logout", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
@@ -253,7 +328,7 @@ public class Settings extends AppCompatActivity {
                         dialog.dismiss();
                     }
                 });
-                logoutcheck.setTitle("Do you want to logout?").create().show();
+                logoutcheck.setTitle("Logout?").create().show();
 
                 return true;
 
@@ -264,6 +339,7 @@ public class Settings extends AppCompatActivity {
 
         }
     }
+
 
 
 }

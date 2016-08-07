@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "871197951959",
+    "firebase_url": "https://lonesafe-97a59.firebaseio.com",
+    "project_id": "lonesafe-97a59",
+    "storage_bucket": "lonesafe-97a59.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:871197951959:android:f59d4f224787b20a",
+        "android_client_info": {
+          "package_name": "io.github.itsjumaah.lonesafe"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "871197951959-tv3lf9qkqv3m525e1m7gtil3s7pfglan.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCZoMHKLdezWgr6CUiGKn04v_BBjHOahm0"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -17,6 +17,9 @@ import android.widget.Toast;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.toolbox.Volley;
+import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.firebase.iid.FirebaseInstanceIdService;
+import com.google.firebase.messaging.FirebaseMessaging;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -116,6 +119,10 @@ public class Login extends AppCompatActivity {
 
         final String username = etUser.getText().toString();
         final String password = etPassword.getText().toString();
+
+        //token for Firebase Push notification
+       // FirebaseMessaging.getInstance().subscribeToTopic("test");
+        String token = FirebaseInstanceId.getInstance().getToken();
         //Get user data from DB
 
         // }
@@ -132,21 +139,24 @@ public class Login extends AppCompatActivity {
                     boolean success = jsonResponse.getBoolean("success");
 
                     if (success) {
-                      //  savePreferences();
 
+                        //  savePreferences();
                         String name = jsonResponse.getString("name");
                         String pass = jsonResponse.getString("password");
                         String user = jsonResponse.getString("username");
-                        int age = jsonResponse.getInt("age");
+                        int user_id = jsonResponse.getInt("user_id");
+                        String userId = String.valueOf(user_id);
+                    //    int age = jsonResponse.getInt("age");
 
                         sharedPreference.saveName(context, name);
                         sharedPreference.saveUser(context, user);
                         sharedPreference.savePass(context, pass);
+                        sharedPreference.saveUserID(context, userId);
+
+                       // FirebaseInstanceIdService FBID = new FirebaseInstanceIDService();
+                       // FBID.onTokenRefresh();
 
                         Intent intent = new Intent(Login.this, Settings.class);
-                   //     intent.putExtra("name", name);
-                    //    intent.putExtra("age", age);
-                    //    intent.putExtra("username", username);
                         Login.this.startActivity(intent);
 
                     } else {
@@ -162,7 +172,7 @@ public class Login extends AppCompatActivity {
             }
         };
 
-        LoginRequest loginRequest = new LoginRequest(username, password, responseListener);
+        LoginRequest loginRequest = new LoginRequest(username, password, token, responseListener);
         RequestQueue queue = Volley.newRequestQueue(Login.this);
         queue.add(loginRequest);
 

@@ -54,12 +54,14 @@
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="set start time"
+        android:text="Start time"
         android:id="@+id/btnStartTime"
         android:layout_marginTop="28dp"
         android:layout_below="@+id/tvWorkingHours"
         android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true" />
+        android:layout_alignParentStart="true"
+        android:layout_alignRight="@+id/btnFinishTime"
+        android:layout_alignEnd="@+id/btnFinishTime" />
 
     <Button
         android:layout_width="wrap_content"

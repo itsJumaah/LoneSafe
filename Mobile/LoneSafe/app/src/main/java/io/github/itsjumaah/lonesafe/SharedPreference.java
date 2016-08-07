@@ -5,10 +5,6 @@ import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 
 
-/**
- * Created by ashneelkumar on 28/05/16.
- */
-
 public class SharedPreference {
 
     public static final String PREFS_NAME = "AOP_PREFS";
@@ -16,6 +12,7 @@ public class SharedPreference {
     public static final String User = "User";
     public static final String Name = "Name";
     public static final String Pass = "Pass";
+    public static final String UserID = "UserID";
 
     public static final String TimeStart = "TimeStart";
     public static final String TimeEnd = "TimeEnd";
@@ -39,6 +36,10 @@ public class SharedPreference {
 
     public void saveUser (Context context, String text){
         save(context,User,text);
+    }
+
+    public void saveUserID (Context context, String text){
+        save(context,UserID,text);
     }
 
     public void saveRL (Context context, String text) {
@@ -90,32 +91,7 @@ public class SharedPreference {
 
 
     //-----------------------------------------------------
-/*  // This is redundant if we apply correct Key when we call the function -- DELETE
-    public String getName (Context context){
-        returnText = getValue(context,Name);
-        return returnText;
-    }
 
-    public String getPass (Context context){
-        returnText = getValue(context,Pass);
-        return returnText;
-    }
-
-    public String getTimeStart (Context context){
-        returnText = getValue(context,TimeStart);
-        return returnText;
-    }
-    public String getTimeEnd (Context context){
-        returnText = getValue(context,TimeEnd);
-        return returnText;
-    }
-
-    public String getRiskLevel (Context context){
-        returnText = getValue(context,RiskLevel);
-        return returnText;
-    }
-
-*/
     public String getValue(Context context,String key) {
         SharedPreferences settings;
         String text;

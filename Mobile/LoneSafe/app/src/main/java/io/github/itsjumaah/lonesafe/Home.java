@@ -65,6 +65,7 @@ public class Home extends AppCompatActivity {
         final TextView tvFnTime = (TextView) findViewById(R.id.tvFnTime);
         tvFnTime.setText(FinishTime);
 
+        /*
         final Button btnsettings = (Button) findViewById(R.id.btnSettings);
         assert btnsettings != null;
         btnsettings.setOnClickListener(new View.OnClickListener() {
@@ -75,6 +76,8 @@ public class Home extends AppCompatActivity {
             }
         });
 
+        */
+
         final Button btnStop = (Button) findViewById(R.id.btnStop);
         assert btnStop != null;
         btnStop.setOnClickListener(new View.OnClickListener() {
@@ -82,6 +85,23 @@ public class Home extends AppCompatActivity {
             public void onClick(View v) {
                 countDownTimer.cancel();
                 countDownTimer.onFinish();
+
+                final AlertDialog.Builder logoutcheck = new AlertDialog.Builder(Home.this);
+                logoutcheck.setMessage("Are you sure you want to stop the job?");
+                logoutcheck.setPositiveButton("Yes, Stop", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        Intent intent = new Intent(Home.this, Settings.class);
+                        Home.this.startActivity(intent);
+                    }
+                });
+                logoutcheck.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                });
+                logoutcheck.setTitle("Stop Job?").create().show();
             }
         });
 
@@ -159,7 +179,7 @@ public class Home extends AppCompatActivity {
             case R.id.action_logout:
 
                 final AlertDialog.Builder logoutcheck = new AlertDialog.Builder(this);
-                logoutcheck.setMessage("Once you logout, you preferences will be deleted. You'll need to log back in to use the application again");
+                logoutcheck.setMessage("Are you sure you want to Logout?");
                 logoutcheck.setPositiveButton("Logout", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
@@ -174,7 +194,7 @@ public class Home extends AppCompatActivity {
                         dialog.dismiss();
                     }
                 });
-                logoutcheck.setTitle("Do you want to logout?").create().show();
+                logoutcheck.setTitle("logout?").create().show();
 
                 return true;
 
