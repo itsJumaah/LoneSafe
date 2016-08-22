@@ -28,13 +28,12 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.ListViewItem listViewItem1 = new System.Windows.Forms.ListViewItem(new string[] {
-            "Bilal Jumaah",
-            "last checked-in 3:20"}, -1, System.Drawing.Color.Empty, System.Drawing.Color.Empty, new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0))));
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainWindow));
             this.name = new System.Windows.Forms.Label();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
-            this.toolStripStatusLabel1 = new System.Windows.Forms.ToolStripStatusLabel();
+            this.greetings = new System.Windows.Forms.ToolStripStatusLabel();
+            this.progBar = new System.Windows.Forms.ToolStripProgressBar();
+            this.toolStripStatusLabel2 = new System.Windows.Forms.ToolStripStatusLabel();
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.loneSafeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.logOutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -53,18 +52,26 @@
             this.contactToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
-            this.tableLayoutPanel2 = new System.Windows.Forms.TableLayoutPanel();
             this.title = new System.Windows.Forms.Label();
             this.logo = new System.Windows.Forms.PictureBox();
-            this.label1 = new System.Windows.Forms.Label();
+            this.tableLayoutPanel2 = new System.Windows.Forms.TableLayoutPanel();
             this.label2 = new System.Windows.Forms.Label();
-            this.webBrowser1 = new System.Windows.Forms.WebBrowser();
-            this.listView1 = new System.Windows.Forms.ListView();
+            this.backgroundWorker = new System.ComponentModel.BackgroundWorker();
+            this.dataGrid = new System.Windows.Forms.DataGridView();
+            this.fullName = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.rskLevel = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.c1 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.c2 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.c3 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.c4 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.c5 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.c6 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.statusStrip1.SuspendLayout();
             this.menuStrip1.SuspendLayout();
             this.tableLayoutPanel1.SuspendLayout();
-            this.tableLayoutPanel2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.logo)).BeginInit();
+            this.tableLayoutPanel2.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.dataGrid)).BeginInit();
             this.SuspendLayout();
             // 
             // name
@@ -79,19 +86,35 @@
             // 
             this.statusStrip1.BackColor = System.Drawing.SystemColors.HotTrack;
             this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.toolStripStatusLabel1});
+            this.greetings,
+            this.progBar,
+            this.toolStripStatusLabel2});
             this.statusStrip1.Location = new System.Drawing.Point(0, 539);
             this.statusStrip1.Name = "statusStrip1";
             this.statusStrip1.Size = new System.Drawing.Size(784, 22);
             this.statusStrip1.TabIndex = 1;
             this.statusStrip1.Text = "statusStrip1";
             // 
-            // toolStripStatusLabel1
+            // greetings
             // 
-            this.toolStripStatusLabel1.ForeColor = System.Drawing.SystemColors.Control;
-            this.toolStripStatusLabel1.Name = "toolStripStatusLabel1";
-            this.toolStripStatusLabel1.Size = new System.Drawing.Size(118, 17);
-            this.toolStripStatusLabel1.Text = "toolStripStatusLabel1";
+            this.greetings.ForeColor = System.Drawing.SystemColors.Control;
+            this.greetings.Name = "greetings";
+            this.greetings.Size = new System.Drawing.Size(118, 17);
+            this.greetings.Text = "toolStripStatusLabel1";
+            // 
+            // progBar
+            // 
+            this.progBar.BackColor = System.Drawing.SystemColors.Desktop;
+            this.progBar.ForeColor = System.Drawing.SystemColors.Control;
+            this.progBar.Name = "progBar";
+            this.progBar.Size = new System.Drawing.Size(100, 16);
+            this.progBar.Style = System.Windows.Forms.ProgressBarStyle.Continuous;
+            this.progBar.ToolTipText = "Updating data";
+            // 
+            // toolStripStatusLabel2
+            // 
+            this.toolStripStatusLabel2.Name = "toolStripStatusLabel2";
+            this.toolStripStatusLabel2.Size = new System.Drawing.Size(0, 17);
             // 
             // menuStrip1
             // 
@@ -237,25 +260,6 @@
             this.tableLayoutPanel1.Size = new System.Drawing.Size(784, 100);
             this.tableLayoutPanel1.TabIndex = 3;
             // 
-            // tableLayoutPanel2
-            // 
-            this.tableLayoutPanel2.ColumnCount = 2;
-            this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 23.08673F));
-            this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 76.91327F));
-            this.tableLayoutPanel2.Controls.Add(this.label1, 0, 0);
-            this.tableLayoutPanel2.Controls.Add(this.label2, 1, 0);
-            this.tableLayoutPanel2.Controls.Add(this.webBrowser1, 1, 1);
-            this.tableLayoutPanel2.Controls.Add(this.listView1, 0, 1);
-            this.tableLayoutPanel2.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tableLayoutPanel2.Location = new System.Drawing.Point(0, 124);
-            this.tableLayoutPanel2.Name = "tableLayoutPanel2";
-            this.tableLayoutPanel2.RowCount = 2;
-            this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 9.638555F));
-            this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 90.36144F));
-            this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
-            this.tableLayoutPanel2.Size = new System.Drawing.Size(784, 415);
-            this.tableLayoutPanel2.TabIndex = 4;
-            // 
             // title
             // 
             this.title.AutoSize = true;
@@ -282,21 +286,21 @@
             this.logo.TabIndex = 1;
             this.logo.TabStop = false;
             // 
-            // label1
+            // tableLayoutPanel2
             // 
-            this.label1.AutoSize = true;
-            this.label1.BackColor = System.Drawing.Color.White;
-            this.label1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.label1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.label1.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.label1.Font = new System.Drawing.Font("Segoe UI", 11.25F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Bold | System.Drawing.FontStyle.Underline))), System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label1.ForeColor = System.Drawing.SystemColors.Highlight;
-            this.label1.Location = new System.Drawing.Point(3, 0);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(175, 40);
-            this.label1.TabIndex = 1;
-            this.label1.Text = "On-Job Users";
-            this.label1.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.tableLayoutPanel2.ColumnCount = 1;
+            this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 20F));
+            this.tableLayoutPanel2.Controls.Add(this.dataGrid, 0, 1);
+            this.tableLayoutPanel2.Controls.Add(this.label2, 0, 0);
+            this.tableLayoutPanel2.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tableLayoutPanel2.Location = new System.Drawing.Point(0, 124);
+            this.tableLayoutPanel2.Name = "tableLayoutPanel2";
+            this.tableLayoutPanel2.RowCount = 2;
+            this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 9.638555F));
+            this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 90.36144F));
+            this.tableLayoutPanel2.Size = new System.Drawing.Size(784, 415);
+            this.tableLayoutPanel2.TabIndex = 4;
             // 
             // label2
             // 
@@ -307,35 +311,94 @@
             this.label2.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.label2.Font = new System.Drawing.Font("Segoe UI", 11.25F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Bold | System.Drawing.FontStyle.Underline))), System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label2.ForeColor = System.Drawing.SystemColors.Highlight;
-            this.label2.Location = new System.Drawing.Point(184, 0);
+            this.label2.Location = new System.Drawing.Point(3, 0);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(597, 40);
+            this.label2.Size = new System.Drawing.Size(778, 40);
             this.label2.TabIndex = 2;
             this.label2.Text = "Live Data";
             this.label2.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
-            // webBrowser1
+            // backgroundWorker
             // 
-            this.webBrowser1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.webBrowser1.Location = new System.Drawing.Point(184, 43);
-            this.webBrowser1.MinimumSize = new System.Drawing.Size(20, 20);
-            this.webBrowser1.Name = "webBrowser1";
-            this.webBrowser1.Size = new System.Drawing.Size(597, 369);
-            this.webBrowser1.TabIndex = 3;
+            this.backgroundWorker.WorkerReportsProgress = true;
+            this.backgroundWorker.DoWork += new System.ComponentModel.DoWorkEventHandler(this.backgroundWorker_DoWork);
+            this.backgroundWorker.ProgressChanged += new System.ComponentModel.ProgressChangedEventHandler(this.backgroundWorker_ProgressChanged);
+            this.backgroundWorker.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.backgroundWorker_RunWorkerCompleted);
             // 
-            // listView1
+            // dataGrid
             // 
-            this.listView1.Dock = System.Windows.Forms.DockStyle.Fill;
-            listViewItem1.IndentCount = 10;
-            listViewItem1.ToolTipText = "last check-in 3:30";
-            this.listView1.Items.AddRange(new System.Windows.Forms.ListViewItem[] {
-            listViewItem1});
-            this.listView1.Location = new System.Drawing.Point(3, 43);
-            this.listView1.Name = "listView1";
-            this.listView1.ShowItemToolTips = true;
-            this.listView1.Size = new System.Drawing.Size(175, 369);
-            this.listView1.TabIndex = 4;
-            this.listView1.UseCompatibleStateImageBehavior = false;
+            this.dataGrid.AllowUserToAddRows = false;
+            this.dataGrid.AllowUserToDeleteRows = false;
+            this.dataGrid.AllowUserToOrderColumns = true;
+            this.dataGrid.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
+            this.dataGrid.BackgroundColor = System.Drawing.Color.White;
+            this.dataGrid.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.dataGrid.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.dataGrid.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
+            this.fullName,
+            this.rskLevel,
+            this.c1,
+            this.c2,
+            this.c3,
+            this.c4,
+            this.c5,
+            this.c6});
+            this.dataGrid.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.dataGrid.GridColor = System.Drawing.SystemColors.HotTrack;
+            this.dataGrid.Location = new System.Drawing.Point(3, 43);
+            this.dataGrid.MultiSelect = false;
+            this.dataGrid.Name = "dataGrid";
+            this.dataGrid.ReadOnly = true;
+            this.dataGrid.Size = new System.Drawing.Size(778, 369);
+            this.dataGrid.TabIndex = 6;
+            // 
+            // fullName
+            // 
+            this.fullName.HeaderText = "Name";
+            this.fullName.Name = "fullName";
+            this.fullName.ReadOnly = true;
+            // 
+            // rskLevel
+            // 
+            this.rskLevel.HeaderText = "Risk Level";
+            this.rskLevel.Name = "rskLevel";
+            this.rskLevel.ReadOnly = true;
+            // 
+            // c1
+            // 
+            this.c1.HeaderText = "Check-in 1";
+            this.c1.Name = "c1";
+            this.c1.ReadOnly = true;
+            // 
+            // c2
+            // 
+            this.c2.HeaderText = "Check-in 2";
+            this.c2.Name = "c2";
+            this.c2.ReadOnly = true;
+            // 
+            // c3
+            // 
+            this.c3.HeaderText = "Check-in 3";
+            this.c3.Name = "c3";
+            this.c3.ReadOnly = true;
+            // 
+            // c4
+            // 
+            this.c4.HeaderText = "Check-in 4";
+            this.c4.Name = "c4";
+            this.c4.ReadOnly = true;
+            // 
+            // c5
+            // 
+            this.c5.HeaderText = "Check-in 5";
+            this.c5.Name = "c5";
+            this.c5.ReadOnly = true;
+            // 
+            // c6
+            // 
+            this.c6.HeaderText = "Check-in 6";
+            this.c6.Name = "c6";
+            this.c6.ReadOnly = true;
             // 
             // MainWindow
             // 
@@ -359,9 +422,10 @@
             this.menuStrip1.PerformLayout();
             this.tableLayoutPanel1.ResumeLayout(false);
             this.tableLayoutPanel1.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.logo)).EndInit();
             this.tableLayoutPanel2.ResumeLayout(false);
             this.tableLayoutPanel2.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.logo)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.dataGrid)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -371,7 +435,7 @@
 
         private System.Windows.Forms.Label name;
         private System.Windows.Forms.StatusStrip statusStrip1;
-        private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel1;
+        private System.Windows.Forms.ToolStripStatusLabel greetings;
         private System.Windows.Forms.MenuStrip menuStrip1;
         private System.Windows.Forms.ToolStripMenuItem loneSafeToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem logOutToolStripMenuItem;
@@ -393,9 +457,18 @@
         private System.Windows.Forms.Label title;
         private System.Windows.Forms.PictureBox logo;
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel2;
-        private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.WebBrowser webBrowser1;
-        private System.Windows.Forms.ListView listView1;
+        private System.Windows.Forms.ToolStripProgressBar progBar;
+        private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel2;
+        private System.ComponentModel.BackgroundWorker backgroundWorker;
+        private System.Windows.Forms.DataGridView dataGrid;
+        private System.Windows.Forms.DataGridViewTextBoxColumn fullName;
+        private System.Windows.Forms.DataGridViewTextBoxColumn rskLevel;
+        private System.Windows.Forms.DataGridViewTextBoxColumn c1;
+        private System.Windows.Forms.DataGridViewTextBoxColumn c2;
+        private System.Windows.Forms.DataGridViewTextBoxColumn c3;
+        private System.Windows.Forms.DataGridViewTextBoxColumn c4;
+        private System.Windows.Forms.DataGridViewTextBoxColumn c5;
+        private System.Windows.Forms.DataGridViewTextBoxColumn c6;
     }
 }

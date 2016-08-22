@@ -15,47 +15,20 @@ namespace LoneSafe
             this.AcceptButton = loginButton;
         }
 
-        public User user;
+        private User user;
+        private Connection conn;
 
-        private bool connect(string username, string password)
-        {
-
-
-            string URL = "http://202.89.41.210/login.php";
-            string param = "username=" + username + "&password=" + password;
-
-            WebClient server = new WebClient();
-            server.Headers[HttpRequestHeader.ContentType] = "application/x-www-form-urlencoded";
-            string HtmlResult = server.UploadString(URL, param);
-
-            string[] words = Regex.Split(HtmlResult, @"([A-Za-z0-9_\-]+)");
-            
-           
-            bool success =  Convert.ToBoolean(words[3]);
-           
-
-            if (success)
-            {
-                string name = words[7];
-                int x = Int32.Parse(words[27]);
-                bool isAdmin = Convert.ToBoolean(x);
-
-                user = new User(username, password, name, isAdmin);
-                
-                return true;
-            }
-            else
-            {
-                return false;
-            }
+        public static string URL = "http://202.89.41.210";
 
 
-        }
-        
         private void loginButton_Click(object sender, EventArgs e)
         {
-            if (connect(userInput.Text, passInput.Text))
+            conn = new Connection(URL, userInput.Text, passInput.Text);
+
+            if (conn.Success)
             {
+                user = conn.User;
+
                 if(user.IsAdmin)
                 {
                     MainWindow main = new MainWindow(user, this);
