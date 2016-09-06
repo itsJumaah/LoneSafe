@@ -2,39 +2,26 @@ package io.github.itsjumaah.lonesafe;
 
 
 
-import android.app.Activity;
+import android.util.Log;
 
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.iid.FirebaseInstanceIdService;
-
-import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.toolbox.Volley;
-
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.io.IOException;
-
-import okhttp3.FormBody;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.RequestBody;
 
 
 /**
  * Created by ashneelkumar on 5/08/16.
  */
 public class FirebaseInstanceIDService extends FirebaseInstanceIdService {
-
+    private static final String TAG = "MyFirebaseIIDService";
 
     @Override
     public void onTokenRefresh() {
 
         String token = FirebaseInstanceId.getInstance().getToken();
-      //  System.out.print(token);
-        registerToken(token);
+        Log.d(TAG, "Refreshed token: " + token);        //Implement later?
+        //registerToken(token);
     }
+
 
 
     private void registerToken(String token) {

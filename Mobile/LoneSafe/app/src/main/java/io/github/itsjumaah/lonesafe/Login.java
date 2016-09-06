@@ -3,27 +3,22 @@ package io.github.itsjumaah.lonesafe;
 import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
+import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.toolbox.Volley;
 import com.google.firebase.iid.FirebaseInstanceId;
-import com.google.firebase.iid.FirebaseInstanceIdService;
-import com.google.firebase.messaging.FirebaseMessaging;
 
 import org.json.JSONException;
 import org.json.JSONObject;
-
 public class Login extends AppCompatActivity {
 
     private SharedPreference sharedPreference;
@@ -40,11 +35,10 @@ public class Login extends AppCompatActivity {
         //--- action bar icon
 
         ActionBar actionBar = getSupportActionBar();
-        actionBar.setDisplayShowHomeEnabled(true);
-        actionBar.setIcon(R.mipmap.ic_launcher);
-        actionBar.setTitle(" LoneSafe");
-
-        
+       // actionBar.setDisplayShowHomeEnabled(true);
+       // actionBar.setIcon(R.mipmap.ic_launcher);
+       // actionBar.setTitle(" LoneSafe");
+        actionBar.hide();
 
         final EditText etUser = (EditText) findViewById(R.id.etUser);
         final EditText etPassword = (EditText) findViewById(R.id.etPassword);
@@ -70,6 +64,7 @@ public class Login extends AppCompatActivity {
                 final String password = etPassword.getText().toString();
 
                 // Hardcoded user and password incase server doesn't work
+                //TODO DELETE!!--------
                 if (username.equals("johndoe") && password.equals("pass")) {
 
                     String name = ("John");
@@ -82,8 +77,6 @@ public class Login extends AppCompatActivity {
 
                 }
                 else { provokeDatabase(); }
-
-
 
             }
 
@@ -98,7 +91,7 @@ public class Login extends AppCompatActivity {
 
     public void showAlert (View view){
         AlertDialog.Builder myAlert = new AlertDialog.Builder(this);
-        myAlert.setMessage("This application is designed for specific users, please see your manager if need a login, Thanks :)")
+        myAlert.setMessage("This application is designed for specific users, please see your manager if need a login")
                 .setPositiveButton("Dismiss", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
@@ -114,6 +107,22 @@ public class Login extends AppCompatActivity {
 
     public void provokeDatabase() {
 
+        if(!NetworkChangeReceiver.isNetworkStatusAvialable(context)){
+            AlertDialog.Builder alert = new AlertDialog.Builder(this);
+            alert.setMessage("PLEASE ENSURE YOUR DATA IS TURNED ON")
+                    .setPositiveButton("Dismiss", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            //dialog.dismiss();
+                            onRestart();
+                        }
+                    })
+                    .setTitle("NO INTERNET CONNECTION")
+                    .create();
+            alert.show();
+        }
+
+
         final EditText etUser = (EditText) findViewById(R.id.etUser);
         final EditText etPassword = (EditText) findViewById(R.id.etPassword);
 
@@ -121,6 +130,10 @@ public class Login extends AppCompatActivity {
         final String password = etPassword.getText().toString();
 
         //token for Firebase Push notification
+
+       // FirebaseInstanceIdService FBID = new FirebaseInstanceIDService();
+       // FBID.onTokenRefresh();
+
        // FirebaseMessaging.getInstance().subscribeToTopic("test");
         String token = FirebaseInstanceId.getInstance().getToken();
         //Get user data from DB
@@ -153,11 +166,9 @@ public class Login extends AppCompatActivity {
                         sharedPreference.savePass(context, pass);
                         sharedPreference.saveUserID(context, userId);
 
-                       // FirebaseInstanceIdService FBID = new FirebaseInstanceIDService();
-                       // FBID.onTokenRefresh();
-
                         Intent intent = new Intent(Login.this, Settings.class);
                         Login.this.startActivity(intent);
+                        finish();
 
                     } else {
                         AlertDialog.Builder builder = new AlertDialog.Builder(Login.this);
@@ -175,7 +186,6 @@ public class Login extends AppCompatActivity {
         LoginRequest loginRequest = new LoginRequest(username, password, token, responseListener);
         RequestQueue queue = Volley.newRequestQueue(Login.this);
         queue.add(loginRequest);
-
 
     }
 }

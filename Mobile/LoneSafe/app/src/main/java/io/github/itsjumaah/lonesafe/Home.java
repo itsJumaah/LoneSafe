@@ -1,14 +1,13 @@
 package io.github.itsjumaah.lonesafe;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -16,11 +15,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ProgressBar;
-import android.widget.TextClock;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import org.w3c.dom.Text;
 
 public class Home extends AppCompatActivity {
 
@@ -38,11 +34,13 @@ public class Home extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
 
+
         //--- action bar icon
         ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayShowHomeEnabled(true);
         actionBar.setIcon(R.mipmap.ic_launcher);
         actionBar.setTitle(" LoneSafe");
+
 
         sharedPreference = new SharedPreference();
 
@@ -86,22 +84,46 @@ public class Home extends AppCompatActivity {
                 countDownTimer.cancel();
                 countDownTimer.onFinish();
 
-                final AlertDialog.Builder logoutcheck = new AlertDialog.Builder(Home.this);
-                logoutcheck.setMessage("Are you sure you want to stop the job?");
-                logoutcheck.setPositiveButton("Yes, Stop", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        Intent intent = new Intent(Home.this, Settings.class);
-                        Home.this.startActivity(intent);
-                    }
-                });
-                logoutcheck.setNegativeButton("No", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.dismiss();
-                    }
-                });
-                logoutcheck.setTitle("Stop Job?").create().show();
+                //Notify if there is no network connection
+                if(!NetworkChangeReceiver.isNetworkStatusAvialable(context)){
+                    AlertDialog.Builder alert = new AlertDialog.Builder(Home.this);
+                    alert.setMessage("NO INTERNET CONNECTION" + "\n\nPlease try again once you have network connection")
+                            .setPositiveButton("Dismiss", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    //dialog.dismiss();
+                                    onRestart();
+                                }
+                            })
+                            .setTitle("CANNOT STOP JOB")
+                            .create();
+                    alert.show();
+                } else {
+                    final AlertDialog.Builder logoutcheck = new AlertDialog.Builder(Home.this);
+                    logoutcheck.setMessage("Are you sure you want to stop the job?");
+                    logoutcheck.setPositiveButton("Yes, Stop", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            //STOP FOREGROUND SERVICE
+                            Intent service = new Intent(Home.this, ForegroundService.class);
+                            if (ForegroundService.IS_SERVICE_RUNNING) {
+                                service.setAction(ForegroundService.Constants.ACTION.STOPFOREGROUND_ACTION);
+                                ForegroundService.IS_SERVICE_RUNNING = false;
+                            }
+                            startService(service);
+
+                            Intent intent = new Intent(Home.this, Settings.class);
+                            Home.this.startActivity(intent);
+                        }
+                    });
+                    logoutcheck.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.dismiss();
+                        }
+                    });
+                    logoutcheck.setTitle("Stop Job?").create().show();
+                }
             }
         });
 
@@ -146,6 +168,13 @@ public class Home extends AppCompatActivity {
         countDownTimer.start();
     }
 
+    @Override
+    public void onBackPressed() {
+        //DO Nothing!
+        //This Disables the back button.
+    }
+
+    //WHERE IS THIS CALLED?? TODO DELETE if not used
     public void showSosAlert (View view){
         final AlertDialog.Builder sosAlert = new AlertDialog.Builder(this);
         sosAlert.setMessage("You are about to trigger an alarm! Are you in Trouble?");
@@ -186,6 +215,7 @@ public class Home extends AppCompatActivity {
                         sharedPreference.clearSharedPreference(context);
                         Intent logoutIntent = new Intent(Home.this, Login.class);
                         Home.this.startActivity(logoutIntent);
+                        finish();
                     }
                 });
                 logoutcheck.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {

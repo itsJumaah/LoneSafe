@@ -1,11 +1,10 @@
 package io.github.itsjumaah.lonesafe;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
+import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 
 public class Launcher extends AppCompatActivity {
 
@@ -17,7 +16,7 @@ public class Launcher extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_launcher);
 
-       new Handler().postDelayed(new Runnable(){
+        new Handler().postDelayed(new Runnable(){
            @Override
            public void run() {
                sharedPreference = new SharedPreference();
@@ -36,4 +35,6 @@ public class Launcher extends AppCompatActivity {
            }
        },2500);
     }
+
+
 }

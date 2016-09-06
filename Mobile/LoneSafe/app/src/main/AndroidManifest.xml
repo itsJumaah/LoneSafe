@@ -3,28 +3,27 @@
     package="io.github.itsjumaah.lonesafe">
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.VIBRATE" />
 
     <application
+        android:name=".MyApplication"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".Login"
+        <activity
+            android:name=".Login"
             android:screenOrientation="portrait" />
-
-            <!--
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-            -->
-        <activity android:name=".Home"
+        <activity
+            android:name=".Home"
             android:screenOrientation="portrait" />
-        <activity android:name=".Settings"
+        <activity
+            android:name=".Settings"
             android:screenOrientation="portrait" />
-        <activity android:name=".TimeSelector"
+        <activity
+            android:name=".TimeSelector"
             android:screenOrientation="portrait" />
 
         <receiver android:name=".LoneSafeWidget">
@@ -51,24 +50,47 @@
             android:name=".SosActivity"
             android:screenOrientation="portrait"
             android:theme="@style/SOSAppTheme" />
-
-        <activity android:name=".Terms"
+        <activity
+            android:name=".Terms"
             android:screenOrientation="portrait" />
 
-        <service
-            android:name=".FirebaseMessagingService">
+        <activity
+            android:name="io.github.itsjumaah.lonesafe.Checkin"
+            android:launchMode="singleTask"
+            android:taskAffinity=""
+            android:exported="true"
+            android:excludeFromRecents="true"
+            android:label="CheckinActivity" >
             <intent-filter>
-                <action android:name="com.google.firebase.MESSAGING_EVENT"/>
+                <action android:name=".Checkin" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+
+        </activity>
+
+        <receiver
+            android:name=".NetworkChangeReceiver"
+            android:label="NetworkChangeReceiver">
+            <intent-filter>
+                <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
+            </intent-filter>
+        </receiver>
+
+        <service android:name=".FirebaseMessagingService">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
+            </intent-filter>
+        </service>
+        <service android:name=".FirebaseInstanceIDService">
+            <intent-filter>
+                <action android:name="com.google.firebase.INSTANCE_ID_EVENT" />
             </intent-filter>
         </service>
 
+        <service android:name=".ForegroundService">
 
-        <service
-            android:name=".FirebaseInstanceIDService">
-            <intent-filter>
-                <action android:name="com.google.firebase.INSTANCE_ID_EVENT"/>
-            </intent-filter>
         </service>
+
     </application>
 
 </manifest>

@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+
+    <RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -34,7 +36,7 @@
         android:layout_alignParentTop="true"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:layout_marginTop="80dp"
+        android:layout_marginTop="260dp"
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true"
         android:layout_marginLeft="40dp"
@@ -60,7 +62,7 @@
         android:layout_width="35dp"
         android:layout_height="35dp"
         android:text=" ? "
-        android:color="#3852b7"
+        android:color="#094AB2"
         android:textColor="#ffffff"
         android:id="@+id/btnInfo"
         android:onClick="showAlert"
@@ -69,14 +71,27 @@
         android:layout_alignParentEnd="true"
         android:layout_alignParentTop="true" />
 
+
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceSmall"
         android:text="Terms and Conditions"
         android:id="@+id/tvTnc"
+        android:clickable="true"
         android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
-        android:clickable="true" />
+        android:layout_centerHorizontal="true" />
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/imageView2"
+        android:src="@mipmap/ic_launcher"
+        android:layout_alignParentTop="true"
+        android:layout_alignLeft="@+id/tvTnc"
+        android:layout_alignStart="@+id/tvTnc"
+        android:layout_alignRight="@+id/tvTnc"
+        android:layout_alignEnd="@+id/tvTnc"
+        android:layout_alignBottom="@+id/etUser" />
 
 </RelativeLayout>

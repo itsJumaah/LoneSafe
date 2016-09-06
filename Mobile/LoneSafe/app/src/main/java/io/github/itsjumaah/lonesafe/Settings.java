@@ -4,23 +4,22 @@ import android.app.Activity;
 import android.app.TimePickerDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.Color;
+import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
+import android.text.format.DateFormat;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.Spinner;
 import android.widget.TextView;
-import java.util.Calendar;
-import java.util.concurrent.TimeUnit;
-import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
@@ -31,15 +30,19 @@ import com.android.volley.toolbox.Volley;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.Locale;
+
 
 public class Settings extends AppCompatActivity {
 
     private static String strStartTime = "";
     private static String strFinishTime = "";
-    int id = 0;
-    private static long militime1;
-    private static long militime2;
-    private static String time;
+    int id = 0;        //For RiskLevel Spinner
+    private static String getTimeDifference;
+
 
     private SharedPreference sharedPreference;
     Activity context = this; //For shared Pref
@@ -50,11 +53,9 @@ public class Settings extends AppCompatActivity {
         setContentView(R.layout.activity_settings);
 
         sharedPreference = new SharedPreference();
+        strFinishTime = sharedPreference.getValue(context,"TimeEnd"); //Gets FinishTime from sharedPref
 
-       // strStartTime = sharedPreference.getValue(context,"TimeStart"); <-- always current time so redundant
-        strFinishTime = sharedPreference.getValue(context,"TimeEnd");
-
-        //Add icon to action bar
+        //init action bar
         ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayShowHomeEnabled(true);
         actionBar.setIcon(R.mipmap.ic_launcher);
@@ -66,13 +67,15 @@ public class Settings extends AppCompatActivity {
         String message = "Welcome " + sharedPreference.getValue(context,"Name");
         tvWelcomeMsg.setText(message);
 
+        //------------------------------------------------------------------------------------------
         //------------------------------------- RISK LEVEL SPINNER ---------------------------------
+        //------------------------------------------------------------------------------------------
 
         final Spinner riskSelector = (Spinner) findViewById(R.id.riskLvlDropdown);
 
 
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(Settings.this,
-                  R.array.risk_levels, android.R.layout.simple_spinner_item);
+                  R.array.risk_levels,  R.layout.spinner_item);
 
         riskSelector.setAdapter(adapter);
 
@@ -83,9 +86,9 @@ public class Settings extends AppCompatActivity {
         riskSelector.setOnItemSelectedListener(new OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                 //   ((TextView) parent.getChildAt(0)).setTextColor(Color.rgb(24,143,251));
+                 //   ((TextView) parent.getChildAt(0)).setTextSize(20);
 
-              //  ((TextView) parent.getChildAt(0)).setTextColor(Color.rgb(24,143,251));
-              //  ((TextView) parent.getChildAt(0)).setTextSize(20);
 
                 Toast.makeText(parent.getContext(),
                         "Risk Level : " + parent.getItemAtPosition(position).toString(),
@@ -100,13 +103,12 @@ public class Settings extends AppCompatActivity {
             }
         });
 
-        //------------------------------------- TIME SELECTION -------------------------------------
-
+        //------------------------------------------------------------------------------------------
+        //-------------------- Buttons Init (StartTime, FinishTime, Start) -------------------------
+        // -----------------------------------------------------------------------------------------
         startTimeSet();
 
         final Button btnStartTime = (Button) findViewById(R.id.btnStartTime);
-      //  final TextView tvStartTime = (TextView) findViewById(R.id.tvStartTime);
-        //  tvStartTime.setText(strStartTime);
         assert btnStartTime != null;
         btnStartTime.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -134,13 +136,34 @@ public class Settings extends AppCompatActivity {
         btnStart.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
+
+                // Alert user if no network connection
+                if(!NetworkChangeReceiver.isNetworkStatusAvialable(context)){
+                    AlertDialog.Builder alert = new AlertDialog.Builder(Settings.this);
+                    alert.setMessage("PLEASE ENSURE YOUR DATA IS TURNED ON")
+                            .setPositiveButton("Dismiss", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    //dialog.dismiss();
+                                    onRestart();
+                                }
+                            })
+                            .setTitle("NO INTERNET CONNECTION")
+                            .create();
+                    alert.show();
+                }
+                //Refresh start time, so it is current time
+                startTimeSet();
+
                 final String selectedItem = riskSelector.getSelectedItem().toString();
                 sharedPreference.saveRL(context, selectedItem);
                 final String User_id =  sharedPreference.getValue(context,"UserID");
-               final String startTime = sharedPreference.getValue(context,"TimeStart");
+                final String startTime = sharedPreference.getValue(context,"TimeStart");
                 final String endTime = sharedPreference.getValue(context,"TimeEnd");
                // final String rskLevel = sharedPreference.getValue(context,"RiskLevel");
 
+               // onFieldHours
+                getTimeDifference = getTimeDifference(strStartTime,strFinishTime);
 
                 if (strStartTime != null && strFinishTime != null){
                     Response.Listener<String> responseListener = new Response.Listener<String>() {
@@ -152,13 +175,22 @@ public class Settings extends AppCompatActivity {
                                 if (success) {
 
                                     final AlertDialog.Builder confirm = new AlertDialog.Builder(Settings.this);
-                                    confirm.setMessage("Start: " +  strStartTime + "\nFinish: " + strFinishTime
-                                    +"\nRisk Level: " + selectedItem);
+                                    confirm.setMessage("Start: " +  strStartTime+ "  |  " + "Finish: " + strFinishTime
+                                    +"\n\nRisk Level: " + selectedItem + "\n\nHours: " + getTimeDifference);
                                     confirm.setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
                                         @Override
                                         public void onClick(DialogInterface dialog, int which) {
+                                            //START FOREGROUND SERVICE
+                                            Intent service = new Intent(Settings.this, ForegroundService.class);
+                                            if (!ForegroundService.IS_SERVICE_RUNNING) {
+                                                service.setAction(ForegroundService.Constants.ACTION.STARTFOREGROUND_ACTION);
+                                                ForegroundService.IS_SERVICE_RUNNING = true;
+                                            }
+                                            startService(service);
+
                                             Intent intent = new Intent(Settings.this, Home.class);
                                             Settings.this.startActivity(intent);
+                                            finish();
                                         }
                                     });
                                     confirm.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -167,8 +199,11 @@ public class Settings extends AppCompatActivity {
                                             dialog.dismiss();
                                         }
                                     });
+                                    confirm.setCancelable(false);
                                     confirm.setTitle("Confirm").create().show();
+
                                 } else {
+
                                     AlertDialog.Builder builder = new AlertDialog.Builder(Settings.this);
                                     builder.setMessage("Something went wrong!")
                                             .setNegativeButton("Retry", null)
@@ -181,24 +216,66 @@ public class Settings extends AppCompatActivity {
                         }
                     };
 
-                    InsertDataRequest registerRequest = new InsertDataRequest(User_id, strStartTime, endTime, selectedItem, responseListener);
+                    //TEST CODE----------------------
+                    System.out.println("--> START TIME (SP): " + startTime);
+                    System.out.println("--> END TIME (SP): " + endTime);
+                    //----------------
+
+                    InsertDataRequest registerRequest = new InsertDataRequest(User_id, endTime, selectedItem, responseListener);
                     RequestQueue queue = Volley.newRequestQueue(Settings.this);
                     queue.add(registerRequest);
                 }
                 else {
-                    Toast.makeText(Settings.this, "Please select start and finish time", Toast.LENGTH_SHORT).show();
-                    // TODO: change this toast to alertdialog?
+                    Toast.makeText(Settings.this, "Please Select Finish Time", Toast.LENGTH_LONG).show();
                 }
             }
         });
     }
+
+    //----------------------------------------------------------------------------------------------
+    //------------------------------------- TIME SELECTION -----------------------------------------
+    //----------------------------------------------------------------------------------------------
 
     void startTimeSet (){
         final TextView tvStartTime = (TextView) findViewById(R.id.tvStartTime);
         final Calendar calendar = Calendar.getInstance();
         int hour = calendar.get(Calendar.HOUR_OF_DAY);
         int minute = calendar.get(Calendar.MINUTE);
+        strStartTime = timeFormat(hour, minute);
+        tvStartTime.setText(strStartTime);
+        sharedPreference.saveTimeStart(context, strStartTime);
+        System.out.println("-- START TIME: " + strStartTime);
+
+    }
+
+    void finishTimePicker() {
+
+        final TextView tvFinishTime = (TextView) findViewById(R.id.tvEndTime);
+        final Calendar calendar = Calendar.getInstance();
+        int hour = calendar.get(Calendar.HOUR_OF_DAY);
+        int minute = calendar.get(Calendar.MINUTE);
+        final TimePickerDialog mTimePicker;
+
+        mTimePicker = new TimePickerDialog(Settings.this, new TimePickerDialog.OnTimeSetListener() {
+
+            @Override
+            public void onTimeSet(TimePicker timePicker, int selectedHour, int selectedMinute) {
+
+                strFinishTime = timeFormat(selectedHour,selectedMinute);
+                tvFinishTime.setText(strFinishTime);
+                sharedPreference.saveTimeEnd(context, strFinishTime);
+                System.out.println("-- END TIME: " + strFinishTime);
+            }
+
+        }, hour, minute, DateFormat.is24HourFormat(context));//No 24 hour time
+        mTimePicker.setTitle("What time will you finish?");
+        mTimePicker.show();
+    }
+
+    //Formats the time in AM/PM format. HH:mm: aa
+    public String timeFormat(int hour, int minute){
         String format;
+        String formattedTime;
         if (hour == 0) {
             hour += 12;
             format = "AM";
@@ -211,93 +288,72 @@ public class Settings extends AppCompatActivity {
         } else {
             format = "AM";
         }
-        tvStartTime.setText(String.format("%02d:%02d ",hour,minute)+ format);
-        strStartTime = tvStartTime.getText().toString();
-        sharedPreference.saveTimeStart(context, strStartTime);
 
+        formattedTime = (String.format(Locale.getDefault(),"%02d:%02d ",hour,minute)+ format);
+        return formattedTime;
     }
 
-    /*
-    void startTimePicker (){
-        final TextView tvStartTime = (TextView) findViewById(R.id.tvStartTime);
-        final Calendar calendar = Calendar.getInstance();
-        int hour = calendar.get(Calendar.HOUR_OF_DAY);
-        int minute = calendar.get(Calendar.MINUTE);
-        final TimePickerDialog mTimePicker;
+    //Calculates job hours Given start and end time
+    public static String getTimeDifference(String startTime,String endTime){
+        try{
+          //  Date time1 = new SimpleDateFormat("hh:mm aa", Locale.getDefault()).parse(endTime);
+          //  Calendar calendar1 = Calendar.getInstance();
+          //  calendar1.setTime(time1);
+          //  Date time2 = new SimpleDateFormat("hh:mm aa", Locale.getDefault()).parse(startTime);
+            // Calendar calendar2 = Calendar.getInstance();
+            //   calendar2.setTime(time2);
 
-        mTimePicker = new TimePickerDialog(Settings.this, new TimePickerDialog.OnTimeSetListener() {
-            @Override
-            public void onTimeSet(TimePicker timePicker, int selectedHour, int selectedMinute) {
-                String format;
-                if (selectedHour == 0) {
-                    selectedHour += 12;
-                    format = "AM";
-                }
-                else if (selectedHour == 12) {
-                    format = "PM";
-                } else if (selectedHour > 12) {
-                    selectedHour -= 12;
-                    format = "PM";
-                } else {
-                    format = "AM";
-                }
-                tvStartTime.setText(String.format("%02d:%02d ",selectedHour,selectedMinute)+ format);
-                strStartTime = tvStartTime.getText().toString();
-                sharedPreference.saveTimeStart(context, strStartTime);
+            //Converts startTime to 24hr Format
+            SimpleDateFormat displayFormat = new SimpleDateFormat("HH:mm");
+            SimpleDateFormat parseFormat = new SimpleDateFormat("hh:mm a");
+            Date date11 = parseFormat.parse(startTime);
+            System.out.println("TESTTET--START " + parseFormat.format(date11) + " = " + displayFormat.format(date11));
 
-                //Calculate millisec for progress bar on home -- Might not need this once we have server --
-                //TODO Remove?
-                long hour = TimeUnit.MILLISECONDS.convert(selectedHour,TimeUnit.HOURS);
-                long min = TimeUnit.MILLISECONDS.convert(selectedMinute,TimeUnit.MINUTES);
-                militime1 = hour + min;
+            Date date22 = parseFormat.parse(endTime);
+            System.out.println("TESTTET--END " + parseFormat.format(date22) + " = " + displayFormat.format(date22));
 
-            }
-        }, hour, minute, false);//No 24 hour time
-        mTimePicker.setTitle("Select START Time");
-        mTimePicker.show();
 
+            //TEST
+          //  SimpleDateFormat df = new SimpleDateFormat("hh:mm aa", Locale.getDefault());
+         //   Date date1 = df.parse(startTime);
+         //   Date date2 = df.parse(endTime);
+         //   long difference = time2.getTime() - time1.getTime();
+
+            long difference = date22.getTime() - date11.getTime();
+
+            int days = (int) (difference / (1000*60*60*24));
+            int hours = (int) ((difference - (1000*60*60*24*days)) / (1000*60*60));
+            int min = (int) (difference - (1000*60*60*24*days) - (1000*60*60*hours)) / (1000*60);
+
+
+            //TEST CODE
+            System.out.println("########### ------> START TIME: " + date11.getTime());
+            System.out.println("########### ------> END  TIME: " + date22.getTime());
+            System.out.println("########### ------> DIFF  TIME: " + difference);
+
+            //-------
+
+
+            hours = (hours < 0 ? -hours : hours);
+            min = (min < 0 ? -min : min);
+
+            String totalDiff = (hours + " Hour(s) " + min + " minutes");
+
+            Log.i("======= Hours"," :: "+hours + " " + min);
+
+
+            return totalDiff;
+        }
+        catch(Exception e){
+            e.printStackTrace();
+        }
+        return "";
     }
-    */
 
-    void finishTimePicker() {
-        final TextView tvFinishTime = (TextView) findViewById(R.id.tvEndTime);
-        final Calendar calendar = Calendar.getInstance();
-        int hour = calendar.get(Calendar.HOUR_OF_DAY);
-        int minute = calendar.get(Calendar.MINUTE);
-        TimePickerDialog mTimePicker;
-
-        mTimePicker = new TimePickerDialog(Settings.this, new TimePickerDialog.OnTimeSetListener() {
-            @Override
-            public void onTimeSet(TimePicker timePicker, int selectedHour, int selectedMinute) {
-                String format;
-                if (selectedHour == 0) {
-                    selectedHour += 12;
-                    format = "AM";
-                }
-                else if (selectedHour == 12) {
-                    format = "PM";
-                } else if (selectedHour > 12) {
-                    selectedHour -= 12;
-                    format = "PM";
-                } else {
-                    format = "AM";
-                }
-                tvFinishTime.setText(String.format("%02d:%02d ",selectedHour,selectedMinute)+ format);
-                strFinishTime = tvFinishTime.getText().toString();
-                sharedPreference.saveTimeEnd(context, strFinishTime);
-
-                //Calculate millisec for progress bar on home -- Might not need this once we have server --
-                //TODO Remove?
-                long hour = TimeUnit.MILLISECONDS.convert(selectedHour,TimeUnit.HOURS);
-                long min = TimeUnit.MILLISECONDS.convert(selectedMinute,TimeUnit.MINUTES);
-                militime2 = (hour + min) - militime1;
-
-            }
-        }, hour, minute, false);//No 24 hour time
-        mTimePicker.setTitle("Select FINISH Time");
-        mTimePicker.show();
-    }
+    //----------------------------------------------------------------------------------------------
     //------------------------------------- Menu Item - Logout Button ------------------------------
+    //----------------------------------------------------------------------------------------------
+
     //Menu Items on Action bar -- Logout Button
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -320,6 +376,7 @@ public class Settings extends AppCompatActivity {
                         sharedPreference.clearSharedPreference(context);
                         Intent logoutIntent = new Intent(Settings.this, Login.class);
                         Settings.this.startActivity(logoutIntent);
+                        finish();
                     }
                 });
                 logoutcheck.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
