@@ -91,6 +91,7 @@ public class ForegroundService extends Service {
         super.onDestroy();
         Log.i(LOG_TAG, "In onDestroy");
         Toast.makeText(this, "Service Detroyed!", Toast.LENGTH_SHORT).show();
+        //Set Onjob boolean false here
     }
 
     @Override

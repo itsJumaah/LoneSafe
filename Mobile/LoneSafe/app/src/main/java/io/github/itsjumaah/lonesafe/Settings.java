@@ -1,51 +1,33 @@
 package io.github.itsjumaah.lonesafe;
 
 import android.app.Activity;
-import android.app.TimePickerDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.text.format.DateFormat;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemSelectedListener;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.Spinner;
+import android.widget.NumberPicker;
 import android.widget.TextView;
-import android.widget.TimePicker;
 import android.widget.Toast;
-
-import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.toolbox.Volley;
-
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.Locale;
-
 
 public class Settings extends AppCompatActivity {
 
-    private static String strStartTime = "";
-    private static String strFinishTime = "";
-    int id = 0;        //For RiskLevel Spinner
-    private static String getTimeDifference;
-
-
     private SharedPreference sharedPreference;
     Activity context = this; //For shared Pref
+    int Hours = 1;
+    int RiskLevel = 1;
+    String FinishTime;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,7 +35,6 @@ public class Settings extends AppCompatActivity {
         setContentView(R.layout.activity_settings);
 
         sharedPreference = new SharedPreference();
-        strFinishTime = sharedPreference.getValue(context,"TimeEnd"); //Gets FinishTime from sharedPref
 
         //init action bar
         ActionBar actionBar = getSupportActionBar();
@@ -67,78 +48,98 @@ public class Settings extends AppCompatActivity {
         String message = "Welcome " + sharedPreference.getValue(context,"Name");
         tvWelcomeMsg.setText(message);
 
+
         //------------------------------------------------------------------------------------------
-        //------------------------------------- RISK LEVEL SPINNER ---------------------------------
+        //------------------------------------- RISK LEVEL & HOURS PICKER --------------------------
         //------------------------------------------------------------------------------------------
 
-        final Spinner riskSelector = (Spinner) findViewById(R.id.riskLvlDropdown);
 
+        final String getRL = sharedPreference.getValue(context,"SaveRiskLevel");
+        if (getRL != null){
+            RiskLevel = Integer.parseInt(getRL);
+            System.out.println("---------> #RISKLEVELSP = " + RiskLevel);
+        }
 
-        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(Settings.this,
-                  R.array.risk_levels,  R.layout.spinner_item);
+        android.widget.NumberPicker npRiskLvl = (android.widget.NumberPicker) findViewById(R.id.numberPicker2);
+        String[] num = new String[4];
+       // String[] arrayString= new String[]{"5 - Very High","4 - High","3 - Medium","2 - Low","1 - Very Low"};
+       // for(int i=0; i<num.length; i++)
+       //     num[i] = Integer.toString(i);
 
-        riskSelector.setAdapter(adapter);
+        npRiskLvl.setMinValue(0);
+        npRiskLvl.setMaxValue(4);
+        npRiskLvl.setWrapSelectorWheel(false);
+        npRiskLvl.setDisplayedValues( new String[] {"1 - Very Low","2 - Low","3 - Medium","4 - High","5 - Very High"});
+        npRiskLvl.setValue(RiskLevel-1);
 
-        //Gets last risklevel if available
-        id = sharedPreference.getRLPos(context);
-        riskSelector.setSelection(id);
-
-        riskSelector.setOnItemSelectedListener(new OnItemSelectedListener() {
+        npRiskLvl.setOnValueChangedListener(new NumberPicker.OnValueChangeListener() {
             @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                 //   ((TextView) parent.getChildAt(0)).setTextColor(Color.rgb(24,143,251));
-                 //   ((TextView) parent.getChildAt(0)).setTextSize(20);
+            public void onValueChange(NumberPicker picker, int oldVal, int newVal) {
+                oldVal++;
+                RiskLevel = newVal;
+                RiskLevel = RiskLevel + 1;
 
+                String SaveRiskLevel = String.valueOf(RiskLevel);
+                System.out.println("---------> #RL = " + RiskLevel);
+                sharedPreference.saveRL(context, SaveRiskLevel);
 
-                Toast.makeText(parent.getContext(),
-                        "Risk Level : " + parent.getItemAtPosition(position).toString(),
-                        Toast.LENGTH_SHORT).show();
-
-                sharedPreference.setRLPos(context, position);
-            }
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-                //DO Nothing
+                Toast.makeText(Settings.this, "Value was: " + Integer.toString(oldVal) + " is now: " + Integer.toString(RiskLevel), Toast.LENGTH_SHORT).show();
 
             }
         });
 
         //------------------------------------------------------------------------------------------
-        //-------------------- Buttons Init (StartTime, FinishTime, Start) -------------------------
-        // -----------------------------------------------------------------------------------------
-        startTimeSet();
 
-        final Button btnStartTime = (Button) findViewById(R.id.btnStartTime);
-        assert btnStartTime != null;
-        btnStartTime.setOnClickListener(new View.OnClickListener() {
+        final String getHour = sharedPreference.getValue(context,"Hours");
+        if (getHour != null){
+            Hours = Integer.parseInt(getHour);
+            System.out.println("---------> #HoursSP = " + Hours);
+        }
+
+        NumberPicker npHours = (NumberPicker) findViewById(R.id.numberPicker);
+        String[] nums = new String[23];
+        //  for(int i=0; i<nums.length; i++)
+      //      nums[i] = Integer.toString(i);
+        String[] test = getResources().getStringArray(R.array.hours);
+
+        npHours.setMinValue(0);
+        npHours.setMaxValue(23);
+        npHours.setWrapSelectorWheel(true);
+        npHours.setDisplayedValues(test);
+        npHours.setValue(Hours-1);
+
+        npHours.setOnValueChangedListener(new NumberPicker.OnValueChangeListener() {
             @Override
-            public void onClick(View v) {
-                startTimeSet();
+            public void onValueChange(NumberPicker picker, int oldVal, int newVal) {
+                oldVal++;
+                Hours = newVal;
+                Hours = Hours + 1;
+
+                String SaveHourStr = String.valueOf(Hours);
+                System.out.println("---------> #HOURSSAVED = " + Hours);
+                sharedPreference.saveHours(context, SaveHourStr);
+
+                Toast.makeText(Settings.this, "Value was: " + Integer.toString(oldVal) + " is now: " + Integer.toString(Hours), Toast.LENGTH_SHORT).show();
+
+              //  getTime();
             }
         });
 
+        //------------------------------------------------------------------------------------------
+        //------------------------------------- START BUTTON ---------------------------------------
+        //------------------------------------------------------------------------------------------
 
-
-        final Button btnFinishTime = (Button) findViewById(R.id.btnFinishTime);
-        final TextView tvFinishTime = (TextView) findViewById(R.id.tvEndTime);
-        tvFinishTime.setText(strFinishTime);
-
-        assert btnFinishTime != null;
-        btnFinishTime.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                finishTimePicker();
-            }
-        });
 
         final Button btnStart = (Button) findViewById(R.id.btnStart);
         assert btnStart !=null;
-        btnStart.setOnClickListener(new View.OnClickListener(){
+
+        btnStart.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                getTime();
 
                 // Alert user if no network connection
-                if(!NetworkChangeReceiver.isNetworkStatusAvialable(context)){
+                if (!NetworkChangeReceiver.isNetworkStatusAvialable(context)) {
                     AlertDialog.Builder alert = new AlertDialog.Builder(Settings.this);
                     alert.setMessage("PLEASE ENSURE YOUR DATA IS TURNED ON")
                             .setPositiveButton("Dismiss", new DialogInterface.OnClickListener() {
@@ -152,202 +153,66 @@ public class Settings extends AppCompatActivity {
                             .create();
                     alert.show();
                 }
-                //Refresh start time, so it is current time
-                startTimeSet();
 
-                final String selectedItem = riskSelector.getSelectedItem().toString();
-                sharedPreference.saveRL(context, selectedItem);
-                final String User_id =  sharedPreference.getValue(context,"UserID");
-                final String startTime = sharedPreference.getValue(context,"TimeStart");
-                final String endTime = sharedPreference.getValue(context,"TimeEnd");
-               // final String rskLevel = sharedPreference.getValue(context,"RiskLevel");
+                //Checks if SharedPref Null---------------
 
-               // onFieldHours
-                getTimeDifference = getTimeDifference(strStartTime,strFinishTime);
+                if(getHour == null){
+                    String SaveHourStr = String.valueOf(Hours);
+                    System.out.println("-----||----> #HOURSSAVED = " + Hours);
+                    sharedPreference.saveHours(context, SaveHourStr);
+                }
 
-                if (strStartTime != null && strFinishTime != null){
-                    Response.Listener<String> responseListener = new Response.Listener<String>() {
-                        @Override
-                        public void onResponse(String response) {
-                            try {
-                                JSONObject jsonResponse = new JSONObject(response);
-                                boolean success = jsonResponse.getBoolean("success");
-                                if (success) {
+                if (getRL == null){
+                    String SaveRiskLevel = String.valueOf(RiskLevel);
+                   // System.out.println("---------> #RL = " + RiskLevel);
+                    sharedPreference.saveRL(context, SaveRiskLevel);
+                }
+                //----------|
 
-                                    final AlertDialog.Builder confirm = new AlertDialog.Builder(Settings.this);
-                                    confirm.setMessage("Start: " +  strStartTime+ "  |  " + "Finish: " + strFinishTime
-                                    +"\n\nRisk Level: " + selectedItem + "\n\nHours: " + getTimeDifference);
-                                    confirm.setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
-                                        @Override
-                                        public void onClick(DialogInterface dialog, int which) {
-                                            //START FOREGROUND SERVICE
-                                            Intent service = new Intent(Settings.this, ForegroundService.class);
-                                            if (!ForegroundService.IS_SERVICE_RUNNING) {
-                                                service.setAction(ForegroundService.Constants.ACTION.STARTFOREGROUND_ACTION);
-                                                ForegroundService.IS_SERVICE_RUNNING = true;
-                                            }
-                                            startService(service);
-
-                                            Intent intent = new Intent(Settings.this, Home.class);
-                                            Settings.this.startActivity(intent);
-                                            finish();
-                                        }
-                                    });
-                                    confirm.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                                        @Override
-                                        public void onClick(DialogInterface dialog, int which) {
-                                            dialog.dismiss();
-                                        }
-                                    });
-                                    confirm.setCancelable(false);
-                                    confirm.setTitle("Confirm").create().show();
-
-                                } else {
-
-                                    AlertDialog.Builder builder = new AlertDialog.Builder(Settings.this);
-                                    builder.setMessage("Something went wrong!")
-                                            .setNegativeButton("Retry", null)
-                                            .create()
-                                            .show();
-                                }
-                            } catch (JSONException e) {
-                                e.printStackTrace();
-                            }
+                final AlertDialog.Builder confirm = new AlertDialog.Builder(Settings.this);
+                confirm.setMessage("RiskLevel: " + RiskLevel + "\n\nHours: " + Hours + "\n\n You will finish at: " + FinishTime);
+                confirm.setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        //START FOREGROUND SERVICE
+                        Intent service = new Intent(Settings.this, ForegroundService.class);
+                        if (!ForegroundService.IS_SERVICE_RUNNING) {
+                            service.setAction(ForegroundService.Constants.ACTION.STARTFOREGROUND_ACTION);
+                            ForegroundService.IS_SERVICE_RUNNING = true;
                         }
-                    };
+                        startService(service);
 
-                    //TEST CODE----------------------
-                    System.out.println("--> START TIME (SP): " + startTime);
-                    System.out.println("--> END TIME (SP): " + endTime);
-                    //----------------
-
-                    InsertDataRequest registerRequest = new InsertDataRequest(User_id, endTime, selectedItem, responseListener);
-                    RequestQueue queue = Volley.newRequestQueue(Settings.this);
-                    queue.add(registerRequest);
-                }
-                else {
-                    Toast.makeText(Settings.this, "Please Select Finish Time", Toast.LENGTH_LONG).show();
-                }
+                        Intent intent = new Intent(Settings.this, Home.class);
+                        Settings.this.startActivity(intent);
+                        finish();
+                    }
+                });
+                confirm.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                });
+                confirm.setCancelable(false);
+                confirm.setTitle("Confirm").create().show();
             }
         });
-    }
-
-    //----------------------------------------------------------------------------------------------
-    //------------------------------------- TIME SELECTION -----------------------------------------
-    //----------------------------------------------------------------------------------------------
-
-    void startTimeSet (){
-        final TextView tvStartTime = (TextView) findViewById(R.id.tvStartTime);
-        final Calendar calendar = Calendar.getInstance();
-        int hour = calendar.get(Calendar.HOUR_OF_DAY);
-        int minute = calendar.get(Calendar.MINUTE);
-        strStartTime = timeFormat(hour, minute);
-        tvStartTime.setText(strStartTime);
-        sharedPreference.saveTimeStart(context, strStartTime);
-        System.out.println("-- START TIME: " + strStartTime);
 
     }
 
-    void finishTimePicker() {
+    void getTime(){
 
-        final TextView tvFinishTime = (TextView) findViewById(R.id.tvEndTime);
-        final Calendar calendar = Calendar.getInstance();
-        int hour = calendar.get(Calendar.HOUR_OF_DAY);
-        int minute = calendar.get(Calendar.MINUTE);
-        final TimePickerDialog mTimePicker;
+        Calendar cal = Calendar.getInstance(); // creates calendar
+        cal.setTime(new Date()); // sets calendar time/date
+        cal.add(Calendar.HOUR_OF_DAY, Hours); // adds one hour
+        Date time = cal.getTime(); // returns new date object, one hour in the future
 
-        mTimePicker = new TimePickerDialog(Settings.this, new TimePickerDialog.OnTimeSetListener() {
+        SimpleDateFormat formatter = new SimpleDateFormat("hh:mm a");
+        FinishTime = formatter.format(time);
 
-            @Override
-            public void onTimeSet(TimePicker timePicker, int selectedHour, int selectedMinute) {
-
-                strFinishTime = timeFormat(selectedHour,selectedMinute);
-                tvFinishTime.setText(strFinishTime);
-                sharedPreference.saveTimeEnd(context, strFinishTime);
-                System.out.println("-- END TIME: " + strFinishTime);
-            }
-
-        }, hour, minute, DateFormat.is24HourFormat(context));//No 24 hour time
-        mTimePicker.setTitle("What time will you finish?");
-        mTimePicker.show();
-    }
-
-    //Formats the time in AM/PM format. HH:mm: aa
-    public String timeFormat(int hour, int minute){
-        String format;
-        String formattedTime;
-        if (hour == 0) {
-            hour += 12;
-            format = "AM";
-        }
-        else if (hour == 12) {
-            format = "PM";
-        } else if (hour > 12) {
-            hour -= 12;
-            format = "PM";
-        } else {
-            format = "AM";
-        }
-
-        formattedTime = (String.format(Locale.getDefault(),"%02d:%02d ",hour,minute)+ format);
-        return formattedTime;
-    }
-
-    //Calculates job hours Given start and end time
-    public static String getTimeDifference(String startTime,String endTime){
-        try{
-          //  Date time1 = new SimpleDateFormat("hh:mm aa", Locale.getDefault()).parse(endTime);
-          //  Calendar calendar1 = Calendar.getInstance();
-          //  calendar1.setTime(time1);
-          //  Date time2 = new SimpleDateFormat("hh:mm aa", Locale.getDefault()).parse(startTime);
-            // Calendar calendar2 = Calendar.getInstance();
-            //   calendar2.setTime(time2);
-
-            //Converts startTime to 24hr Format
-            SimpleDateFormat displayFormat = new SimpleDateFormat("HH:mm");
-            SimpleDateFormat parseFormat = new SimpleDateFormat("hh:mm a");
-            Date date11 = parseFormat.parse(startTime);
-            System.out.println("TESTTET--START " + parseFormat.format(date11) + " = " + displayFormat.format(date11));
-
-            Date date22 = parseFormat.parse(endTime);
-            System.out.println("TESTTET--END " + parseFormat.format(date22) + " = " + displayFormat.format(date22));
+        sharedPreference.saveTimeEnd(context, FinishTime);
 
 
-            //TEST
-          //  SimpleDateFormat df = new SimpleDateFormat("hh:mm aa", Locale.getDefault());
-         //   Date date1 = df.parse(startTime);
-         //   Date date2 = df.parse(endTime);
-         //   long difference = time2.getTime() - time1.getTime();
-
-            long difference = date22.getTime() - date11.getTime();
-
-            int days = (int) (difference / (1000*60*60*24));
-            int hours = (int) ((difference - (1000*60*60*24*days)) / (1000*60*60));
-            int min = (int) (difference - (1000*60*60*24*days) - (1000*60*60*hours)) / (1000*60);
-
-
-            //TEST CODE
-            System.out.println("########### ------> START TIME: " + date11.getTime());
-            System.out.println("########### ------> END  TIME: " + date22.getTime());
-            System.out.println("########### ------> DIFF  TIME: " + difference);
-
-            //-------
-
-
-            hours = (hours < 0 ? -hours : hours);
-            min = (min < 0 ? -min : min);
-
-            String totalDiff = (hours + " Hour(s) " + min + " minutes");
-
-            Log.i("======= Hours"," :: "+hours + " " + min);
-
-
-            return totalDiff;
-        }
-        catch(Exception e){
-            e.printStackTrace();
-        }
-        return "";
     }
 
     //----------------------------------------------------------------------------------------------
@@ -397,7 +262,4 @@ public class Settings extends AppCompatActivity {
         }
     }
 
-
-
 }
-

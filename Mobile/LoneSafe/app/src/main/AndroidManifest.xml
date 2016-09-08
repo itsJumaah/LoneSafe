@@ -20,10 +20,7 @@
             android:name=".Home"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".Settings"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name=".TimeSelector"
+            android:name=".OLDSettings"
             android:screenOrientation="portrait" />
 
         <receiver android:name=".LoneSafeWidget">
@@ -53,19 +50,18 @@
         <activity
             android:name=".Terms"
             android:screenOrientation="portrait" />
-
         <activity
-            android:name="io.github.itsjumaah.lonesafe.Checkin"
-            android:launchMode="singleTask"
-            android:taskAffinity=""
-            android:exported="true"
+            android:name=".Checkin"
             android:excludeFromRecents="true"
-            android:label="CheckinActivity" >
+            android:exported="true"
+            android:label="CheckinActivity"
+            android:launchMode="singleTask"
+            android:taskAffinity="">
             <intent-filter>
                 <action android:name=".Checkin" />
+
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
-
         </activity>
 
         <receiver
@@ -86,11 +82,9 @@
                 <action android:name="com.google.firebase.INSTANCE_ID_EVENT" />
             </intent-filter>
         </service>
+        <service android:name=".ForegroundService"></service>
 
-        <service android:name=".ForegroundService">
-
-        </service>
-
+        <activity android:name=".Settings"></activity>
     </application>
 
 </manifest>

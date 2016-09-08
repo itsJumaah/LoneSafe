@@ -18,6 +18,11 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.concurrent.TimeUnit;
+
 public class Home extends AppCompatActivity {
 
     private SharedPreference sharedPreference;
@@ -26,6 +31,7 @@ public class Home extends AppCompatActivity {
     ProgressBar progressBar;
     CountDownTimer countDownTimer;
     int i = 0;
+    long milli;
 
 
 
@@ -49,11 +55,43 @@ public class Home extends AppCompatActivity {
         String message = "Welcome " + sharedPreference.getValue(context,"Name");
         tvWelcome.setText(message);
 
-        String Value = sharedPreference.getValue(context,"RiskLevel");
+        String Value = sharedPreference.getValue(context,"SaveRiskLevel");
 
         final TextView tvRiskLvl = (TextView) findViewById(R.id.tvRiskLvl);
         tvRiskLvl.setText(Value);
 
+        //Get current time //------------------
+        Calendar cal = Calendar.getInstance(); // creates calendar
+        cal.setTime(new Date()); // sets calendar time/date
+        Date time = cal.getTime();
+
+        SimpleDateFormat formatter = new SimpleDateFormat("hh:mm a");
+        String startTime = formatter.format(time);
+
+        final TextView tvStTime = (TextView) findViewById(R.id.tvStTime);
+        tvStTime.setText(startTime);
+        //-------------------------------------|
+
+        //Get Finish Time from SharedPref
+        String FinishTime = sharedPreference.getValue(context,"FinishTime");
+        final TextView tvFnTime = (TextView) findViewById(R.id.tvFnTime);
+        tvFnTime.setText(FinishTime);
+
+        //Get hours from shared Pref -----------|
+        String getHour = sharedPreference.getValue(context,"Hours");
+        final TextView tvFieldHours = (TextView) findViewById(R.id.tvFieldHours);
+        tvFieldHours.setText(getHour);
+
+        int Hours = Integer.parseInt(getHour);
+        System.out.println("--------->| #HoursSP = " + Hours);
+        milli = TimeUnit.HOURS.toMillis(Hours);
+
+
+        //--------------------------------------|
+
+
+        //TODO Delete from Shared Preferences
+        /*
         //Retrieve a value from SharedPreference
         String startTime = sharedPreference.getValue(context,"TimeStart");
         final TextView tvStTime = (TextView) findViewById(R.id.tvStTime);
@@ -62,18 +100,6 @@ public class Home extends AppCompatActivity {
         String FinishTime = sharedPreference.getValue(context,"TimeEnd");
         final TextView tvFnTime = (TextView) findViewById(R.id.tvFnTime);
         tvFnTime.setText(FinishTime);
-
-        /*
-        final Button btnsettings = (Button) findViewById(R.id.btnSettings);
-        assert btnsettings != null;
-        btnsettings.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(Home.this, Settings.class);
-                Home.this.startActivity(intent);
-            }
-        });
-
         */
 
         final Button btnStop = (Button) findViewById(R.id.btnStop);
@@ -142,17 +168,21 @@ public class Home extends AppCompatActivity {
 
 
 //------------------ Countdown Timer and Progress bar -- temp only until server is working ---
-       // Intent intent = getIntent();
-       // long time = intent.getLongExtra("getdata",1);
-        //      long time = sharedPreference.getTimeMiliSec(context,"TimeKey");
-    //    final TextView milVal = (TextView) findViewById(R.id.tvMil);
-     //   milVal.setText(String.valueOf(time));
 
         progressBar = (ProgressBar) findViewById(R.id.progressBar);
         progressBar.setProgress(i);
-        countDownTimer = new CountDownTimer(7200000, 10000) {
+
+
+       final TextView tvTimer = (TextView) findViewById(R.id.tvTimer);
+
+
+        countDownTimer = new CountDownTimer(milli, 60000) {
             @Override
             public void onTick(long millisUntilFinished) {
+
+                Long minleft = TimeUnit.MILLISECONDS.toMinutes(millisUntilFinished);
+                tvTimer.setText(" " + minleft + " minutes");
+                //tvTimer.setText("seconds remaining: " + millisUntilFinished / 1000);
                 Log.v("Log_tag", "Tick of Progress"+ i+ millisUntilFinished);
                 i++;
                 progressBar.setProgress(i);
@@ -162,7 +192,7 @@ public class Home extends AppCompatActivity {
             public void onFinish() {
                 i++;
                 progressBar.setProgress(i);
-                Toast.makeText(Home.this,"Job Stopped",Toast.LENGTH_LONG).show();
+                Toast.makeText(Home.this,"Job Finished",Toast.LENGTH_LONG).show();
             }
         };
         countDownTimer.start();
@@ -201,6 +231,8 @@ public class Home extends AppCompatActivity {
         inflater.inflate(R.menu.activity_bar, menu);
         return super.onCreateOptionsMenu(menu);
     }
+
+    //TODO Remove logout option from Homepage?
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {

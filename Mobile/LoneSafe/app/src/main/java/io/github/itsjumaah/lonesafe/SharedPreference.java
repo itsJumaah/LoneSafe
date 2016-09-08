@@ -14,9 +14,11 @@ public class SharedPreference {
     public static final String Pass = "Pass";
     public static final String UserID = "UserID";
 
-    public static final String TimeStart = "TimeStart";
-    public static final String TimeEnd = "TimeEnd";
-    public static final String RiskLevel = "RiskLevel";
+   // public static final String TimeStart = "TimeStart";
+    public static final String FinishTime = "FinishTime";
+    public static final String SaveRiskLevel = "SaveRiskLevel";
+
+    public static final String Hours = "Hours";
 
 
 
@@ -42,16 +44,22 @@ public class SharedPreference {
         save(context,UserID,text);
     }
 
-    public void saveRL (Context context, String text) {
-        save(context,RiskLevel,text);
+    public void saveHours (Context context, String text){
+        save(context,Hours,text);
     }
 
+    public void saveRL (Context context, String text) {
+        save(context,SaveRiskLevel,text);
+    }
+
+    /*
     public void saveTimeStart (Context context, String text) {
         save(context,TimeStart,text);
     }
+    */
 
     public void saveTimeEnd (Context context, String text) {
-        save(context,TimeEnd,text);
+        save(context,FinishTime,text);
 
     }
 
@@ -65,9 +73,12 @@ public class SharedPreference {
         editor = settings.edit(); //2
 
         editor.putString(key, text); //3
-        editor.commit(); //4
+        //editor.commit(); //4
+        editor.apply(); //4
 
     }
+
+    /*
 
     public void setRLPos (Context context,int pos) {
         SharedPreferences settings;
@@ -89,8 +100,11 @@ public class SharedPreference {
 
     }
 
+    */
+
 
     //-----------------------------------------------------
+
 
     public String getValue(Context context,String key) {
         SharedPreferences settings;
@@ -101,6 +115,7 @@ public class SharedPreference {
         return text;
     }
 
+    //Clears everything from shared Pref (i.e. when User logs out)
     public void clearSharedPreference(Context context) {
         SharedPreferences settings;
         Editor editor;
@@ -110,9 +125,12 @@ public class SharedPreference {
         editor = settings.edit();
 
         editor.clear();
-        editor.commit();
+       // editor.commit();
+        editor.apply();
+
     }
 
+    //For removing indiviual values from shared Preference
     public void removeValue(Context context, String key) {
         SharedPreferences settings;
         Editor editor;
@@ -121,6 +139,8 @@ public class SharedPreference {
         editor = settings.edit();
 
         editor.remove(key);
-        editor.commit();
+        //editor.commit();
+        editor.apply();
+
     }
 }

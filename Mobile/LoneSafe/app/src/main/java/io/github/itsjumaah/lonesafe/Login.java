@@ -154,16 +154,15 @@ public class Login extends AppCompatActivity {
                     if (success) {
 
                         //  savePreferences();
-                        String name = jsonResponse.getString("name");
-                        String pass = jsonResponse.getString("password");
+                        String name = jsonResponse.getString("firstname");
+                       // String pass = jsonResponse.getString("password");
                         String user = jsonResponse.getString("username");
-                        int user_id = jsonResponse.getInt("user_id");
+                        int user_id = jsonResponse.getInt("id");
                         String userId = String.valueOf(user_id);
-                    //    int age = jsonResponse.getInt("age");
 
                         sharedPreference.saveName(context, name);
                         sharedPreference.saveUser(context, user);
-                        sharedPreference.savePass(context, pass);
+                        sharedPreference.savePass(context, password);
                         sharedPreference.saveUserID(context, userId);
 
                         Intent intent = new Intent(Login.this, Settings.class);

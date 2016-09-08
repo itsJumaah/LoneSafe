@@ -52,12 +52,14 @@ public class NetworkChangeReceiver extends BroadcastReceiver {
     }
 
     public static void snack (HashMap<String,View.OnClickListener> actions, String message, Context context) {
+
         if(MyApplication.appactivity != null){
             snackbar = TSnackbar.make(MyApplication.appactivity.findViewById(android.R.id.content), message, TSnackbar.LENGTH_INDEFINITE);//MyApplication.appactivity from Application class.
             View view = snackbar.getView();
             FrameLayout.LayoutParams params =(FrameLayout.LayoutParams)view.getLayoutParams();
             params.gravity = Gravity.TOP;
             view.setLayoutParams(params);
+
             if (actions != null) {
                 Iterator iterator = actions.entrySet().iterator();
                 snackbar.setDuration(TSnackbar.LENGTH_INDEFINITE);
@@ -67,18 +69,9 @@ public class NetworkChangeReceiver extends BroadcastReceiver {
                     iterator.remove(); // avoids a ConcurrentModificationException
                 }
             }
-            //switch (priority) {
-              //  case 0:
             view.setBackgroundColor(Color.parseColor("#B20000"));
-               //     break;
-              //  case 1:
-               //     snackbar.getView().setBackgroundColor(Color.parseColor("#66ccff"));
-               //     break;
-               // case 2:
-               //     snackbar.getView().setBackgroundColor(Color.parseColor("#66ff33"));
-               //     break;
-           // }
             TextView txtv = (TextView) view.findViewById(android.support.design.R.id.snackbar_text);
+
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
                 txtv.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
             }
@@ -88,6 +81,7 @@ public class NetworkChangeReceiver extends BroadcastReceiver {
             snackbar.show();
         }
     }
+    
     private static void hideSnackbar(){
         if(snackbar !=null && snackbar.isShown()){
             snackbar.dismiss();

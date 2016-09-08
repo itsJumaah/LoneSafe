@@ -11,18 +11,18 @@ import com.google.firebase.iid.FirebaseInstanceIdService;
 /**
  * Created by ashneelkumar on 5/08/16.
  */
-public class FirebaseInstanceIDService extends FirebaseInstanceIdService {
+public class FirebaseInstanceIDService extends FirebaseInstanceIdService  {
     private static final String TAG = "MyFirebaseIIDService";
 
     @Override
     public void onTokenRefresh() {
 
         String token = FirebaseInstanceId.getInstance().getToken();
-        Log.d(TAG, "Refreshed token: " + token);        //Implement later?
+        Log.d(TAG, "Refreshed token: " + token);
         //registerToken(token);
     }
 
-
+    /*
 
     private void registerToken(String token) {
 /*
@@ -37,7 +37,7 @@ public class FirebaseInstanceIDService extends FirebaseInstanceIdService {
                     boolean success = jsonResponse.getBoolean("successful");
 
                     if (success) {
-                       // Intent intent = new Intent(FirebaseInstanceIDService.this, Settings.class);
+                       // Intent intent = new Intent(FirebaseInstanceIDService.this, OLDSettings.class);
                        // FirebaseInstanceIDService.this.startActivity(intent);
                     }
                     else{
@@ -69,7 +69,8 @@ public class FirebaseInstanceIDService extends FirebaseInstanceIdService {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        */
+
 
     }
+    */
 }

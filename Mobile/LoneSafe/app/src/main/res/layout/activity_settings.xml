@@ -7,39 +7,42 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context="io.github.itsjumaah.lonesafe.Settings">
+    tools:context=".Settings">
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="Settings"
+        android:text="   Settings   "
         android:id="@+id/tvSettingtitle"
         android:textStyle="bold"
         android:textSize="@dimen/abc_text_size_display_1_material"
         android:layout_below="@+id/tvUser"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="28dp" />
+        android:layout_marginTop="20dp" />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Select Level of risk:"
         android:id="@+id/tvRiskLvlLabel"
-        android:layout_marginTop="24dp"
+        android:layout_marginTop="10dp"
         android:layout_below="@+id/tvSettingtitle"
         android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true" />
+        android:layout_alignParentStart="true"
+        android:layout_marginBottom="10dp"
+        android:textStyle="bold" />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Working hours:"
+        android:text="Select Working hours:"
         android:id="@+id/tvWorkingHours"
-        android:layout_below="@+id/riskLvlDropdown"
+        android:layout_below="@+id/viewDivider"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:layout_marginTop="50dp" />
+        android:layout_marginBottom="10dp"
+        android:textStyle="bold" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -51,43 +54,42 @@
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true" />
 
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Start time"
-        android:id="@+id/btnStartTime"
-        android:layout_marginTop="28dp"
+
+    <view class = "io.github.itsjumaah.lonesafe.CustomNumberPicker"
+        android:layout_width="12dp"
+        android:layout_height="12dp"
+        android:id="@+id/numberPicker"
+        android:descendantFocusability="blocksDescendants"
+        android:layout_alignRight="@+id/tvSettingtitle"
+        android:layout_alignEnd="@+id/tvSettingtitle"
+        android:layout_alignLeft="@+id/tvSettingtitle"
+        android:layout_alignStart="@+id/tvSettingtitle"
+        android:layout_above="@+id/btnStart"
         android:layout_below="@+id/tvWorkingHours"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_alignRight="@+id/btnFinishTime"
-        android:layout_alignEnd="@+id/btnFinishTime" />
+        android:layout_marginBottom="20dp" />
 
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="set finish time"
-        android:id="@+id/btnFinishTime"
-        android:layout_marginTop="18dp"
-        android:layout_below="@+id/btnStartTime"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true" />
-
-    <Spinner
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/riskLvlDropdown"
-        android:entries="@array/risk_levels"
-        android:prompt="@string/RL_prompt"
-        android:spinnerMode="dropdown"
-        android:layout_below="@+id/tvRiskLvlLabel"
+    <View
+        android:layout_width="fill_parent"
+        android:layout_height="2dp"
+        android:background="#f2f2f2"
+        android:layout_centerVertical="true"
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_marginLeft="20dp"
-        android:layout_marginRight="20dp"
-        android:nestedScrollingEnabled="false" />
+        android:id="@+id/viewDivider"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="10dp" />
+
+    <view class = "io.github.itsjumaah.lonesafe.CustomNumberPicker"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:id="@+id/numberPicker2"
+        android:descendantFocusability="blocksDescendants"
+        android:layout_below="@+id/tvRiskLvlLabel"
+        android:layout_alignLeft="@+id/numberPicker"
+        android:layout_alignStart="@+id/numberPicker"
+        android:layout_alignRight="@+id/numberPicker"
+        android:layout_alignEnd="@+id/numberPicker"
+        android:layout_above="@+id/viewDivider" />
 
     <Button
         android:layout_width="200dp"
@@ -98,32 +100,5 @@
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="32dp"
         android:enabled="true" />
-
-    <TextView
-        android:layout_width="250dp"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="__:__"
-        android:id="@+id/tvStartTime"
-        android:textColor="@color/lonesafeBackground"
-        android:layout_alignTop="@+id/btnStartTime"
-        android:layout_marginRight="40dp"
-        android:layout_toRightOf="@+id/btnFinishTime"
-        android:layout_toEndOf="@+id/btnFinishTime"
-        android:layout_marginLeft="30dp" />
-
-    <TextView
-        android:layout_width="250dp"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="__:__"
-        android:id="@+id/tvEndTime"
-        android:textColor="@color/lonesafeBackground"
-        android:layout_alignTop="@+id/btnFinishTime"
-        android:layout_toEndOf="@+id/tvSettingtitle"
-        android:layout_marginRight="40dp"
-        android:layout_alignLeft="@+id/tvStartTime"
-        android:layout_alignStart="@+id/tvStartTime" />
-
 
 </RelativeLayout>
