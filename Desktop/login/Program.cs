@@ -14,9 +14,14 @@ namespace LoneSafe
         [STAThread]
         static void Main()
         {
+            //LoneSafeLib.User user = new LoneSafeLib.User("buzz", "pass", "Bilal", true);
+
+
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
             Application.Run(new Login());
+
+           // Application.Run(new MainWindow(user));
         }
     }
 }

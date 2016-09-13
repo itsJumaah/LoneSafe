@@ -28,11 +28,11 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainWindow));
             this.name = new System.Windows.Forms.Label();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.greetings = new System.Windows.Forms.ToolStripStatusLabel();
-            this.progBar = new System.Windows.Forms.ToolStripProgressBar();
             this.toolStripStatusLabel2 = new System.Windows.Forms.ToolStripStatusLabel();
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.loneSafeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -41,7 +41,7 @@
             this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.manageToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.addANewLoneWorkerToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.deleteAUserToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.editAUser = new System.Windows.Forms.ToolStripMenuItem();
             this.deleteAUserToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.deleteAUserToolStripMenuItem2 = new System.Windows.Forms.ToolStripMenuItem();
             this.reportToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -55,8 +55,6 @@
             this.title = new System.Windows.Forms.Label();
             this.logo = new System.Windows.Forms.PictureBox();
             this.tableLayoutPanel2 = new System.Windows.Forms.TableLayoutPanel();
-            this.label2 = new System.Windows.Forms.Label();
-            this.backgroundWorker = new System.ComponentModel.BackgroundWorker();
             this.dataGrid = new System.Windows.Forms.DataGridView();
             this.fullName = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.rskLevel = new System.Windows.Forms.DataGridViewTextBoxColumn();
@@ -66,6 +64,10 @@
             this.c4 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.c5 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.c6 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.c7 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.c8 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.label2 = new System.Windows.Forms.Label();
+            this.notifyIcon1 = new System.Windows.Forms.NotifyIcon(this.components);
             this.statusStrip1.SuspendLayout();
             this.menuStrip1.SuspendLayout();
             this.tableLayoutPanel1.SuspendLayout();
@@ -87,11 +89,10 @@
             this.statusStrip1.BackColor = System.Drawing.SystemColors.HotTrack;
             this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.greetings,
-            this.progBar,
             this.toolStripStatusLabel2});
             this.statusStrip1.Location = new System.Drawing.Point(0, 539);
             this.statusStrip1.Name = "statusStrip1";
-            this.statusStrip1.Size = new System.Drawing.Size(784, 22);
+            this.statusStrip1.Size = new System.Drawing.Size(936, 22);
             this.statusStrip1.TabIndex = 1;
             this.statusStrip1.Text = "statusStrip1";
             // 
@@ -99,17 +100,8 @@
             // 
             this.greetings.ForeColor = System.Drawing.SystemColors.Control;
             this.greetings.Name = "greetings";
-            this.greetings.Size = new System.Drawing.Size(118, 17);
-            this.greetings.Text = "toolStripStatusLabel1";
-            // 
-            // progBar
-            // 
-            this.progBar.BackColor = System.Drawing.SystemColors.Desktop;
-            this.progBar.ForeColor = System.Drawing.SystemColors.Control;
-            this.progBar.Name = "progBar";
-            this.progBar.Size = new System.Drawing.Size(100, 16);
-            this.progBar.Style = System.Windows.Forms.ProgressBarStyle.Continuous;
-            this.progBar.ToolTipText = "Updating data";
+            this.greetings.Size = new System.Drawing.Size(52, 17);
+            this.greetings.Text = "Greeting";
             // 
             // toolStripStatusLabel2
             // 
@@ -127,7 +119,7 @@
             this.aboutToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
-            this.menuStrip1.Size = new System.Drawing.Size(784, 24);
+            this.menuStrip1.Size = new System.Drawing.Size(936, 24);
             this.menuStrip1.TabIndex = 2;
             this.menuStrip1.Text = "menuStrip1";
             // 
@@ -146,6 +138,7 @@
             this.logOutToolStripMenuItem.Name = "logOutToolStripMenuItem";
             this.logOutToolStripMenuItem.Size = new System.Drawing.Size(115, 22);
             this.logOutToolStripMenuItem.Text = "Log out";
+            this.logOutToolStripMenuItem.Click += new System.EventHandler(this.logOutToolStripMenuItem_Click);
             // 
             // toolStripMenuItem2
             // 
@@ -159,12 +152,13 @@
             this.exitToolStripMenuItem.Name = "exitToolStripMenuItem";
             this.exitToolStripMenuItem.Size = new System.Drawing.Size(115, 22);
             this.exitToolStripMenuItem.Text = "Exit";
+            this.exitToolStripMenuItem.Click += new System.EventHandler(this.exitToolStripMenuItem_Click);
             // 
             // manageToolStripMenuItem
             // 
             this.manageToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.addANewLoneWorkerToolStripMenuItem,
-            this.deleteAUserToolStripMenuItem,
+            this.editAUser,
             this.deleteAUserToolStripMenuItem1,
             this.deleteAUserToolStripMenuItem2});
             this.manageToolStripMenuItem.Name = "manageToolStripMenuItem";
@@ -176,15 +170,18 @@
             this.addANewLoneWorkerToolStripMenuItem.Name = "addANewLoneWorkerToolStripMenuItem";
             this.addANewLoneWorkerToolStripMenuItem.Size = new System.Drawing.Size(155, 22);
             this.addANewLoneWorkerToolStripMenuItem.Text = "Add a new user";
+            this.addANewLoneWorkerToolStripMenuItem.Click += new System.EventHandler(this.addANewLoneWorkerToolStripMenuItem_Click);
             // 
-            // deleteAUserToolStripMenuItem
+            // editAUser
             // 
-            this.deleteAUserToolStripMenuItem.Name = "deleteAUserToolStripMenuItem";
-            this.deleteAUserToolStripMenuItem.Size = new System.Drawing.Size(155, 22);
-            this.deleteAUserToolStripMenuItem.Text = "Edit a user";
+            this.editAUser.Name = "editAUser";
+            this.editAUser.Size = new System.Drawing.Size(155, 22);
+            this.editAUser.Text = "Edit a user";
+            this.editAUser.Click += new System.EventHandler(this.deleteAUserToolStripMenuItem_Click);
             // 
             // deleteAUserToolStripMenuItem1
             // 
+            this.deleteAUserToolStripMenuItem1.Enabled = false;
             this.deleteAUserToolStripMenuItem1.Name = "deleteAUserToolStripMenuItem1";
             this.deleteAUserToolStripMenuItem1.Size = new System.Drawing.Size(155, 22);
             this.deleteAUserToolStripMenuItem1.Text = "--------";
@@ -194,6 +191,7 @@
             this.deleteAUserToolStripMenuItem2.Name = "deleteAUserToolStripMenuItem2";
             this.deleteAUserToolStripMenuItem2.Size = new System.Drawing.Size(155, 22);
             this.deleteAUserToolStripMenuItem2.Text = "Delete a user";
+            this.deleteAUserToolStripMenuItem2.Click += new System.EventHandler(this.deleteAUserToolStripMenuItem2_Click);
             // 
             // reportToolStripMenuItem
             // 
@@ -209,12 +207,14 @@
             this.reportToolStripMenuItem1.Name = "reportToolStripMenuItem1";
             this.reportToolStripMenuItem1.Size = new System.Drawing.Size(109, 22);
             this.reportToolStripMenuItem1.Text = "Report";
+            this.reportToolStripMenuItem1.Click += new System.EventHandler(this.reportToolStripMenuItem1_Click);
             // 
             // usersToolStripMenuItem
             // 
             this.usersToolStripMenuItem.Name = "usersToolStripMenuItem";
             this.usersToolStripMenuItem.Size = new System.Drawing.Size(109, 22);
             this.usersToolStripMenuItem.Text = "Users";
+            this.usersToolStripMenuItem.Click += new System.EventHandler(this.usersToolStripMenuItem_Click);
             // 
             // helpToolStripMenuItem
             // 
@@ -257,7 +257,7 @@
             this.tableLayoutPanel1.RowCount = 1;
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tableLayoutPanel1.Size = new System.Drawing.Size(784, 100);
+            this.tableLayoutPanel1.Size = new System.Drawing.Size(936, 100);
             this.tableLayoutPanel1.TabIndex = 3;
             // 
             // title
@@ -268,9 +268,9 @@
             this.title.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.title.Font = new System.Drawing.Font("Trebuchet MS", 27.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.title.ForeColor = System.Drawing.SystemColors.HotTrack;
-            this.title.Location = new System.Drawing.Point(395, 0);
+            this.title.Location = new System.Drawing.Point(471, 0);
             this.title.Name = "title";
-            this.title.Size = new System.Drawing.Size(386, 100);
+            this.title.Size = new System.Drawing.Size(462, 100);
             this.title.TabIndex = 0;
             this.title.Text = "LoneSafe";
             this.title.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
@@ -279,7 +279,7 @@
             // 
             this.logo.Dock = System.Windows.Forms.DockStyle.Right;
             this.logo.Image = global::LoneSafe.Properties.Resources.logo1;
-            this.logo.Location = new System.Drawing.Point(295, 3);
+            this.logo.Location = new System.Drawing.Point(371, 3);
             this.logo.Name = "logo";
             this.logo.Size = new System.Drawing.Size(94, 94);
             this.logo.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
@@ -299,31 +299,8 @@
             this.tableLayoutPanel2.RowCount = 2;
             this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 9.638555F));
             this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 90.36144F));
-            this.tableLayoutPanel2.Size = new System.Drawing.Size(784, 415);
+            this.tableLayoutPanel2.Size = new System.Drawing.Size(936, 415);
             this.tableLayoutPanel2.TabIndex = 4;
-            // 
-            // label2
-            // 
-            this.label2.AutoSize = true;
-            this.label2.BackColor = System.Drawing.Color.White;
-            this.label2.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.label2.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.label2.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.label2.Font = new System.Drawing.Font("Segoe UI", 11.25F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Bold | System.Drawing.FontStyle.Underline))), System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label2.ForeColor = System.Drawing.SystemColors.Highlight;
-            this.label2.Location = new System.Drawing.Point(3, 0);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(778, 40);
-            this.label2.TabIndex = 2;
-            this.label2.Text = "Live Data";
-            this.label2.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
-            // backgroundWorker
-            // 
-            this.backgroundWorker.WorkerReportsProgress = true;
-            this.backgroundWorker.DoWork += new System.ComponentModel.DoWorkEventHandler(this.backgroundWorker_DoWork);
-            this.backgroundWorker.ProgressChanged += new System.ComponentModel.ProgressChangedEventHandler(this.backgroundWorker_ProgressChanged);
-            this.backgroundWorker.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.backgroundWorker_RunWorkerCompleted);
             // 
             // dataGrid
             // 
@@ -342,14 +319,16 @@
             this.c3,
             this.c4,
             this.c5,
-            this.c6});
+            this.c6,
+            this.c7,
+            this.c8});
             this.dataGrid.Dock = System.Windows.Forms.DockStyle.Fill;
             this.dataGrid.GridColor = System.Drawing.SystemColors.HotTrack;
             this.dataGrid.Location = new System.Drawing.Point(3, 43);
             this.dataGrid.MultiSelect = false;
             this.dataGrid.Name = "dataGrid";
             this.dataGrid.ReadOnly = true;
-            this.dataGrid.Size = new System.Drawing.Size(778, 369);
+            this.dataGrid.Size = new System.Drawing.Size(930, 369);
             this.dataGrid.TabIndex = 6;
             // 
             // fullName
@@ -400,12 +379,45 @@
             this.c6.Name = "c6";
             this.c6.ReadOnly = true;
             // 
+            // c7
+            // 
+            this.c7.HeaderText = "Check-in 7";
+            this.c7.Name = "c7";
+            this.c7.ReadOnly = true;
+            // 
+            // c8
+            // 
+            this.c8.HeaderText = "Check-in 8";
+            this.c8.Name = "c8";
+            this.c8.ReadOnly = true;
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.BackColor = System.Drawing.Color.White;
+            this.label2.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.label2.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.label2.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.label2.Font = new System.Drawing.Font("Segoe UI", 11.25F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Bold | System.Drawing.FontStyle.Underline))), System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label2.ForeColor = System.Drawing.SystemColors.Highlight;
+            this.label2.Location = new System.Drawing.Point(3, 0);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(930, 40);
+            this.label2.TabIndex = 2;
+            this.label2.Text = "Live Data";
+            this.label2.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // notifyIcon1
+            // 
+            this.notifyIcon1.Text = "notifyIcon1";
+            this.notifyIcon1.Visible = true;
+            // 
             // MainWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.White;
-            this.ClientSize = new System.Drawing.Size(784, 561);
+            this.ClientSize = new System.Drawing.Size(936, 561);
             this.Controls.Add(this.tableLayoutPanel2);
             this.Controls.Add(this.tableLayoutPanel1);
             this.Controls.Add(this.statusStrip1);
@@ -443,7 +455,7 @@
         private System.Windows.Forms.ToolStripMenuItem exitToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem manageToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem addANewLoneWorkerToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem deleteAUserToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem editAUser;
         private System.Windows.Forms.ToolStripMenuItem deleteAUserToolStripMenuItem1;
         private System.Windows.Forms.ToolStripMenuItem deleteAUserToolStripMenuItem2;
         private System.Windows.Forms.ToolStripMenuItem reportToolStripMenuItem;
@@ -458,9 +470,7 @@
         private System.Windows.Forms.PictureBox logo;
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel2;
         private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.ToolStripProgressBar progBar;
         private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel2;
-        private System.ComponentModel.BackgroundWorker backgroundWorker;
         private System.Windows.Forms.DataGridView dataGrid;
         private System.Windows.Forms.DataGridViewTextBoxColumn fullName;
         private System.Windows.Forms.DataGridViewTextBoxColumn rskLevel;
@@ -470,5 +480,8 @@
         private System.Windows.Forms.DataGridViewTextBoxColumn c4;
         private System.Windows.Forms.DataGridViewTextBoxColumn c5;
         private System.Windows.Forms.DataGridViewTextBoxColumn c6;
+        private System.Windows.Forms.DataGridViewTextBoxColumn c7;
+        private System.Windows.Forms.DataGridViewTextBoxColumn c8;
+        private System.Windows.Forms.NotifyIcon notifyIcon1;
     }
 }

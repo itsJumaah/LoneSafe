@@ -17,19 +17,22 @@ namespace LoneSafe
 
         private User user;
         private Connection conn;
+        public Server server = new Server("http://202.89.41.210");
+        
 
-        public static string URL = "http://202.89.41.210";
-
-
+       
         private void loginButton_Click(object sender, EventArgs e)
         {
-            conn = new Connection(URL, userInput.Text, passInput.Text);
+            
+            conn = new Connection(server.GetURL, userInput.Text, passInput.Text);
 
-            if (conn.Success)
+            user = conn.User;
+
+            if (user.Success)
             {
-                user = conn.User;
+                //user = conn.User;
 
-                if(user.IsAdmin)
+                if(user.Manager)
                 {
                     MainWindow main = new MainWindow(user, this);
                     main.Show();
@@ -54,8 +57,8 @@ namespace LoneSafe
                     MessageBoxIcon.Error);
             }
 
-
-        }
+    
+        } 
 
     }
 }
