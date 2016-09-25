@@ -1,0 +1,35 @@
+body {
+	text-align: center;
+	background-color: rgba(0,120,255,0.5);
+	
+}
+
+img {
+	width: 250;
+	height: 320;
+}
+
+h1 {
+	color: rgba(0,0,150, 1);
+}
+
+p {
+
+	color: rgba(0,70,255, 1);
+	font-size: 9;
+	font-family: tahoma;
+}
+
+a:visited, a:link, a:active {
+
+	text-decoration: none;
+	color: rgba(0,70,255,1);
+
+}
+
+a:hover {
+
+	text-decoration: none;
+	color: rgba(0,70,255,0.4);
+
+}

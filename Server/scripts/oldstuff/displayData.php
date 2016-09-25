@@ -1,4 +1,5 @@
 <?php
+
 $servername = "localhost";
 $username = "db_user";
 $password = "dbpass";
@@ -11,16 +12,17 @@ if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 } 
 
-$sql = "SELECT user_id, name, age FROM names";
+$sql = "SELECT user_id, name, age FROM names WHERE isAdmin = 0";
 $result = $conn->query($sql);
 
 if ($result->num_rows > 0) {
     // output data of each row
     while($row = $result->fetch_assoc()) {
-        echo "ID: " . $row["user_id"]. " - Name: " . $row["name"]. " Age: " . $row["age"]. "<br>";
+        echo $row["user_id"]. "!" . $row["name"]. "!" . $row["age"]. "<br>";
     }
 } else {
     echo "0 results";
 }
 $conn->close();
+
 ?>
