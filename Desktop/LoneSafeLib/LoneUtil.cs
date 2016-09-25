@@ -18,6 +18,8 @@ namespace LoneSafeLib
             return hash.ToString();
         }
 
+        public static string SECRET_KEY = "(G1)MEGA#X!A1**"; //secret key
+
         
     }
 }

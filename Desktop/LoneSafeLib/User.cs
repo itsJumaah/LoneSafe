@@ -81,7 +81,8 @@ namespace LoneSafeLib
                            "&rego=" + rego +
                            "&mobile=" + mnum +
                            "&phone=" + hnum +
-                           "&manager=" + manager;
+                           "&manager=" + manager
+                           + "&ABEX=" + LoneUtil.sha256(LoneUtil.SECRET_KEY);
             
 
             WebClient server = new WebClient();
@@ -103,7 +104,8 @@ namespace LoneSafeLib
                            "&email=" + email +
                            "&rego=" + rego +
                            "&mobile=" + mnum +
-                           "&phone=" + hnum;
+                           "&phone=" + hnum
+                           + "&ABEX=" + LoneUtil.sha256(LoneUtil.SECRET_KEY);
 
 
             WebClient server = new WebClient();
@@ -120,7 +122,7 @@ namespace LoneSafeLib
 
             string m_URL = URL + "/scripts/delUser.php";
             
-            string param = "username=" + username;
+            string param = "username=" + username + "&ABEX=" + LoneUtil.sha256(LoneUtil.SECRET_KEY);
 
             WebClient server = new WebClient();
             server.Headers[HttpRequestHeader.ContentType] = "application/x-www-form-urlencoded";
@@ -136,7 +138,7 @@ namespace LoneSafeLib
             User _user = new User();
 
             string m_URL = URL + "/scripts/delPrepare.php";
-            string param = "username=" + username;
+            string param = "username=" + username + "&ABEX=" + LoneUtil.sha256(LoneUtil.SECRET_KEY);
 
             WebClient server = new WebClient();
             server.Headers[HttpRequestHeader.ContentType] = "application/x-www-form-urlencoded";

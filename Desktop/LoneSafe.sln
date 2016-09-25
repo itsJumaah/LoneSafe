@@ -4,6 +4,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LoneSafeGUI", "login\LoneSafeGUI.csproj", "{6E619455-D891-4AD4-9B8D-C411B590E6EB}"
+	ProjectSection(ProjectDependencies) = postProject
+		{CC0B770B-02CD-4330-A294-ECE0F4EE5ACB} = {CC0B770B-02CD-4330-A294-ECE0F4EE5ACB}
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LoneSafeLib", "LoneSafeLib\LoneSafeLib.csproj", "{CC0B770B-02CD-4330-A294-ECE0F4EE5ACB}"
 EndProject

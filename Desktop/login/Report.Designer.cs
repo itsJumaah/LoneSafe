@@ -234,72 +234,84 @@
             // 
             // date
             // 
+            this.date.FillWeight = 81.40286F;
             this.date.HeaderText = "Date";
             this.date.Name = "date";
             this.date.ReadOnly = true;
             // 
             // n
             // 
+            this.n.FillWeight = 150F;
             this.n.HeaderText = "Name";
             this.n.Name = "n";
             this.n.ReadOnly = true;
             // 
             // duration
             // 
+            this.duration.FillWeight = 50F;
             this.duration.HeaderText = "Duration";
             this.duration.Name = "duration";
             this.duration.ReadOnly = true;
             // 
             // risklevel
             // 
+            this.risklevel.FillWeight = 50F;
             this.risklevel.HeaderText = "Risk Level";
             this.risklevel.Name = "risklevel";
             this.risklevel.ReadOnly = true;
             // 
             // c1
             // 
+            this.c1.FillWeight = 81.40286F;
             this.c1.HeaderText = "Check-in 1";
             this.c1.Name = "c1";
             this.c1.ReadOnly = true;
             // 
             // c2
             // 
+            this.c2.FillWeight = 81.40286F;
             this.c2.HeaderText = "Check-in 2";
             this.c2.Name = "c2";
             this.c2.ReadOnly = true;
             // 
             // c3
             // 
+            this.c3.FillWeight = 81.40286F;
             this.c3.HeaderText = "Check-in 3";
             this.c3.Name = "c3";
             this.c3.ReadOnly = true;
             // 
             // c4
             // 
+            this.c4.FillWeight = 81.40286F;
             this.c4.HeaderText = "Check-in 4";
             this.c4.Name = "c4";
             this.c4.ReadOnly = true;
             // 
             // c5
             // 
+            this.c5.FillWeight = 81.40286F;
             this.c5.HeaderText = "Check-in 5";
             this.c5.Name = "c5";
             this.c5.ReadOnly = true;
             // 
             // c6
             // 
+            this.c6.FillWeight = 81.40286F;
             this.c6.HeaderText = "Check-in 6";
             this.c6.Name = "c6";
             this.c6.ReadOnly = true;
             // 
             // c7
             // 
+            this.c7.FillWeight = 81.40286F;
             this.c7.HeaderText = "Check-in 7";
             this.c7.Name = "c7";
             this.c7.ReadOnly = true;
             // 
             // c8
             // 
+            this.c8.FillWeight = 81.40286F;
             this.c8.HeaderText = "Check-in 8";
             this.c8.Name = "c8";
             this.c8.ReadOnly = true;
@@ -342,6 +354,7 @@
         private System.Windows.Forms.Button btnGen;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.ComboBox select;
+        private System.Windows.Forms.Button btnSave;
         private System.Windows.Forms.DataGridViewTextBoxColumn date;
         private System.Windows.Forms.DataGridViewTextBoxColumn n;
         private System.Windows.Forms.DataGridViewTextBoxColumn duration;
@@ -354,6 +367,5 @@
         private System.Windows.Forms.DataGridViewTextBoxColumn c6;
         private System.Windows.Forms.DataGridViewTextBoxColumn c7;
         private System.Windows.Forms.DataGridViewTextBoxColumn c8;
-        private System.Windows.Forms.Button btnSave;
     }
 }

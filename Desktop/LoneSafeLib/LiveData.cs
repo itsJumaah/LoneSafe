@@ -17,8 +17,6 @@ namespace LoneSafeLib
         public LiveData(string url)
         {
             this.url = url;
-
-           
         }
 
        
@@ -38,11 +36,13 @@ namespace LoneSafeLib
             
             
             string m_URL = URL + "/scripts/liveData.php";
-            
+
+            string param = "ABEX=" + LoneUtil.sha256(LoneUtil.SECRET_KEY);
+
             WebClient server = new WebClient();
             server.Headers[HttpRequestHeader.ContentType] = "application/x-www-form-urlencoded";
-            //string HtmlResult = server.UploadString(m_URL, null);
-            string htmlResult = server.DownloadString(m_URL);
+            string htmlResult = server.UploadString(m_URL, param);
+            //string htmlResult = server.DownloadString(m_URL);
             
             liveUsersList = JsonConvert.DeserializeObject<List<LiveUserJson>>(htmlResult);
             

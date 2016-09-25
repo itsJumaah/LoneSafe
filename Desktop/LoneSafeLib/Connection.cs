@@ -18,7 +18,7 @@ namespace LoneSafeLib
             string p = LoneUtil.sha256(password);
 
             string m_URL =  URL + "/scripts/login.php";
-            string param = "username=" + username + "&password=" + p;
+            string param = "username=" + username + "&password=" + p + "&ABEX=" + LoneUtil.sha256(LoneUtil.SECRET_KEY);
 
             WebClient server = new WebClient();
             server.Headers[HttpRequestHeader.ContentType] = "application/x-www-form-urlencoded";
@@ -42,7 +42,7 @@ namespace LoneSafeLib
             User _user = new User();
 
             string m_URL = URL + "/scripts/delPrepare.php";
-            string param = "username=" + username;
+            string param = "username=" + username + "&ABEX=" + LoneUtil.sha256(LoneUtil.SECRET_KEY);
 
             WebClient server = new WebClient();
             server.Headers[HttpRequestHeader.ContentType] = "application/x-www-form-urlencoded";
@@ -53,6 +53,35 @@ namespace LoneSafeLib
             return _user;
         }
 
+        //change the status of sos back to 0 after being notified
+        public static void noMoreSOS(string URL, string username)
+        {
+          
+            string m_URL = URL + "/scripts/sosDone.php";
+            string param = "username=" + username + "&ABEX=" + LoneUtil.sha256(LoneUtil.SECRET_KEY);
+
+            WebClient server = new WebClient();
+            server.Headers[HttpRequestHeader.ContentType] = "application/x-www-form-urlencoded";
+            string HtmlResult = server.UploadString(m_URL, param);
+            
+        }
+
+
+        //alter escalation
+        public static void notified(string URL, string username, string checkin, string esc)
+        {
+
+            string m_URL = URL + "/scripts/escDone.php";
+            string param = "username=" + username + "&checkin=" + checkin + "&esc=" + esc + "&ABEX=" + LoneUtil.sha256(LoneUtil.SECRET_KEY);
+
+            WebClient server = new WebClient();
+            server.Headers[HttpRequestHeader.ContentType] = "application/x-www-form-urlencoded";
+            string HtmlResult = server.UploadString(m_URL, param);
+
+            Console.WriteLine(HtmlResult);
+
+        }
+
 
         public static List<DisplayUserJson> allUsersList(string URL)
         {
@@ -61,14 +90,15 @@ namespace LoneSafeLib
 
             string m_URL = URL + "/scripts/displayData.php";
 
+            string param = "ABEX=" + LoneUtil.sha256(LoneUtil.SECRET_KEY);
 
             WebClient server = new WebClient();
             server.Headers[HttpRequestHeader.ContentType] = "application/x-www-form-urlencoded";
             //string HtmlResult = server.UploadString(m_URL, null);
-            string htmlResult = server.DownloadString(m_URL);
-            
+           // string htmlResult = server.DownloadString(m_URL);
+            string HtmlResult = server.UploadString(m_URL, param);
 
-            usersList = JsonConvert.DeserializeObject<List<DisplayUserJson>>(htmlResult);
+            usersList = JsonConvert.DeserializeObject<List<DisplayUserJson>>(HtmlResult);
             
 
             return usersList;

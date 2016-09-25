@@ -58,7 +58,21 @@ namespace LoneSafe
             }
 
     
-        } 
+        }
 
+        private void exit_MouseHover(object sender, EventArgs e)
+        {
+            exit.ForeColor = System.Drawing.Color.Red;
+        }
+
+        private void exit_MouseLeave(object sender, EventArgs e)
+        {
+            exit.ForeColor = System.Drawing.Color.White;
+        }
+
+        private void exit_Click(object sender, EventArgs e)
+        {
+            this.Close();
+        }
     }
 }

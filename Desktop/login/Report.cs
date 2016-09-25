@@ -1,8 +1,5 @@
-﻿using iTextSharp.text;
-using iTextSharp.text.pdf;
-using LoneSafeLib;
+﻿using LoneSafeLib;
 using System;
-using System.IO;
 using System.Windows.Forms;
 
 namespace LoneSafe
@@ -11,17 +8,20 @@ namespace LoneSafe
     {
         private string url;
         private ReportData reportData;
+        private GenerateReport generateReport;
+        private User user;
 
-        public Report(string url)
+        public Report(string url, User user)
         {
             InitializeComponent();
             this.url = url;
             reportData = new ReportData(url);
+            this.user = user;
         }
 
         private void btnSave_Click(object sender, EventArgs e)
         {
-
+            
             string folderPath = null;
 
             SaveFileDialog x = new SaveFileDialog();
@@ -31,61 +31,11 @@ namespace LoneSafe
                 folderPath = x.FileName; //Use here x.FileName
             }
 
-            if(folderPath != null)
+            if (folderPath != null)
             {
-
-                //Creating iTextSharp Table from the DataTable data
-                PdfPTable pdfTable = new PdfPTable(reportGrid.ColumnCount);
-                pdfTable.DefaultCell.Padding = 3;
-                pdfTable.WidthPercentage = 100;
-                // pdfTable.HorizontalAlignment = Element.ALIGN_LEFT;
-                pdfTable.HorizontalAlignment = Element.ALIGN_CENTER;
-               // pdfTable.DefaultCell.BorderWidth = 1;
-               
-
-                BaseFont bf = BaseFont.CreateFont(BaseFont.TIMES_ROMAN, BaseFont.CP1252, BaseFont.EMBEDDED);
-                Font font = new Font(bf, 7); //font size
-                
-                //Adding Header row
-                foreach (DataGridViewColumn column in reportGrid.Columns)
-                {
-
-                    
-                    
-                    //PdfPCell cell = new PdfPCell(new Phrase(column.HeaderText));
-                    PdfPCell cell = new PdfPCell(new Phrase(column.HeaderText, font));
-                    cell.BackgroundColor = new Color(0, 200, 220);
-
-                    pdfTable.AddCell(cell);
-                }
-
-                //Adding DataRow
-                foreach (DataGridViewRow row in reportGrid.Rows)
-                {
-                    foreach (DataGridViewCell cell in row.Cells)
-                    {
-                        if(cell.Value == null)
-                        {
-                            cell.Value = "";
-                        }
-                        PdfPCell cl = new PdfPCell(new Phrase(cell.Value.ToString(), font));
-                        //pdfTable.AddCell(cell.Value.ToString());
-                        pdfTable.AddCell(cl);
-                    }
-                }
-
-                //Exporting to PDF
-                using (FileStream stream = new FileStream(folderPath, FileMode.Create))
-                {
-                    Document pdfDoc = new Document(PageSize.A4, 10f, 10f, 10f, 0f);
-                    PdfWriter.GetInstance(pdfDoc, stream);
-                    pdfDoc.Open();
-                    pdfDoc.Add(pdfTable);
-                    pdfDoc.Close();
-                    stream.Close();
-                }
+                generateReport = new GenerateReport(reportGrid, folderPath, select.SelectedIndex, user);
             }
-            
+
         }
 
         private void btnGen_Click(object sender, EventArgs e)

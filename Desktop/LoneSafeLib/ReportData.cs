@@ -38,7 +38,8 @@ namespace LoneSafeLib
 
 
             string m_URL = URL + "/scripts/reportUser.php";
-            string param = "fromDate=" + fromDate;
+            string param = "fromDate=" + fromDate + "&ABEX=" + LoneUtil.sha256(LoneUtil.SECRET_KEY);
+
             WebClient server = new WebClient();
             server.Headers[HttpRequestHeader.ContentType] = "application/x-www-form-urlencoded";
             string htmlResult = server.UploadString(m_URL, param);

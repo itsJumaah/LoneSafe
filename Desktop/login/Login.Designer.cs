@@ -33,6 +33,7 @@
             this.userInput = new System.Windows.Forms.TextBox();
             this.passInput = new System.Windows.Forms.TextBox();
             this.loginButton = new System.Windows.Forms.Button();
+            this.exit = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.SuspendLayout();
             // 
@@ -79,11 +80,28 @@
             this.loginButton.UseVisualStyleBackColor = false;
             this.loginButton.Click += new System.EventHandler(this.loginButton_Click);
             // 
+            // exit
+            // 
+            this.exit.AutoSize = true;
+            this.exit.BackColor = System.Drawing.Color.DodgerBlue;
+            this.exit.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.exit.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.exit.ForeColor = System.Drawing.Color.White;
+            this.exit.Location = new System.Drawing.Point(12, 9);
+            this.exit.Name = "exit";
+            this.exit.Size = new System.Drawing.Size(14, 13);
+            this.exit.TabIndex = 4;
+            this.exit.Text = "X";
+            this.exit.Click += new System.EventHandler(this.exit_Click);
+            this.exit.MouseLeave += new System.EventHandler(this.exit_MouseLeave);
+            this.exit.MouseHover += new System.EventHandler(this.exit_MouseHover);
+            // 
             // Login
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(347, 543);
+            this.Controls.Add(this.exit);
             this.Controls.Add(this.loginButton);
             this.Controls.Add(this.passInput);
             this.Controls.Add(this.userInput);
@@ -105,6 +123,7 @@
         private System.Windows.Forms.TextBox userInput;
         private System.Windows.Forms.TextBox passInput;
         private System.Windows.Forms.Button loginButton;
+        private System.Windows.Forms.Label exit;
     }
 }
 
