@@ -24,9 +24,16 @@ public class Launcher extends AppCompatActivity {
                String Password = sharedPreference.getValue(context,"Pass");
 
                if(Username != null && Password != null){
-                   Intent intent = new Intent(Launcher.this,Settings.class);
-                   startActivity(intent);
-                   finish();
+                   if(ForegroundService.IS_SERVICE_RUNNING){
+                       Intent intent = new Intent(Launcher.this, Home.class);
+                       startActivity(intent);
+                       finish();
+                   } else {
+                       Intent intent = new Intent(Launcher.this,Settings.class);
+                       startActivity(intent);
+                       finish();
+                   }
+
                } else {
                    Intent intent = new Intent(Launcher.this, Login.class);
                    startActivity(intent);

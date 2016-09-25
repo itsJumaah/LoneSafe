@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -19,10 +20,18 @@ import com.google.firebase.iid.FirebaseInstanceId;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.io.IOException;
+import java.math.BigInteger;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+
 public class Login extends AppCompatActivity {
 
     private SharedPreference sharedPreference;
     Activity context = this;
+
+    String password;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -127,14 +136,49 @@ public class Login extends AppCompatActivity {
         final EditText etPassword = (EditText) findViewById(R.id.etPassword);
 
         final String username = etUser.getText().toString();
-        final String password = etPassword.getText().toString();
+      //  final String password = etPassword.getText().toString();
 
-        //token for Firebase Push notification
 
-       // FirebaseInstanceIdService FBID = new FirebaseInstanceIDService();
-       // FBID.onTokenRefresh();
+       // int hashCode = etPassword.hashCode();
+       // System.out.println("input hash code = " + hashCode);
 
-       // FirebaseMessaging.getInstance().subscribeToTopic("test");
+
+        try{
+            final MessageDigest md = MessageDigest.getInstance("SHA-256");
+            String text = etPassword.getText().toString();
+            System.out.println("etPassword : " + text);
+
+
+            md.update(text.getBytes("UTF-8")); // Change this to "UTF-16" if needed
+            byte[] digest = md.digest();
+
+            password = String.format("%0" + (digest.length * 2) + 'x', new BigInteger(1, digest));
+
+            /*
+            StringBuilder hexString = new StringBuilder();
+            for (int i=0;i<digest.length;i++) {
+                hexString.append(Integer.toHexString(0xFF & digest[i]));
+            }
+            */
+
+
+             // password = String.valueOf(digest);
+           // password = hexString.toString();
+
+            System.out.println("--------> ## HASH PASS:" + password);
+        } catch (NoSuchAlgorithmException x) {
+            System.err.println("SHA-256 is not a valid message digest algorithm");
+        } catch (IOException e){
+            System.err.println("unsupported Encoding Exception");
+
+        }
+
+
+
+
+
+
+        //TODO Remove Firebase
         String token = FirebaseInstanceId.getInstance().getToken();
         //Get user data from DB
 
@@ -144,14 +188,16 @@ public class Login extends AppCompatActivity {
         Response.Listener<String> responseListener = new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
-               // loadPreferences();
                 try {
 
 
                     JSONObject jsonResponse = new JSONObject(response);
                     boolean success = jsonResponse.getBoolean("success");
+                   // String password1 = jsonResponse.getString("password");
+
 
                     if (success) {
+                        Log.i("JSON: ", "Response true");
 
                         //  savePreferences();
                         String name = jsonResponse.getString("firstname");
@@ -170,6 +216,8 @@ public class Login extends AppCompatActivity {
                         finish();
 
                     } else {
+
+                        Log.i("JSON: ", "Response false");
                         AlertDialog.Builder builder = new AlertDialog.Builder(Login.this);
                         builder.setMessage("Login Failed")
                                 .setNegativeButton("Retry", null)
@@ -182,7 +230,9 @@ public class Login extends AppCompatActivity {
             }
         };
 
-        LoginRequest loginRequest = new LoginRequest(username, password, token, responseListener);
+        System.out.println("--------> ## HASH PASS BEFORE REquest: " + password);
+
+        LoginRequest loginRequest = new LoginRequest(username, password, responseListener);
         RequestQueue queue = Volley.newRequestQueue(Login.this);
         queue.add(loginRequest);
 

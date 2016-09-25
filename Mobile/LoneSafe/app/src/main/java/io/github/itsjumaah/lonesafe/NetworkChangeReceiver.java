@@ -81,7 +81,6 @@ public class NetworkChangeReceiver extends BroadcastReceiver {
             snackbar.show();
         }
     }
-    
     private static void hideSnackbar(){
         if(snackbar !=null && snackbar.isShown()){
             snackbar.dismiss();

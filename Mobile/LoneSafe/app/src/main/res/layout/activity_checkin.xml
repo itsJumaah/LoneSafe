@@ -8,13 +8,34 @@
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
     android:background="@color/onlinegreen"
-    tools:context="io.github.itsjumaah.lonesafe.Checkin">
+    tools:context=".CheckinNotification">
 
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="CHECK IN"
-        android:id="@+id/Btncheckin"
+        android:id="@+id/btnCheckin"
         android:layout_centerVertical="true"
         android:layout_centerHorizontal="true" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="Are you Safe?"
+        android:id="@+id/tvTitle"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="58dp"
+        android:textColor="@color/White" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="Please Checkin"
+        android:id="@+id/textView3"
+        android:layout_below="@+id/tvTitle"
+        android:layout_centerHorizontal="true"
+        android:textColor="@color/White" />
 </RelativeLayout>

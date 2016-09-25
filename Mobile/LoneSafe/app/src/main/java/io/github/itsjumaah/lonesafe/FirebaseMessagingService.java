@@ -30,7 +30,7 @@ public class FirebaseMessagingService extends com.google.firebase.messaging.Fire
 
      //   NotificationCompat.Builder builder = new NotificationCompat.Builder(this);
 
-        Intent notifyIntent = new Intent(this,Checkin.class);
+        Intent notifyIntent = new Intent(this,CheckinNotification.class);
         notifyIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);  //THIS MIGHT BE THE PROBLEM <--------------
         notifyIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
        // notifyIntent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);//single top to avoid...

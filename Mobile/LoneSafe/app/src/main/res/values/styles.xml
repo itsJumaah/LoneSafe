@@ -13,12 +13,10 @@
 
     </style>
 
-    <style name="Theme.UserDialog" parent="Theme.AppCompat.NoActionBar">
-        <item name="android:windowFrame">@null</item>
-        <item name="android:windowIsFloating">true</item>
-        <item name="android:windowIsTranslucent">true</item>
-        <item name="android:background">@android:color/holo_red_light</item>
-        <item name="android:windowBackground">@android:color/transparent</item>
+    <style name="UserDialog" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="colorPrimary">@color/blue2Light</item>
+        <item name="colorPrimaryDark">@color/blue2dark</item>
+        <item name="colorAccent">@color/lonesafeBackground</item>
     </style>
 
     <style name="SOSAppTheme" parent="Theme.AppCompat.NoActionBar">

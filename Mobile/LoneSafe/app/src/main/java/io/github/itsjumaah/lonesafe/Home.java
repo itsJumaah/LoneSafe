@@ -1,38 +1,191 @@
 package io.github.itsjumaah.lonesafe;
 
 import android.app.Activity;
+import android.app.NotificationManager;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
-import android.os.CountDownTimer;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
+
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.toolbox.Volley;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.concurrent.TimeUnit;
 
 public class Home extends AppCompatActivity {
+
 
     private SharedPreference sharedPreference;
     Activity context = this;
 
     ProgressBar progressBar;
-    CountDownTimer countDownTimer;
-    int i = 0;
-    long milli;
+    int max; // for progress bar
+    int RL;
 
+    public AlertDialog jobfinished;
+
+
+
+    private BroadcastReceiver br = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            updateGUI(intent); //
+        }
+    };
+
+
+    //Broadcast receiver listens for service finish...
+    private BroadcastReceiver serviceLife = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+
+            if(!ForegroundService.IS_SERVICE_RUNNING){
+                onServiceFinish();
+            }
+        }
+    };
+
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        registerReceiver(br, new IntentFilter(ForegroundService.COUNTDOWN_BR));
+        registerReceiver(serviceLife, new IntentFilter(ForegroundService.SERVICE_BR));
+
+        /*
+        if(!ForegroundService.IS_SERVICE_RUNNING){
+            onServiceFinish();
+        }
+        */
+        // Log.i(TAG, "Registered broacast receiver");
+        System.out.println("Registered broacast receiver");
+
+
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        unregisterReceiver(br);
+        unregisterReceiver(serviceLife);
+        System.out.println("Unregistered broacast receiver");
+        //Log.i(TAG, "Unregistered broacast receiver");
+    }
+
+    @Override
+    public void onStop() {
+        try {
+            unregisterReceiver(br);
+            unregisterReceiver(serviceLife);
+        } catch (Exception e) {
+            // Receiver was probably already stopped in onPause()
+        }
+        super.onStop();
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+
+        //jobfinished.dismiss();
+       // jobfinished.cancel();
+
+    }
+
+    public AlertDialog onServiceFinish (){
+
+        updateOnJobtoZero();
+
+        unregisterReceiver(serviceLife);
+
+        return  jobfinished = new AlertDialog.Builder(this)
+                .setTitle("Job Finished")
+               // .setMessage(mymessage)
+                .setPositiveButton("Start a new job",
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int whichButton) {
+                                String ns = Context.NOTIFICATION_SERVICE;
+                                NotificationManager nMgr = (NotificationManager) getApplicationContext().getSystemService(ns);
+                                nMgr.cancel(105);
+
+                                Intent intent = new Intent(Home.this, Settings.class);
+                                Home.this.startActivity(intent);
+                                finish();
+                            }
+                        })
+                .setNegativeButton("Exit LoneSafe",
+                        new DialogInterface.OnClickListener(){
+                            public void onClick(DialogInterface dialog, int whichButton) {
+                                String ns = Context.NOTIFICATION_SERVICE;
+                                NotificationManager nMgr = (NotificationManager) getApplicationContext().getSystemService(ns);
+                                nMgr.cancel(105);
+
+                                // dialog.dismiss();
+                                //finish();
+                                System.exit(0);
+                            }
+
+                        })
+                .show();
+
+        //--------------
+    }
+
+
+
+    private void updateGUI(Intent intent) {
+        if (intent.getExtras() != null) {
+
+            int progress = intent.getIntExtra("countdown", 0);
+            long minutesRemaining = intent.getLongExtra("remaining", 0);
+            int max = intent.getIntExtra("max", 900);
+            boolean displayCheckin = intent.getBooleanExtra("DisplayCheckin", false);
+            //minutesRemaining = TimeUnit.MILLISECONDS.toMinutes(minutesRemaining);
+            // Log.i(TAG, "Countdown seconds remaining: " +  millisUntilFinished / 1000);
+            minutesRemaining = minutesRemaining + 1; // adds one minute to the display value.
+            System.out.println("|||PROGRESS: " +  progress);
+            System.out.println("|||MINUTES: " +  minutesRemaining);
+            System.out.println("|||MAX: " +  max);
+
+
+
+            progressBar = (ProgressBar) findViewById(R.id.progressBar);
+            progressBar.setMax(max);
+
+            final TextView tvTimer = (TextView) findViewById(R.id.tvTimer);
+            tvTimer.setText(" " + minutesRemaining + " Minutes");
+            progressBar.setProgress(progressBar.getMax()-progress); //max set as default in xml atm
+            //progressBar.setProgress(max - progress); //max set as default in xml atm
+
+
+            System.out.println("|||BOOLCHECK: " +  displayCheckin);
+
+            /*
+            if(displayCheckin){
+                if (ForegroundService.IS_SERVICE_RUNNING) {
+                    Intent checkinIntent = new Intent(this, CheckinNotification.class);
+                    Home.this.startActivity(checkinIntent);
+                }
+            }
+            */
+        }
+    }
 
 
     @Override
@@ -47,6 +200,7 @@ public class Home extends AppCompatActivity {
         actionBar.setIcon(R.mipmap.ic_launcher);
         actionBar.setTitle(" LoneSafe");
 
+      //  registerReceiver(serviceLife, new IntentFilter(ForegroundService.SERVICE_BR));
 
         sharedPreference = new SharedPreference();
 
@@ -56,7 +210,7 @@ public class Home extends AppCompatActivity {
         tvWelcome.setText(message);
 
         String Value = sharedPreference.getValue(context,"SaveRiskLevel");
-
+        RL = Integer.parseInt(Value);
         final TextView tvRiskLvl = (TextView) findViewById(R.id.tvRiskLvl);
         tvRiskLvl.setText(Value);
 
@@ -84,31 +238,18 @@ public class Home extends AppCompatActivity {
 
         int Hours = Integer.parseInt(getHour);
         System.out.println("--------->| #HoursSP = " + Hours);
-        milli = TimeUnit.HOURS.toMillis(Hours);
+       // milli = TimeUnit.HOURS.toMillis(Hours);
 
 
         //--------------------------------------|
-
-
-        //TODO Delete from Shared Preferences
-        /*
-        //Retrieve a value from SharedPreference
-        String startTime = sharedPreference.getValue(context,"TimeStart");
-        final TextView tvStTime = (TextView) findViewById(R.id.tvStTime);
-        tvStTime.setText(startTime);
-
-        String FinishTime = sharedPreference.getValue(context,"TimeEnd");
-        final TextView tvFnTime = (TextView) findViewById(R.id.tvFnTime);
-        tvFnTime.setText(FinishTime);
-        */
 
         final Button btnStop = (Button) findViewById(R.id.btnStop);
         assert btnStop != null;
         btnStop.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                countDownTimer.cancel();
-                countDownTimer.onFinish();
+              //  countDownTimer.cancel();
+             //   countDownTimer.onFinish();
 
                 //Notify if there is no network connection
                 if(!NetworkChangeReceiver.isNetworkStatusAvialable(context)){
@@ -125,30 +266,43 @@ public class Home extends AppCompatActivity {
                             .create();
                     alert.show();
                 } else {
-                    final AlertDialog.Builder logoutcheck = new AlertDialog.Builder(Home.this);
-                    logoutcheck.setMessage("Are you sure you want to stop the job?");
-                    logoutcheck.setPositiveButton("Yes, Stop", new DialogInterface.OnClickListener() {
+                    final AlertDialog.Builder stopjob = new AlertDialog.Builder(Home.this);
+                    stopjob.setMessage("Are you sure you want to stop the job?");
+                    stopjob.setPositiveButton("Yes, Stop", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
+
+                            if(ForegroundService.EscalationCounter > 0){
+                                ForegroundService.counter++;
+                                setcheckinOnCancel();
+                            }
+                            else{
+                                setcheckinOnCancel();
+                            }
+
                             //STOP FOREGROUND SERVICE
                             Intent service = new Intent(Home.this, ForegroundService.class);
                             if (ForegroundService.IS_SERVICE_RUNNING) {
                                 service.setAction(ForegroundService.Constants.ACTION.STOPFOREGROUND_ACTION);
                                 ForegroundService.IS_SERVICE_RUNNING = false;
+
+                                ForegroundService.counter = 1;
+                                startService(service);
                             }
-                            startService(service);
+
+                            updateOnJobtoZero();
 
                             Intent intent = new Intent(Home.this, Settings.class);
                             Home.this.startActivity(intent);
                         }
                     });
-                    logoutcheck.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                    stopjob.setNegativeButton("No", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                             dialog.dismiss();
                         }
                     });
-                    logoutcheck.setTitle("Stop Job?").create().show();
+                    stopjob.setTitle("Stop Job?").create().show();
                 }
             }
         });
@@ -158,46 +312,117 @@ public class Home extends AppCompatActivity {
         btnSOS.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-               // Intent GotoCustomActivityDialog = new Intent(Home.this, SosActivity.class);
-               // startActivity(GotoCustomActivityDialog);
                 Intent sosintent = new Intent(Home.this, SosActivity.class);
                 Home.this.startActivity(sosintent);
 
             }
         });
 
-
-//------------------ Countdown Timer and Progress bar -- temp only until server is working ---
-
-        progressBar = (ProgressBar) findViewById(R.id.progressBar);
-        progressBar.setProgress(i);
-
-
-       final TextView tvTimer = (TextView) findViewById(R.id.tvTimer);
-
-
-        countDownTimer = new CountDownTimer(milli, 60000) {
-            @Override
-            public void onTick(long millisUntilFinished) {
-
-                Long minleft = TimeUnit.MILLISECONDS.toMinutes(millisUntilFinished);
-                tvTimer.setText(" " + minleft + " minutes");
-                //tvTimer.setText("seconds remaining: " + millisUntilFinished / 1000);
-                Log.v("Log_tag", "Tick of Progress"+ i+ millisUntilFinished);
-                i++;
-                progressBar.setProgress(i);
-
-            }
-            @Override
-            public void onFinish() {
-                i++;
-                progressBar.setProgress(i);
-                Toast.makeText(Home.this,"Job Finished",Toast.LENGTH_LONG).show();
-            }
-        };
-        countDownTimer.start();
     }
 
+    //--------------------------------------------------------------------------------------------------
+    void setcheckinOnCancel(){
+        if(ForegroundService.counter == 1){
+            ((MyApplication) this.getApplication()).setCheckin1("Cancelled");
+        }
+        else if(ForegroundService.counter == 2 ){
+            ((MyApplication) this.getApplication()).setCheckin2("Cancelled");
+        }
+        else if(ForegroundService.counter == 3 ){
+            ((MyApplication) this.getApplication()).setCheckin3("Cancelled");
+        }
+        else if(ForegroundService.counter == 4 ){
+            ((MyApplication) this.getApplication()).setCheckin4("Cancelled");
+        }
+        else if(ForegroundService.counter == 5 ){
+            ((MyApplication) this.getApplication()).setCheckin5("Cancelled");
+        }
+        else if(ForegroundService.counter == 6 ){
+            ((MyApplication) this.getApplication()).setCheckin6("Cancelled");
+        }
+        else if(ForegroundService.counter == 7 ){
+            ((MyApplication) this.getApplication()).setCheckin7("Cancelled");
+        }
+        else if(ForegroundService.counter == 8 ){
+            ((MyApplication) this.getApplication()).setCheckin8("Cancelled");
+        }
+
+        //Save to db
+        // Response received from the server
+        Response.Listener<String> responseListener = new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                try {
+
+                    JSONObject jsonResponse = new JSONObject(response);
+                    boolean success = jsonResponse.getBoolean("success");
+
+                    if (success) {
+                        Log.i("JSON: ", "Response true");
+
+                    } else {
+                        Log.i("JSON: ", "Response false");
+
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        };
+
+        String job_num = sharedPreference.getValue(context,"UserID");
+        Log.i("JSON: ", "JOB NUM IS: " + job_num);
+
+        String checkin1 = ((MyApplication) this.getApplication()).getCheckin1();
+        String checkin2 = ((MyApplication) this.getApplication()).getCheckin2();
+        String checkin3 = ((MyApplication) this.getApplication()).getCheckin3();
+        String checkin4 = ((MyApplication) this.getApplication()).getCheckin4();
+        String checkin5 = ((MyApplication) this.getApplication()).getCheckin5();
+        String checkin6 = ((MyApplication) this.getApplication()).getCheckin6();
+        String checkin7 = ((MyApplication) this.getApplication()).getCheckin7();
+        String checkin8 = ((MyApplication) this.getApplication()).getCheckin8();
+
+        CheckinRequest checkinRequest = new CheckinRequest(job_num,checkin1, checkin2, checkin3, checkin4, checkin5,
+                checkin6, checkin7, checkin8, responseListener);
+        RequestQueue queue = Volley.newRequestQueue(Home.this);
+        queue.add(checkinRequest);
+
+    }
+
+    void updateOnJobtoZero(){
+
+        Response.Listener<String> responseListener = new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                try {
+
+                  //  Log.i("tagconvertstr", "["+response+"]");
+
+                    JSONObject jsonResponse = new JSONObject(response);
+                    boolean success = jsonResponse.getBoolean("success");
+
+                    if (success) {
+                        Log.i("JSON: ", "Response true");
+
+                    } else {
+
+                        Log.i("JSON: ", "Response false");
+
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        };
+
+        String username = sharedPreference.getValue(context,"User");
+        String onjob = "0";
+
+        UpdateOnjobRequest updateOnjobRequest = new UpdateOnjobRequest(username, onjob, responseListener);
+        RequestQueue queue = Volley.newRequestQueue(Home.this);
+        queue.add(updateOnjobRequest);
+
+    }
     @Override
     public void onBackPressed() {
         //DO Nothing!
@@ -222,50 +447,6 @@ public class Home extends AppCompatActivity {
         });
         sosAlert.setTitle("S.O.S").create().show();
 
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater inflater = getMenuInflater();
-
-        inflater.inflate(R.menu.activity_bar, menu);
-        return super.onCreateOptionsMenu(menu);
-    }
-
-    //TODO Remove logout option from Homepage?
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.action_logout:
-
-                final AlertDialog.Builder logoutcheck = new AlertDialog.Builder(this);
-                logoutcheck.setMessage("Are you sure you want to Logout?");
-                logoutcheck.setPositiveButton("Logout", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        sharedPreference.clearSharedPreference(context);
-                        Intent logoutIntent = new Intent(Home.this, Login.class);
-                        Home.this.startActivity(logoutIntent);
-                        finish();
-                    }
-                });
-                logoutcheck.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.dismiss();
-                    }
-                });
-                logoutcheck.setTitle("logout?").create().show();
-
-                return true;
-
-            default:
-                // If we got here, the user's action was not recognized.
-                // Invoke the superclass to handle it.
-                return super.onOptionsItemSelected(item);
-
-        }
     }
 
 

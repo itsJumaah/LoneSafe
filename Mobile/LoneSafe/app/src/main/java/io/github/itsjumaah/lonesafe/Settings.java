@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -16,9 +17,17 @@ import android.widget.NumberPicker;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.toolbox.Volley;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.concurrent.TimeUnit;
 
 public class Settings extends AppCompatActivity {
 
@@ -136,6 +145,7 @@ public class Settings extends AppCompatActivity {
         btnStart.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                final long interval = checkinInterval (Hours, RiskLevel);
                 getTime();
 
                 // Alert user if no network connection
@@ -172,21 +182,78 @@ public class Settings extends AppCompatActivity {
                 final AlertDialog.Builder confirm = new AlertDialog.Builder(Settings.this);
                 confirm.setMessage("RiskLevel: " + RiskLevel + "\n\nHours: " + Hours + "\n\n You will finish at: " + FinishTime);
                 confirm.setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
+
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        //START FOREGROUND SERVICE
-                        Intent service = new Intent(Settings.this, ForegroundService.class);
-                        if (!ForegroundService.IS_SERVICE_RUNNING) {
-                            service.setAction(ForegroundService.Constants.ACTION.STARTFOREGROUND_ACTION);
-                            ForegroundService.IS_SERVICE_RUNNING = true;
-                        }
-                        startService(service);
 
-                        Intent intent = new Intent(Settings.this, Home.class);
-                        Settings.this.startActivity(intent);
-                        finish();
+                        setCheckinnull();
+                        updateonJob();
+
+                        Response.Listener<String> responseListener = new Response.Listener<String>() {
+                            @Override
+                            public void onResponse(String response) {
+                                try {
+
+                                    Log.i("tagconvertstr", "["+response+"]");
+
+                                    JSONObject jsonResponse = new JSONObject(response);
+                                    boolean success = jsonResponse.getBoolean("success");
+
+                                    if (success) {
+                                        Log.i("JSON: ", "Response true");
+
+                                        //TODO note temp storing as userid, change to jobid in sharedpref
+                                        int job_num = jsonResponse.getInt("job_num");
+                                        String userId = String.valueOf(job_num);
+
+                                        sharedPreference.saveUserID(context, userId);
+
+                                        Log.i("JSON: ", "JOB ID = " + userId);
+
+                                        //START FOREGROUND SERVICE
+                                        Intent service = new Intent(Settings.this, ForegroundService.class);
+                                        service.putExtra("jobTime", Hours);//
+                                        service.putExtra("interval",interval);
+
+                                        if (!ForegroundService.IS_SERVICE_RUNNING) {
+                                            service.setAction(ForegroundService.Constants.ACTION.STARTFOREGROUND_ACTION);
+                                            ForegroundService.IS_SERVICE_RUNNING = true;
+                                            ForegroundService.counter = 1;
+                                            startService(service);
+                                        }
+
+
+                                        Intent intent = new Intent(Settings.this, Home.class);
+                                        Settings.this.startActivity(intent);
+                                        finish();
+
+                                    } else {
+
+                                        Log.i("JSON: ", "Response false");
+                                        AlertDialog.Builder builder = new AlertDialog.Builder(Settings.this);
+                                        builder.setMessage("INSERT Failed")
+                                                .setNegativeButton("Retry", null)
+                                                .create()
+                                                .show();
+                                    }
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                        };
+
+                        String username = sharedPreference.getValue(context,"User");
+                        String workinghours = sharedPreference.getValue(context,"Hours");
+                        String risklevel = sharedPreference.getValue(context,"SaveRiskLevel");
+
+                        InsertDataRequest insertDataRequest = new InsertDataRequest(username, workinghours, risklevel ,responseListener);
+                        RequestQueue queue = Volley.newRequestQueue(Settings.this);
+                        queue.add(insertDataRequest);
+
+
                     }
                 });
+
                 confirm.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
@@ -197,6 +264,149 @@ public class Settings extends AppCompatActivity {
                 confirm.setTitle("Confirm").create().show();
             }
         });
+
+    }
+    void setCheckinnull(){
+        ((MyApplication) this.getApplication()).setCheckin1("null");
+        ((MyApplication) this.getApplication()).setCheckin2("null");
+        ((MyApplication) this.getApplication()).setCheckin3("null");
+        ((MyApplication) this.getApplication()).setCheckin4("null");
+        ((MyApplication) this.getApplication()).setCheckin5("null");
+        ((MyApplication) this.getApplication()).setCheckin6("null");
+        ((MyApplication) this.getApplication()).setCheckin7("null");
+        ((MyApplication) this.getApplication()).setCheckin8("null");
+    }
+
+    void updateonJob(){
+
+        Response.Listener<String> responseListener = new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                try {
+
+                    Log.i("tagconvertstr", "["+response+"]");
+
+                    JSONObject jsonResponse = new JSONObject(response);
+                    boolean success = jsonResponse.getBoolean("success");
+
+                    if (success) {
+                        Log.i("JSON: ", "Response true");
+
+                    } else {
+
+                        Log.i("JSON: ", "Response false");
+
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        };
+
+        String username = sharedPreference.getValue(context,"User");
+        String onjob = "1";
+
+        UpdateOnjobRequest updateOnjobRequest = new UpdateOnjobRequest(username, onjob, responseListener);
+        RequestQueue queue = Volley.newRequestQueue(Settings.this);
+        queue.add(updateOnjobRequest);
+
+    }
+
+    public long checkinInterval (long hours, int risklvl) {
+
+        long inMinutes = TimeUnit.HOURS.toMinutes(hours);
+
+        System.out.println("+++INFUCN+++++++ RL = " + risklvl + " <---------------------");
+        System.out.println("++++INFUCN++++++ HOURS = " + hours + " <---------------------");
+        System.out.println("++++INFUCN++++++ inMinutes = " + inMinutes + " <---------------------");
+
+        long interval = inMinutes;
+
+        if (risklvl == 1){
+            if(hours == 1 || hours == 2 || hours == 3 || hours == 4){
+                interval = inMinutes / 2;
+            } else if (hours == 5 || hours == 6 || hours == 7) {
+                interval = inMinutes / 3;
+            }else if(hours == 8 || hours == 9 || hours == 10){
+                interval = inMinutes / 4;
+            }else if(hours == 11 || hours == 12){
+                interval = inMinutes / 5;
+            }
+        }
+
+        if (risklvl == 2 ){
+            if(hours == 1 || hours == 2 || hours == 3 || hours == 4){
+                interval = inMinutes/3;
+            } else if (hours == 5 || hours == 6 || hours == 7) {
+                interval = inMinutes / 4;
+            }else if(hours == 8 || hours == 9 || hours == 10){
+                interval = inMinutes / 5;
+            }else if(hours == 11 || hours == 12){
+                interval = inMinutes / 6;
+            }
+        }
+
+        if (risklvl == 3 ){
+            if(hours == 1){
+                interval = inMinutes / 3;
+            }else if(hours == 2 || hours == 3 || hours == 4){
+                interval = inMinutes / 4;
+
+            } else if (hours == 5 || hours == 6 || hours == 7) {
+                interval = inMinutes / 5;
+            }else if(hours == 8 || hours == 9 || hours == 10){
+                interval = inMinutes / 6;
+            }else if(hours == 11 || hours == 12){
+                interval = inMinutes / 7;
+            }
+        }
+
+        if (risklvl == 4 ){
+            if(hours == 1){
+                interval = inMinutes / 3;
+            }else if(hours == 2 || hours == 3 || hours == 4){
+                interval = inMinutes / 5;
+            } else if (hours == 5 || hours == 6 || hours == 7) {
+                interval = inMinutes / 6;
+            }else if(hours == 8 || hours == 9 || hours == 10){
+                interval = inMinutes / 8;
+            }else if(hours == 11 || hours == 12){
+                interval = inMinutes / 8;
+            }
+        }
+
+        if (risklvl == 5 ){
+            if(hours == 1){
+                interval = inMinutes / 4;
+            }else if(hours == 2 || hours == 3 || hours == 4){
+                interval = inMinutes / 6;
+            } else if (hours == 5 || hours == 6 || hours == 7) {
+                interval = inMinutes / 8;
+            }else if(hours == 8 || hours == 9 || hours == 10){
+                interval = inMinutes / 10;
+            }else if(hours == 11 || hours == 12){
+                interval = inMinutes / 12;
+            }
+        }
+
+       // interval = 3;
+        interval = interval - 1; //minus 1 minute so last checkin comes before job ends
+       // long milli = TimeUnit.MINUTES.toMillis(interval);
+
+        /*
+        Intent toServiceIntent = new Intent(this,ForegroundService.class);
+        toServiceIntent.putExtra("interval",milli);  //long
+        //  toServiceIntent.putExtra("jobTime", inMinutes);//long
+
+        if (ForegroundService.IS_SERVICE_RUNNING) {
+            toServiceIntent.setAction(ForegroundService.Constants.ACTION.CHECKIN_ACTION);
+            //  ForegroundService.IS_SERVICE_RUNNING = true;
+            startService(toServiceIntent);
+        }
+        */
+        long intervalInMilli = TimeUnit.MINUTES.toMillis(interval);
+        ((MyApplication) this.getApplication()).setinterval(intervalInMilli);
+        return intervalInMilli;
 
     }
 
