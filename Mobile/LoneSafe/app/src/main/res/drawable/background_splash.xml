@@ -5,8 +5,7 @@
     <item>
         <bitmap
             android:gravity="center"
-            android:src="@mipmap/androidsplashimage"/>
-
+            android:src="@drawable/androidsplash"/>
     </item>
 
 </layer-list>

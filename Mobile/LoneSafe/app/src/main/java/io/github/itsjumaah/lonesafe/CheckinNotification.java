@@ -37,7 +37,7 @@ public class CheckinNotification extends AppCompatActivity {
     String checkin7 = "null";
     String checkin8 = "null";
 
-    String Checkedin = "x";
+    String Checkedin = "Checked";
     String Escalation1 = "l1";
     String Escalation2 = "l2";
     String Escalation3 = "l3";

@@ -139,31 +139,16 @@ public class Login extends AppCompatActivity {
       //  final String password = etPassword.getText().toString();
 
 
-       // int hashCode = etPassword.hashCode();
-       // System.out.println("input hash code = " + hashCode);
-
-
         try{
             final MessageDigest md = MessageDigest.getInstance("SHA-256");
             String text = etPassword.getText().toString();
             System.out.println("etPassword : " + text);
 
 
-            md.update(text.getBytes("UTF-8")); // Change this to "UTF-16" if needed
+            md.update(text.getBytes("UTF-8"));
             byte[] digest = md.digest();
 
             password = String.format("%0" + (digest.length * 2) + 'x', new BigInteger(1, digest));
-
-            /*
-            StringBuilder hexString = new StringBuilder();
-            for (int i=0;i<digest.length;i++) {
-                hexString.append(Integer.toHexString(0xFF & digest[i]));
-            }
-            */
-
-
-             // password = String.valueOf(digest);
-           // password = hexString.toString();
 
             System.out.println("--------> ## HASH PASS:" + password);
         } catch (NoSuchAlgorithmException x) {
@@ -172,9 +157,6 @@ public class Login extends AppCompatActivity {
             System.err.println("unsupported Encoding Exception");
 
         }
-
-
-
 
 
 
@@ -190,6 +172,7 @@ public class Login extends AppCompatActivity {
             public void onResponse(String response) {
                 try {
 
+                    Log.i("tagconvertstr", "["+response+"]");
 
                     JSONObject jsonResponse = new JSONObject(response);
                     boolean success = jsonResponse.getBoolean("success");
@@ -232,7 +215,28 @@ public class Login extends AppCompatActivity {
 
         System.out.println("--------> ## HASH PASS BEFORE REquest: " + password);
 
-        LoginRequest loginRequest = new LoginRequest(username, password, responseListener);
+        //TODO MOVE to function?
+        String secret =  "(G1)MEGA#X!A1**";
+        try{
+            final MessageDigest md = MessageDigest.getInstance("SHA-256");
+            String text = secret;
+            System.out.println("etPassword : " + text);
+
+
+            md.update(text.getBytes("UTF-8")); // Change this to "UTF-16" if needed
+            byte[] digest = md.digest();
+
+            secret = String.format("%0" + (digest.length * 2) + 'x', new BigInteger(1, digest));
+
+            //System.out.println("--------> ## HASH PASS:" + password);
+        } catch (NoSuchAlgorithmException x) {
+            System.err.println("SHA-256 is not a valid message digest algorithm");
+        } catch (IOException e){
+            System.err.println("unsupported Encoding Exception");
+
+        }
+
+        LoginRequest loginRequest = new LoginRequest(username, password, secret, responseListener);
         RequestQueue queue = Volley.newRequestQueue(Login.this);
         queue.add(loginRequest);
 

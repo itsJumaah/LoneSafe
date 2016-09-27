@@ -16,6 +16,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -35,7 +36,7 @@ public class Home extends AppCompatActivity {
     Activity context = this;
 
     ProgressBar progressBar;
-    int max; // for progress bar
+    int checkinCounter = 1;
     int RL;
 
     public AlertDialog jobfinished;
@@ -280,6 +281,8 @@ public class Home extends AppCompatActivity {
                                 setcheckinOnCancel();
                             }
 
+                            Toast.makeText(Home.this, "Job Stopped!", Toast.LENGTH_SHORT).show();
+
                             //STOP FOREGROUND SERVICE
                             Intent service = new Intent(Home.this, ForegroundService.class);
                             if (ForegroundService.IS_SERVICE_RUNNING) {
@@ -322,6 +325,8 @@ public class Home extends AppCompatActivity {
 
     //--------------------------------------------------------------------------------------------------
     void setcheckinOnCancel(){
+
+
         if(ForegroundService.counter == 1){
             ((MyApplication) this.getApplication()).setCheckin1("Cancelled");
         }
@@ -346,6 +351,16 @@ public class Home extends AppCompatActivity {
         else if(ForegroundService.counter == 8 ){
             ((MyApplication) this.getApplication()).setCheckin8("Cancelled");
         }
+
+        //Get current checkin values..
+        String checkin1 = ((MyApplication) this.getApplication()).getCheckin1();
+        String checkin2 = ((MyApplication) this.getApplication()).getCheckin2();
+        String checkin3 = ((MyApplication) this.getApplication()).getCheckin3();
+        String checkin4 = ((MyApplication) this.getApplication()).getCheckin4();
+        String checkin5 = ((MyApplication) this.getApplication()).getCheckin5();
+        String checkin6 = ((MyApplication) this.getApplication()).getCheckin6();
+        String checkin7 = ((MyApplication) this.getApplication()).getCheckin7();
+        String checkin8 = ((MyApplication) this.getApplication()).getCheckin8();
 
         //Save to db
         // Response received from the server
@@ -373,14 +388,6 @@ public class Home extends AppCompatActivity {
         String job_num = sharedPreference.getValue(context,"UserID");
         Log.i("JSON: ", "JOB NUM IS: " + job_num);
 
-        String checkin1 = ((MyApplication) this.getApplication()).getCheckin1();
-        String checkin2 = ((MyApplication) this.getApplication()).getCheckin2();
-        String checkin3 = ((MyApplication) this.getApplication()).getCheckin3();
-        String checkin4 = ((MyApplication) this.getApplication()).getCheckin4();
-        String checkin5 = ((MyApplication) this.getApplication()).getCheckin5();
-        String checkin6 = ((MyApplication) this.getApplication()).getCheckin6();
-        String checkin7 = ((MyApplication) this.getApplication()).getCheckin7();
-        String checkin8 = ((MyApplication) this.getApplication()).getCheckin8();
 
         CheckinRequest checkinRequest = new CheckinRequest(job_num,checkin1, checkin2, checkin3, checkin4, checkin5,
                 checkin6, checkin7, checkin8, responseListener);

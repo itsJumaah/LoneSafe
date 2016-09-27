@@ -24,6 +24,7 @@ public class ForegroundService extends Service {
 
     private static final String LOG_TAG = "ForegroundService";
     public static boolean IS_SERVICE_RUNNING = false;
+   // public static boolean SOS_TRIGGERED = false;
 
 
     public final static String TAG = "BroadcastService";
@@ -49,6 +50,7 @@ public class ForegroundService extends Service {
     public static int EscalationCounter = 0;
     public static Boolean JobCancelled = false;
     public Boolean EscalationActive = false;
+    public Boolean CheckinCounterActive = false;
 
 
     TimerTask myTask = new TimerTask() {
@@ -78,6 +80,7 @@ public class ForegroundService extends Service {
         checkinCountdown = new CountDownTimer(checkInterval, 1000) {
             @Override
             public void onTick(long millisUntilFinished) {
+                CheckinCounterActive = true;
 
                 minutesRemaining = TimeUnit.MILLISECONDS.toMinutes(millisUntilFinished);
                 Log.i(TAG, ">>>>>>>>>>>>>>** minutes Remaining:  " + minutesRemaining);
@@ -95,6 +98,8 @@ public class ForegroundService extends Service {
 
             @Override
             public void onFinish() {
+
+                CheckinCounterActive = false;
 
                 int progress = (int) (minutesRemaining/1000);
                 bi.putExtra("countdown", progress);
@@ -166,8 +171,6 @@ public class ForegroundService extends Service {
 
     }
 
-
-
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
 
@@ -178,12 +181,22 @@ public class ForegroundService extends Service {
                     EscalationCountdown.cancel();
                 }
             }
-            checkinTimer();
+            if(!CheckinCounterActive){
+                checkinTimer();
+            }
         }
         if (intent.getAction().equals(Constants.ACTION.ESCALATION_ACTION)){
 
-            EscalationActive = true;
+           // EscalationActive = true;
             EscalationTimer();
+        }
+        if(intent.getAction().equals(Constants.ACTION.SOS_ACTION)){
+            if(EscalationActive){
+                EscalationCountdown.cancel();
+                EscalationCounter = 0;
+                counter++;
+                checkinTimer();
+            }
         }
 
 
@@ -207,7 +220,7 @@ public class ForegroundService extends Service {
 
             Log.i(LOG_TAG, "Received Start Foreground Intent ");
             showNotification();
-            Toast.makeText(this, "Service Started!", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Job Started!", Toast.LENGTH_SHORT).show();
 
 
         } else if (intent.getAction().equals(Constants.ACTION.STOPFOREGROUND_ACTION)) {
@@ -290,8 +303,8 @@ public class ForegroundService extends Service {
                 .setLargeIcon(Bitmap.createScaledBitmap(icon, 128, 128, true))
                 .setContentIntent(pendingIntent)
                 .setOngoing(true)
-                .setProgress(0, 0, true) //indeterminate progress bar. --> Update to determinate later or leave?
-                .addAction(0, "STOP JOB",
+                .setProgress(0, 0, true) //indeterminate progress bar. --> maybe update to determinate later?
+                .addAction(0, "",
                         null)
 
 
@@ -327,6 +340,8 @@ public class ForegroundService extends Service {
             public static String ESCALATION_ACTION = "io.github.itsjumaah.lonesafe.foregroundservice.action.EscalationTimer";
             public static String STARTFOREGROUND_ACTION = "io.github.itsjumaah.lonesafe.foregroundservice.action.startforeground";
             public static String STOPFOREGROUND_ACTION = "io.github.itsjumaah.lonesafe.foregroundservice.action.stopforeground";
+            public static String SOS_ACTION = "io.github.itsjumaah.lonesafe.foregroundservice.action.sos";
+
         }
 
         public interface NOTIFICATION_ID {

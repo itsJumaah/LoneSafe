@@ -12,7 +12,7 @@ import java.util.Map;
  */
 public class UpdateOnjobRequest extends StringRequest {
 
-    private static final String ONJOB_REQUEST = "http://202.89.41.210/updateOnjob.php";
+    private static final String ONJOB_REQUEST = "http://202.89.41.210/scripts/updateOnjob.php";
     private Map<String, String> params;
 
     public UpdateOnjobRequest(String username, String onjob, Response.Listener<String> listener) {
@@ -20,7 +20,6 @@ public class UpdateOnjobRequest extends StringRequest {
         params = new HashMap<>();
         params.put("username", username);
         params.put("onjob", onjob);
-
     }
 
     @Override
