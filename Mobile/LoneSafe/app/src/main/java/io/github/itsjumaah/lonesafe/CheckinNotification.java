@@ -1,5 +1,7 @@
 package io.github.itsjumaah.lonesafe;
 
+import android.animation.ObjectAnimator;
+import android.animation.PropertyValuesHolder;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -9,11 +11,11 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Vibrator;
+import android.support.v4.view.animation.FastOutSlowInInterpolator;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
-import android.widget.Button;
 
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -60,8 +62,20 @@ public class CheckinNotification extends AppCompatActivity {
      //   checkinCounter = ((MyApplication) this.getApplication()).getCheckinCounter();
        // ForegroundService.counter = 1;
 
-        getCheckinValue();
+        final View ImageView = findViewById(R.id.imageView4);
 
+        ObjectAnimator scaleDown = ObjectAnimator.ofPropertyValuesHolder(ImageView,
+                PropertyValuesHolder.ofFloat("scaleX", 1.2f),
+                PropertyValuesHolder.ofFloat("scaleY", 1.2f));
+        scaleDown.setInterpolator(new FastOutSlowInInterpolator());
+        scaleDown.setDuration(350);
+
+        scaleDown.setRepeatCount(ObjectAnimator.INFINITE);
+        scaleDown.setRepeatMode(ObjectAnimator.REVERSE);
+
+        scaleDown.start();
+
+        getCheckinValue();
         DisplayNotification();
 
     }
@@ -119,15 +133,29 @@ public class CheckinNotification extends AppCompatActivity {
         ringtone.play();
         vibrator.vibrate(pattern, 0);
 
-        final Button btnCheckin = (Button) findViewById(R.id.btnCheckin);
-        assert btnCheckin != null;
+//        final Button btnCheckin = (Button) findViewById(R.id.btnCheckin);
+        final View ImageView = findViewById(R.id.imageView4);
 
-        btnCheckin.setOnClickListener(new View.OnClickListener(){
+     //   assert btnCheckin != null;
+        assert ImageView != null;
+
+        ImageView.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
                 ringtone.stop();
                 vibrator.cancel();
                 countDownTimer.cancel();
+
+
+                if(ForegroundService.EscalationCounter == 1){
+                    Escalation1 = "Escalation 1";
+                }
+                else if(ForegroundService.EscalationCounter == 2){
+                    Escalation2 = "Escalation 2";
+                }
+                else if(ForegroundService.EscalationCounter ==3){
+                    Escalation3 = "Escalation 3";
+                }
 
                 setCheckinValue();
                 SaveToDataBase();
@@ -289,7 +317,7 @@ public class CheckinNotification extends AppCompatActivity {
             else if(ForegroundService.EscalationCounter == 3){
                 ((MyApplication) this.getApplication()).setCheckin8(Escalation3);
               //  ForegroundService.EscalationCounter = 0;
-                ForegroundService.counter = 0;
+                ForegroundService.counter = 9;
             }
             Log.i("** COUNTER", "++++++++++++++++++++++++++++++++++++++++++++++++++++++++>> Checkin counter is: " + ForegroundService.counter);
         }
@@ -340,5 +368,12 @@ public class CheckinNotification extends AppCompatActivity {
         RequestQueue queue = Volley.newRequestQueue(CheckinNotification.this);
         queue.add(checkinRequest);
     }
+
+    @Override
+    public void onBackPressed() {
+        //DO Nothing!
+        //This Disables the back button.
+    }
+
 
 }

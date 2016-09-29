@@ -113,7 +113,7 @@ public class Home extends AppCompatActivity {
 
         updateOnJobtoZero();
 
-        unregisterReceiver(serviceLife);
+       // unregisterReceiver(serviceLife);
 
         return  jobfinished = new AlertDialog.Builder(this)
                 .setTitle("Job Finished")
@@ -130,7 +130,7 @@ public class Home extends AppCompatActivity {
                                 finish();
                             }
                         })
-                .setNegativeButton("Exit LoneSafe",
+               /* .setNegativeButton("Exit LoneSafe",
                         new DialogInterface.OnClickListener(){
                             public void onClick(DialogInterface dialog, int whichButton) {
                                 String ns = Context.NOTIFICATION_SERVICE;
@@ -142,7 +142,7 @@ public class Home extends AppCompatActivity {
                                 System.exit(0);
                             }
 
-                        })
+                        })*/
                 .show();
 
         //--------------
@@ -403,7 +403,7 @@ public class Home extends AppCompatActivity {
             public void onResponse(String response) {
                 try {
 
-                  //  Log.i("tagconvertstr", "["+response+"]");
+                    Log.i("tagconvertstr", "["+response+"]");
 
                     JSONObject jsonResponse = new JSONObject(response);
                     boolean success = jsonResponse.getBoolean("success");
@@ -428,6 +428,32 @@ public class Home extends AppCompatActivity {
         UpdateOnjobRequest updateOnjobRequest = new UpdateOnjobRequest(username, onjob, responseListener);
         RequestQueue queue = Volley.newRequestQueue(Home.this);
         queue.add(updateOnjobRequest);
+
+        //---
+        Response.Listener<String> responseListener2 = new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                try {
+                    Log.i("tagconvertstr", "["+response+"]");
+                    JSONObject jsonResponse = new JSONObject(response);
+                    boolean success = jsonResponse.getBoolean("success");
+                    if (success) {
+                        Log.i("JSON: ", "Response true");
+                    } else {
+                        Log.i("JSON: ", "Response false");
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        };
+
+        String job_num = sharedPreference.getValue(context,"UserID");
+        String isactive = "0";
+
+        UpdateJobActiveRequest updateJobActiveRequest = new UpdateJobActiveRequest(job_num, isactive, responseListener2);
+        RequestQueue queue2 = Volley.newRequestQueue(Home.this);
+        queue2.add(updateJobActiveRequest);
 
     }
     @Override

@@ -63,6 +63,13 @@ public class ForegroundService extends Service {
 
                 sendBroadcast(serviceIntent);
                 jobFinishedNotification();
+
+                if(CheckinCounterActive){
+                    checkinCountdown.cancel();
+                }
+                if(EscalationActive){
+                    EscalationCountdown.cancel();
+                }
                 stopForeground(true);
                 stopSelf();
             }
@@ -242,7 +249,7 @@ public class ForegroundService extends Service {
 
     private void jobFinishedNotification(){
 
-        Intent notificationIntent = new Intent(this, Home.class);
+        Intent notificationIntent = new Intent(this, Settings.class);
         notificationIntent.setAction(Constants.ACTION.STOPFOREGROUND_ACTION);
         notificationIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK
                 | Intent.FLAG_ACTIVITY_CLEAR_TASK);
@@ -260,8 +267,8 @@ public class ForegroundService extends Service {
                 .setLargeIcon(Bitmap.createScaledBitmap(icon, 128, 128, true))
                 .setContentIntent(pendingIntent)
                 .setOngoing(true)
-             //   .addAction(0, "OK",
-             //           pendingIntent)
+                .addAction(0, "Dismiss",
+                        pendingIntent)
 
                 //android.R.drawable.ic_media_previous
                 .build();

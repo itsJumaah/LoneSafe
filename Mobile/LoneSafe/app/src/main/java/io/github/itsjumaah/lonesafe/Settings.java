@@ -144,7 +144,7 @@ public class Settings extends AppCompatActivity {
         btnStart.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                final long interval = checkinInterval (Hours, RiskLevel);
+            //    final long interval = checkinInterval (Hours, RiskLevel);
 
                 getTime();
 
@@ -186,69 +186,8 @@ public class Settings extends AppCompatActivity {
                         public void onClick(DialogInterface dialog, int which) {
 
                             setCheckinnull();
-                            updateonJob();
-
-                            Response.Listener<String> responseListener = new Response.Listener<String>() {
-                                @Override
-                                public void onResponse(String response) {
-                                    try {
-
-                                        Log.i("tagconvertstr", "["+response+"]");
-
-                                        JSONObject jsonResponse = new JSONObject(response);
-                                        boolean success = jsonResponse.getBoolean("success");
-
-                                        if (success) {
-                                            Log.i("JSON: ", "Response true");
-
-                                            //TODO note temp storing as userid, change to jobid in sharedpref
-                                            int job_num = jsonResponse.getInt("job_num");
-                                            String userId = String.valueOf(job_num);
-
-                                            sharedPreference.saveUserID(context, userId);
-
-                                            Log.i("JSON: ", "JOB ID = " + userId);
-
-                                            //START FOREGROUND SERVICE
-                                            Intent service = new Intent(Settings.this, ForegroundService.class);
-                                            service.putExtra("jobTime", Hours);//
-                                            service.putExtra("interval",interval);
-
-                                            if (!ForegroundService.IS_SERVICE_RUNNING) {
-                                                service.setAction(ForegroundService.Constants.ACTION.STARTFOREGROUND_ACTION);
-                                                ForegroundService.IS_SERVICE_RUNNING = true;
-                                                ForegroundService.counter = 1;
-                                                startService(service);
-                                            }
-
-
-                                            Intent intent = new Intent(Settings.this, Home.class);
-                                            Settings.this.startActivity(intent);
-                                            finish();
-
-                                        } else {
-
-                                            Log.i("JSON: ", "Response false");
-                                            AlertDialog.Builder builder = new AlertDialog.Builder(Settings.this);
-                                            builder.setMessage("INSERT Failed")
-                                                    .setNegativeButton("Retry", null)
-                                                    .create()
-                                                    .show();
-                                        }
-                                    } catch (JSONException e) {
-                                        e.printStackTrace();
-                                    }
-                                }
-                            };
-
-                            String username = sharedPreference.getValue(context,"User");
-                            String workinghours = sharedPreference.getValue(context,"Hours");
-                            String risklevel = sharedPreference.getValue(context,"SaveRiskLevel");
-
-                            InsertDataRequest insertDataRequest = new InsertDataRequest(username, workinghours, risklevel ,responseListener);
-                            RequestQueue queue = Volley.newRequestQueue(Settings.this);
-                            queue.add(insertDataRequest);
-
+                            createJobDB();
+                          //  updateonJob();
 
                         }
                     });
@@ -265,6 +204,74 @@ public class Settings extends AppCompatActivity {
 
             }
         });
+
+    }
+    void createJobDB(){
+        final long interval = checkinInterval (Hours, RiskLevel);
+
+        Response.Listener<String> responseListener = new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                try {
+
+                    Log.i("tagconvertstr", "["+response+"]");
+
+                    JSONObject jsonResponse = new JSONObject(response);
+                    boolean success = jsonResponse.getBoolean("success");
+
+                    if (success) {
+                        Log.i("JSON: ", "Response true");
+
+                        //TODO note temp storing as userid, change to jobid in sharedpref
+                        int job_num = jsonResponse.getInt("job_num");
+                        String userId = String.valueOf(job_num);
+
+                        sharedPreference.saveUserID(context, userId);
+
+                        Log.i("JSON: ", "JOB ID = " + userId);
+
+                        updateonJob();
+                        updateJobActive();
+
+                        //START FOREGROUND SERVICE
+                        Intent service = new Intent(Settings.this, ForegroundService.class);
+                        service.putExtra("jobTime", Hours);//
+                        service.putExtra("interval",interval);
+
+                        if (!ForegroundService.IS_SERVICE_RUNNING) {
+                            service.setAction(ForegroundService.Constants.ACTION.STARTFOREGROUND_ACTION);
+                            ForegroundService.IS_SERVICE_RUNNING = true;
+                            ForegroundService.counter = 1;
+                            startService(service);
+                        }
+
+
+                        Intent intent = new Intent(Settings.this, Home.class);
+                        Settings.this.startActivity(intent);
+                        finish();
+
+                    } else {
+
+                        Log.i("JSON: ", "Response false");
+                        AlertDialog.Builder builder = new AlertDialog.Builder(Settings.this);
+                        builder.setMessage("INSERT Failed")
+                                .setNegativeButton("Retry", null)
+                                .create()
+                                .show();
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        };
+
+        String username = sharedPreference.getValue(context,"User");
+        String workinghours = sharedPreference.getValue(context,"Hours");
+        String risklevel = sharedPreference.getValue(context,"SaveRiskLevel");
+
+        InsertDataRequest insertDataRequest = new InsertDataRequest(username, workinghours, risklevel ,responseListener);
+        RequestQueue queue = Volley.newRequestQueue(Settings.this);
+        queue.add(insertDataRequest);
 
     }
     void setCheckinnull(){
@@ -311,6 +318,34 @@ public class Settings extends AppCompatActivity {
         RequestQueue queue = Volley.newRequestQueue(Settings.this);
         queue.add(updateOnjobRequest);
 
+        //---
+
+    }
+    void updateJobActive(){
+        Response.Listener<String> responseListener = new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                try {
+                    Log.i("tagconvertstr_JOBACTIVE", "["+response+"]");
+                    JSONObject jsonResponse = new JSONObject(response);
+                    boolean success = jsonResponse.getBoolean("success");
+                    if (success) {
+                        Log.i("JSON: ", "Response true");
+                    } else {
+                        Log.i("JSON: ", "Response false");
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        };
+
+        String job_num = sharedPreference.getValue(context,"UserID");
+        String isactive = "1";
+
+        UpdateJobActiveRequest updateJobActiveRequest = new UpdateJobActiveRequest(job_num, isactive, responseListener);
+        RequestQueue queue = Volley.newRequestQueue(Settings.this);
+        queue.add(updateJobActiveRequest);
     }
 
     public long checkinInterval (long hours, int risklvl) {
@@ -394,17 +429,6 @@ public class Settings extends AppCompatActivity {
         interval = interval - 1; //minus 1 minute so last checkin comes before job ends
        // long milli = TimeUnit.MINUTES.toMillis(interval);
 
-        /*
-        Intent toServiceIntent = new Intent(this,ForegroundService.class);
-        toServiceIntent.putExtra("interval",milli);  //long
-        //  toServiceIntent.putExtra("jobTime", inMinutes);//long
-
-        if (ForegroundService.IS_SERVICE_RUNNING) {
-            toServiceIntent.setAction(ForegroundService.Constants.ACTION.CHECKIN_ACTION);
-            //  ForegroundService.IS_SERVICE_RUNNING = true;
-            startService(toServiceIntent);
-        }
-        */
         long intervalInMilli = TimeUnit.MINUTES.toMillis(interval);
         ((MyApplication) this.getApplication()).setinterval(intervalInMilli);
         return intervalInMilli;
@@ -424,6 +448,12 @@ public class Settings extends AppCompatActivity {
         sharedPreference.saveTimeEnd(context, FinishTime);
 
 
+    }
+
+    @Override
+    public void onBackPressed() {
+        //DO Nothing!
+        //This Disables the back button.
     }
 
     //----------------------------------------------------------------------------------------------
