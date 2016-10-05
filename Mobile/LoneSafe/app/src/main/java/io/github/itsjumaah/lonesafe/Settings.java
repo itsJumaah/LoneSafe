@@ -14,6 +14,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.NumberPicker;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.android.volley.RequestQueue;
@@ -35,6 +36,7 @@ public class Settings extends AppCompatActivity {
     int Hours = 1;
     int RiskLevel = 1;
     String FinishTime;
+    ProgressBar loadProgressBar;
 
 
     @Override
@@ -146,6 +148,9 @@ public class Settings extends AppCompatActivity {
             public void onClick(View v) {
             //    final long interval = checkinInterval (Hours, RiskLevel);
 
+
+
+                saveStartTime();
                 getTime();
 
                 //Checks if SharedPref Null---------------
@@ -185,9 +190,12 @@ public class Settings extends AppCompatActivity {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
 
+                            loadProgressBar = (ProgressBar)findViewById(R.id.progressBar1);
+                            loadProgressBar.setVisibility(View.VISIBLE);
+
                             setCheckinnull();
                             createJobDB();
-                          //  updateonJob();
+                          //  updateOnJob();
 
                         }
                     });
@@ -230,7 +238,7 @@ public class Settings extends AppCompatActivity {
 
                         Log.i("JSON: ", "JOB ID = " + userId);
 
-                        updateonJob();
+                        updateOnJob();
                         updateJobActive();
 
                         //START FOREGROUND SERVICE
@@ -245,6 +253,8 @@ public class Settings extends AppCompatActivity {
                             startService(service);
                         }
 
+                        loadProgressBar = (ProgressBar)findViewById(R.id.progressBar1);
+                        loadProgressBar.setVisibility(View.INVISIBLE);
 
                         Intent intent = new Intent(Settings.this, Home.class);
                         Settings.this.startActivity(intent);
@@ -285,7 +295,7 @@ public class Settings extends AppCompatActivity {
         ((MyApplication) this.getApplication()).setCheckin8("null");
     }
 
-    void updateonJob(){
+    void updateOnJob(){
 
         Response.Listener<String> responseListener = new Response.Listener<String>() {
             @Override
@@ -432,6 +442,20 @@ public class Settings extends AppCompatActivity {
         long intervalInMilli = TimeUnit.MINUTES.toMillis(interval);
         ((MyApplication) this.getApplication()).setinterval(intervalInMilli);
         return intervalInMilli;
+
+    }
+
+    void saveStartTime(){
+        //save current time as start time
+
+        Calendar cal = Calendar.getInstance(); // creates calendar
+        cal.setTime(new Date()); // sets calendar time/date
+        Date time = cal.getTime();
+
+        SimpleDateFormat formatter = new SimpleDateFormat("hh:mm a");
+        String startTime = formatter.format(time);
+
+        sharedPreference.saveTimeStart(context, startTime);
 
     }
 

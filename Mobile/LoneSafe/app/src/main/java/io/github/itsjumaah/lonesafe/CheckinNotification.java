@@ -29,7 +29,6 @@ public class CheckinNotification extends AppCompatActivity {
     private SharedPreference sharedPreference;
     Activity context = this; //For shared Pref
 
-    boolean checkedOnce = true;
     String checkin1 = "null";
     String checkin2 = "null";
     String checkin3 = "null";
@@ -40,9 +39,13 @@ public class CheckinNotification extends AppCompatActivity {
     String checkin8 = "null";
 
     String Checkedin = "Checked";
-    String Escalation1 = "l1";
-    String Escalation2 = "l2";
-    String Escalation3 = "l3";
+    String Escalation1 = "1";
+    String Escalation2 = "2";
+    String Escalation3 = "3";
+    CountDownTimer countDownTimer;
+
+    Uri uri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_RINGTONE);
+    private Ringtone ringtone;
 
 
 
@@ -55,6 +58,7 @@ public class CheckinNotification extends AppCompatActivity {
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
+
         setContentView(R.layout.activity_checkin);
 
         sharedPreference = new SharedPreference();
@@ -65,14 +69,13 @@ public class CheckinNotification extends AppCompatActivity {
         final View ImageView = findViewById(R.id.imageView4);
 
         ObjectAnimator scaleDown = ObjectAnimator.ofPropertyValuesHolder(ImageView,
-                PropertyValuesHolder.ofFloat("scaleX", 1.2f),
-                PropertyValuesHolder.ofFloat("scaleY", 1.2f));
+                PropertyValuesHolder.ofFloat("scaleX", 1.4f),
+                PropertyValuesHolder.ofFloat("scaleY", 1.4f));
         scaleDown.setInterpolator(new FastOutSlowInInterpolator());
         scaleDown.setDuration(350);
 
         scaleDown.setRepeatCount(ObjectAnimator.INFINITE);
         scaleDown.setRepeatMode(ObjectAnimator.REVERSE);
-
         scaleDown.start();
 
         getCheckinValue();
@@ -80,17 +83,27 @@ public class CheckinNotification extends AppCompatActivity {
 
     }
 
+
     void DisplayNotification(){
 
+/*
         Uri notification = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_RINGTONE);
         final Ringtone ringtone = RingtoneManager.getRingtone(getApplicationContext(), notification);
         final Vibrator vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
         long[] pattern = {0, 1000, 1000};
 
-        final CountDownTimer countDownTimer;
+        */
+
+
+
+
+
         countDownTimer = new CountDownTimer(30000, 1000) { //Phone would ring for 30 seconds
             //If user hasn't checked in
             public void onFinish() {
+
+                Log.i("Onfinish", "++++++++++++++++++++++++++++++++++++++++++++++++++++++++>> OnFinish called ");
+                Vibrator vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);;
 
                 ringtone.stop();
                 vibrator.cancel();
@@ -130,6 +143,10 @@ public class CheckinNotification extends AppCompatActivity {
         };
         countDownTimer.start();
 
+        Vibrator vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);;
+        long[] pattern = {0, 1000, 1000};
+
+        ringtone = RingtoneManager.getRingtone(this, uri);
         ringtone.play();
         vibrator.vibrate(pattern, 0);
 
@@ -142,38 +159,56 @@ public class CheckinNotification extends AppCompatActivity {
         ImageView.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
-                ringtone.stop();
-                vibrator.cancel();
-                countDownTimer.cancel();
+                userCheckedIn();
 
-
-                if(ForegroundService.EscalationCounter == 1){
-                    Escalation1 = "Escalation 1";
-                }
-                else if(ForegroundService.EscalationCounter == 2){
-                    Escalation2 = "Escalation 2";
-                }
-                else if(ForegroundService.EscalationCounter ==3){
-                    Escalation3 = "Escalation 3";
-                }
-
-                setCheckinValue();
-                SaveToDataBase();
-
-                ForegroundService.EscalationCounter = 0;
-                ForegroundService.counter++;
-
-
-                Intent toServiceIntent = new Intent(CheckinNotification.this,ForegroundService.class);
-
-                if (ForegroundService.IS_SERVICE_RUNNING) {
-                    toServiceIntent.setAction(ForegroundService.Constants.ACTION.CHECKIN_ACTION);
-                    startService(toServiceIntent);
-                }
-                finish();
 
             }
         });
+    }
+
+    @Override
+    protected void onUserLeaveHint() {
+        super.onUserLeaveHint();
+        userCheckedIn();
+
+    }
+
+    void userCheckedIn(){
+       // Uri notification = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_RINGTONE);
+       // final Ringtone ringtone = RingtoneManager.getRingtone(getApplicationContext(), notification);
+        Vibrator vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+
+
+        ringtone.stop();
+        vibrator.cancel();
+        countDownTimer.cancel();
+
+
+        if(ForegroundService.EscalationCounter == 1){
+            Escalation1 = "Escalation 1";
+        }
+        else if(ForegroundService.EscalationCounter == 2){
+            Escalation2 = "Escalation 2";
+        }
+        else if(ForegroundService.EscalationCounter ==3){
+            Escalation3 = "Escalation 3";
+        }
+
+        setCheckinValue();
+        SaveToDataBase();
+
+        ForegroundService.EscalationCounter = 0;
+        ForegroundService.counter++;
+
+
+        Intent toServiceIntent = new Intent(CheckinNotification.this,ForegroundService.class);
+
+        if (ForegroundService.IS_SERVICE_RUNNING) {
+            toServiceIntent.setAction(ForegroundService.Constants.ACTION.CHECKIN_ACTION);
+            startService(toServiceIntent);
+        }
+        finish();
+
     }
 
     void setCheckinValue(){
@@ -196,6 +231,7 @@ public class CheckinNotification extends AppCompatActivity {
             Log.i("****1 COUNTER", "++++++++++++++++++++++++++++++++++++++++++++++++++++++++>> Checkin counter is: " + ForegroundService.counter);
         }
         else if(ForegroundService.counter == 2 ){
+            ((MyApplication) this.getApplication()).setCheckin1("null");
             if(ForegroundService.EscalationCounter == 0){
                 ((MyApplication) this.getApplication()).setCheckin2(Checkedin);
                // ForegroundService.counter = 3;
@@ -214,7 +250,9 @@ public class CheckinNotification extends AppCompatActivity {
             Log.i("****2 COUNTER", "++++++++++++++++++++++++++++++++++++++++++++++++++++++++>> Checkin counter is: " + ForegroundService.counter);
         }
         else if(ForegroundService.counter == 3 ){
-          if(ForegroundService.EscalationCounter == 0){
+            ((MyApplication) this.getApplication()).setCheckin2("null");
+
+            if(ForegroundService.EscalationCounter == 0){
                 ((MyApplication) this.getApplication()).setCheckin3(Checkedin);
                 //ForegroundService.counter = 4;
             }
@@ -232,7 +270,9 @@ public class CheckinNotification extends AppCompatActivity {
             Log.i("****3 COUNTER", "++++++++++++++++++++++++++++++++++++++++++++++++++++++++>> Checkin counter is: " + ForegroundService.counter);
         }
         else if(ForegroundService.counter == 4 ){
-           if(ForegroundService.EscalationCounter == 0){
+            ((MyApplication) this.getApplication()).setCheckin3("null");
+
+            if(ForegroundService.EscalationCounter == 0){
                 ((MyApplication) this.getApplication()).setCheckin4(Checkedin);
                // ForegroundService.counter = 5;
             }
@@ -250,6 +290,8 @@ public class CheckinNotification extends AppCompatActivity {
             Log.i("****4 COUNTER", "++++++++++++++++++++++++++++++++++++++++++++++++++++++++>> Checkin counter is: " + ForegroundService.counter);
         }
         else if(ForegroundService.counter == 5 ){
+            ((MyApplication) this.getApplication()).setCheckin4("null");
+
             if(ForegroundService.EscalationCounter == 0){
                 ((MyApplication) this.getApplication()).setCheckin5(Checkedin);
                // ForegroundService.counter = 6;
@@ -268,7 +310,9 @@ public class CheckinNotification extends AppCompatActivity {
             Log.i("** COUNTER", "++++++++++++++++++++++++++++++++++++++++++++++++++++++++>> Checkin counter is: " + ForegroundService.counter);
         }
         else if(ForegroundService.counter == 6 ){
-          if(ForegroundService.EscalationCounter == 0){
+            ((MyApplication) this.getApplication()).setCheckin5("null");
+
+            if(ForegroundService.EscalationCounter == 0){
                 ((MyApplication) this.getApplication()).setCheckin6(Checkedin);
               //  ForegroundService.counter = 7;
             }
@@ -286,7 +330,9 @@ public class CheckinNotification extends AppCompatActivity {
             Log.i("** COUNTER", "++++++++++++++++++++++++++++++++++++++++++++++++++++++++>> Checkin counter is: " + ForegroundService.counter);
         }
         else if(ForegroundService.counter == 7 ){
-          if(ForegroundService.EscalationCounter == 0){
+            ((MyApplication) this.getApplication()).setCheckin6("null");
+
+            if(ForegroundService.EscalationCounter == 0){
                 ((MyApplication) this.getApplication()).setCheckin7(Checkedin);
                // ForegroundService.counter = 8;
             }
@@ -304,7 +350,9 @@ public class CheckinNotification extends AppCompatActivity {
             Log.i("** COUNTER", "++++++++++++++++++++++++++++++++++++++++++++++++++++++++>> Checkin counter is: " + ForegroundService.counter);
         }
         else if(ForegroundService.counter == 8 ){
-           if(ForegroundService.EscalationCounter == 0){
+            ((MyApplication) this.getApplication()).setCheckin7("null");
+
+            if(ForegroundService.EscalationCounter == 0){
                 ((MyApplication) this.getApplication()).setCheckin8(Checkedin);
                // ForegroundService.counter = -1;
             }

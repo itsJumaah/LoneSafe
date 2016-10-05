@@ -3,12 +3,15 @@ package io.github.itsjumaah.lonesafe;
 import android.app.Activity;
 import android.app.Application;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 
 /**
  * Created by ashneelkumar on 9/08/16.
  */
 public class MyApplication extends Application implements Application.ActivityLifecycleCallbacks {
+
+    public static SharedPreferences sharedPreferences;
 
     public String checkin1 = "null";
     public String checkin2 = "null";
@@ -82,6 +85,7 @@ public class MyApplication extends Application implements Application.ActivityLi
     public void onCreate() {
         super.onCreate();
         registerActivityLifecycleCallbacks(this);
+
     }
     @Override
     public void onActivityCreated(Activity activity, Bundle savedInstanceState) {

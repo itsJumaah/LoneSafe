@@ -11,6 +11,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.android.volley.RequestQueue;
@@ -32,6 +33,8 @@ public class Login extends AppCompatActivity {
     Activity context = this;
 
     String password;
+    ProgressBar loadProgressBar;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,6 +72,10 @@ public class Login extends AppCompatActivity {
         btnLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
+                loadProgressBar = (ProgressBar)findViewById(R.id.progressBar1);
+                loadProgressBar.setVisibility(View.VISIBLE);
+
                 final String username = etUser.getText().toString();
                 final String password = etPassword.getText().toString();
 
@@ -122,6 +129,9 @@ public class Login extends AppCompatActivity {
                     .setPositiveButton("Dismiss", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
+
+                            loadProgressBar = (ProgressBar)findViewById(R.id.progressBar1);
+                            loadProgressBar.setVisibility(View.INVISIBLE);
                             //dialog.dismiss();
                             onRestart();
                         }
@@ -194,6 +204,9 @@ public class Login extends AppCompatActivity {
                         sharedPreference.savePass(context, password);
                         sharedPreference.saveUserID(context, userId);
 
+                        loadProgressBar = (ProgressBar)findViewById(R.id.progressBar1);
+                        loadProgressBar.setVisibility(View.INVISIBLE);
+
                         Intent intent = new Intent(Login.this, Settings.class);
                         Login.this.startActivity(intent);
                         finish();
@@ -206,6 +219,8 @@ public class Login extends AppCompatActivity {
                                 .setNegativeButton("Retry", null)
                                 .create()
                                 .show();
+                        loadProgressBar = (ProgressBar)findViewById(R.id.progressBar1);
+                        loadProgressBar.setVisibility(View.INVISIBLE);
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();

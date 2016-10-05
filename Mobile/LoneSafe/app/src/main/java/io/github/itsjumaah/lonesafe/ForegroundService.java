@@ -44,11 +44,9 @@ public class ForegroundService extends Service {
     long minutesRemaining = 60;
 
     long FinTime = jobTime; //
-    // public static boolean killService = false;
 
     public static int counter = 1;
     public static int EscalationCounter = 0;
-    public static Boolean JobCancelled = false;
     public Boolean EscalationActive = false;
     public Boolean CheckinCounterActive = false;
 
@@ -173,6 +171,7 @@ public class ForegroundService extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
+
 
       //  Log.i("BOOOL", "IS_SERVICE_RUNNING" + IS_SERVICE_RUNNING);
 
@@ -348,6 +347,8 @@ public class ForegroundService extends Service {
             public static String STARTFOREGROUND_ACTION = "io.github.itsjumaah.lonesafe.foregroundservice.action.startforeground";
             public static String STOPFOREGROUND_ACTION = "io.github.itsjumaah.lonesafe.foregroundservice.action.stopforeground";
             public static String SOS_ACTION = "io.github.itsjumaah.lonesafe.foregroundservice.action.sos";
+            public static String SOS_REQUIRED = "io.github.itsjumaah.lonesafe.foregroundservice.action.sosrequired";
+
 
         }
 

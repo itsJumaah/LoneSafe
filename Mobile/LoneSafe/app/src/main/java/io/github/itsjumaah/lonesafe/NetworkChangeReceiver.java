@@ -22,14 +22,27 @@ import java.util.Map;
  * Created by ashneelkumar on 9/08/16.
  */
 
-public class NetworkChangeReceiver extends BroadcastReceiver {
+public class NetworkChangeReceiver extends BroadcastReceiver{
+
 
     static TSnackbar snackbar; //make it as global
+    private SharedPreference sharedPreference;
+
 
     @Override
     public void onReceive(Context context, Intent intent) {
 
         isNetworkStatusAvialable(context);
+
+        if(isNetworkStatusAvialable(context)){
+            if(SosActivity.NEED_TO_SEND_SOS){
+                System.out.print("SOSOS" + "NEED SOS IS TRUE in BR =======++++++++++++++++&&&&&&&&&&&&&&&&&&&&&&&&&&&&" +
+                        "****************************" + SosActivity.NEED_TO_SEND_SOS);
+                Intent intent1 = new Intent(context.getApplicationContext(),SosActivity.class);
+                intent1.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                context.getApplicationContext().startActivity(intent1);
+            }
+        }
 
     }
     public static boolean isNetworkStatusAvialable (Context context) {
@@ -46,8 +59,12 @@ public class NetworkChangeReceiver extends BroadcastReceiver {
         }else{
             NetworkChangeReceiver.hideSnackbar();
             return true;
-            //  MyApplication.appactivity.setTheme(R.style.AppTheme);
 
+           // String job_num = sharedPreference.getValue(context.getApplicationContext(),"UserID");
+
+
+
+            //  MyApplication.appactivity.setTheme(R.style.AppTheme);
         }
     }
 
@@ -86,5 +103,6 @@ public class NetworkChangeReceiver extends BroadcastReceiver {
             snackbar.dismiss();
         }
     }
+
 }
 

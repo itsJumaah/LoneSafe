@@ -94,4 +94,18 @@
         android:layout_alignEnd="@+id/tvTnc"
         android:layout_alignBottom="@+id/etUser" />
 
+    <ProgressBar
+        android:id="@+id/progressBar1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="invisible"
+        android:layout_below="@+id/btnInfo"
+        android:layout_alignLeft="@+id/etUser"
+        android:layout_alignStart="@+id/etUser"
+        android:layout_alignBottom="@+id/imageView2"
+        android:layout_toLeftOf="@+id/btnInfo"
+        android:layout_toStartOf="@+id/btnInfo">
+    </ProgressBar>
+
+
 </RelativeLayout>

@@ -25,10 +25,6 @@ import com.android.volley.toolbox.Volley;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
-
 public class Home extends AppCompatActivity {
 
 
@@ -36,7 +32,6 @@ public class Home extends AppCompatActivity {
     Activity context = this;
 
     ProgressBar progressBar;
-    int checkinCounter = 1;
     int RL;
 
     public AlertDialog jobfinished;
@@ -68,6 +63,8 @@ public class Home extends AppCompatActivity {
         super.onResume();
         registerReceiver(br, new IntentFilter(ForegroundService.COUNTDOWN_BR));
         registerReceiver(serviceLife, new IntentFilter(ForegroundService.SERVICE_BR));
+       // registerReceiver(sendsostodb, new IntentFilter(ForegroundService.SendSOS_BR));
+
 
         /*
         if(!ForegroundService.IS_SERVICE_RUNNING){
@@ -77,7 +74,6 @@ public class Home extends AppCompatActivity {
         // Log.i(TAG, "Registered broacast receiver");
         System.out.println("Registered broacast receiver");
 
-
     }
 
     @Override
@@ -85,6 +81,8 @@ public class Home extends AppCompatActivity {
         super.onPause();
         unregisterReceiver(br);
         unregisterReceiver(serviceLife);
+
+
         System.out.println("Unregistered broacast receiver");
         //Log.i(TAG, "Unregistered broacast receiver");
     }
@@ -216,13 +214,16 @@ public class Home extends AppCompatActivity {
         tvRiskLvl.setText(Value);
 
         //Get current time //------------------
+        /*
         Calendar cal = Calendar.getInstance(); // creates calendar
         cal.setTime(new Date()); // sets calendar time/date
         Date time = cal.getTime();
 
         SimpleDateFormat formatter = new SimpleDateFormat("hh:mm a");
         String startTime = formatter.format(time);
+        */
 
+        String startTime = sharedPreference.getValue(context,"TimeStart");
         final TextView tvStTime = (TextView) findViewById(R.id.tvStTime);
         tvStTime.setText(startTime);
         //-------------------------------------|
