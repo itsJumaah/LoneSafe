@@ -23,7 +23,7 @@ namespace LoneSafeLib
 
             //key words
             Font detailsFont = FontFactory.GetFont("Arial", 7);
-            Paragraph keywords = new Paragraph("DR = Duration in minutes| RL = Level of Risk", detailsFont);
+            Paragraph keywords = new Paragraph("DR = Duration in minutes | RL = Level of Risk (1 lowest - 5 highest)", detailsFont);
             keywords.Alignment = Element.ALIGN_LEFT;
 
             //details
@@ -47,7 +47,7 @@ namespace LoneSafeLib
 
             //BaseFont bf = BaseFont.CreateFont(BaseFont.TIMES_ROMAN, BaseFont.CP1252, BaseFont.EMBEDDED);
             //Font font = new Font(bf, 9); //font size
-            Font font = FontFactory.GetFont("Arial", 9);
+            Font font = FontFactory.GetFont("Arial", 8);
 
             //Adding Header row
             foreach (DataGridViewColumn column in reportGrid.Columns)

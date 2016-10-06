@@ -23,7 +23,7 @@ namespace LoneSafe
             this.server = login.server;
             this.FormClosing += MainWindow_FormClosing; //create a closing window event
 
-            LDC = new LiveDataControl(server.GetURL, dataGrid, notifyIcon1, this.Icon);
+            LDC = new LiveDataControl(server.GetURL, dataGrid, notifyIcon1, this.Icon, user.Firstname, user.Email);
             
         }
         
@@ -105,7 +105,7 @@ namespace LoneSafe
         {
             try
             {
-                System.Diagnostics.Process.Start("manual.pdf");
+                System.Diagnostics.Process.Start(@"res\manual.pdf");
             }
             catch(SystemException er)
             {
