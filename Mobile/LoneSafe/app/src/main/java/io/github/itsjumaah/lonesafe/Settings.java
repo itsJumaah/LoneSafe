@@ -241,10 +241,17 @@ public class Settings extends AppCompatActivity {
                         updateOnJob();
                         updateJobActive();
 
+                        String username = sharedPreference.getValue(context,"User");
+                       // String job_num = sharedPreference.getValue(context,"UserID");
+
+
+
                         //START FOREGROUND SERVICE
                         Intent service = new Intent(Settings.this, ForegroundService.class);
                         service.putExtra("jobTime", Hours);//
                         service.putExtra("interval",interval);
+                        service.putExtra("username", username);
+                        service.putExtra("job_num", userId);
 
                         if (!ForegroundService.IS_SERVICE_RUNNING) {
                             service.setAction(ForegroundService.Constants.ACTION.STARTFOREGROUND_ACTION);

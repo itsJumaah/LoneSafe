@@ -74,7 +74,6 @@ public class SosActivity extends AppCompatActivity {
 
                 if (!NetworkChangeReceiver.isNetworkStatusAvialable(context)) {
                     sos = "1";
-                   // sharedPreference.saveSOS(context, sos);
 
                     NEED_TO_SEND_SOS = true;
                     System.out.print("SOSOS" + "NEED SOS SET TO TRUE =======++++++++++++++++&&&&&&&&&&&&&&&&&&&&&&&&&&&&" +

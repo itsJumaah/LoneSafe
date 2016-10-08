@@ -65,10 +65,14 @@ public class Home extends AppCompatActivity {
         registerReceiver(serviceLife, new IntentFilter(ForegroundService.SERVICE_BR));
 
         /*
+        * Ensures that the onServiceFinish method is called if user presses Job Finished Notification
+        *
+        */
+
         if(!ForegroundService.IS_SERVICE_RUNNING){
             onServiceFinish();
         }
-        */
+
         // Log.i(TAG, "Registered broacast receiver");
         System.out.println("Registered broacast receiver");
 

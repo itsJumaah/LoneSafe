@@ -17,7 +17,6 @@ public class SharedPreference {
     public static final String TimeStart = "TimeStart";
     public static final String FinishTime = "FinishTime";
     public static final String SaveRiskLevel = "SaveRiskLevel";
-    public static final String requireSOS = "requireSOS";
     public static final String Hours = "Hours";
 
 
@@ -50,10 +49,6 @@ public class SharedPreference {
 
     public void saveRL (Context context, String text) {
         save(context,SaveRiskLevel,text);
-    }
-
-    public void saveSOS (Context context, String text){
-        save(context,requireSOS,text);
     }
 
     public void saveTimeStart (Context context, String text) {

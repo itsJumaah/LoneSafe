@@ -13,6 +13,13 @@ import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.toolbox.Volley;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.TimeUnit;
@@ -32,7 +39,7 @@ public class ForegroundService extends Service {
     public static final String COUNTDOWN_BR = "io.github.itsjumaah.lonesafe.countdown_br";
     Intent bi = new Intent(COUNTDOWN_BR);
 
-    public static final String SERVICE_BR = "io.github.itsjumaah.lonesafe.countdown_br";
+    public static final String SERVICE_BR = "io.github.itsjumaah.lonesafe.service_br";
     Intent serviceIntent = new Intent(SERVICE_BR);
 
     CountDownTimer checkinCountdown = null;
@@ -42,6 +49,8 @@ public class ForegroundService extends Service {
     long jobTime = 54;
     long checkInterval = 21;
     long minutesRemaining = 60;
+    String username;
+    String job_num;
 
     long FinTime = jobTime; //
 
@@ -61,6 +70,7 @@ public class ForegroundService extends Service {
 
                 sendBroadcast(serviceIntent);
                 jobFinishedNotification();
+                UpdateonJobDB();
 
                 if(CheckinCounterActive){
                     checkinCountdown.cancel();
@@ -210,9 +220,11 @@ public class ForegroundService extends Service {
 
             jobTime = intent.getIntExtra("jobTime", 69);
             checkInterval = intent.getLongExtra("interval", 38);
+            username = intent.getStringExtra("username");
+            job_num = intent.getStringExtra("job_num");
 
             FinTime = TimeUnit.HOURS.toMillis(jobTime);
-           // FinTime = 60000; // FOR TESTING 1 minutes
+            // FinTime = 60000; // FOR TESTING 1 minutes
 
             Log.i(TAG, ">>>>>>>>>>>>>>** FINISH Remaining:  " + jobTime + " Hour(s) ------");
             Log.i(TAG, ">>>>>>>>>>>>>>** FINISH Remaining:  " + FinTime + " Milliseonds ------");
@@ -246,9 +258,68 @@ public class ForegroundService extends Service {
         return START_STICKY;
     }
 
+    private void UpdateonJobDB(){
+        Response.Listener<String> responseListener = new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                try {
+
+                    Log.i("tagconvertstr", "["+response+"]");
+
+                    JSONObject jsonResponse = new JSONObject(response);
+                    boolean success = jsonResponse.getBoolean("success");
+
+                    if (success) {
+                        Log.i("JSON: ", "Response true");
+
+                    } else {
+
+                        Log.i("JSON: ", "Response false");
+
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        };
+
+      //  String username = sharedPreference.getValue(context,"User");
+        String onjob = "0";
+
+        UpdateOnjobRequest updateOnjobRequest = new UpdateOnjobRequest(username, onjob, responseListener);
+        RequestQueue queue = Volley.newRequestQueue(ForegroundService.this);
+        queue.add(updateOnjobRequest);
+
+        //---
+        Response.Listener<String> responseListener2 = new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                try {
+                    Log.i("tagconvertstr", "["+response+"]");
+                    JSONObject jsonResponse = new JSONObject(response);
+                    boolean success = jsonResponse.getBoolean("success");
+                    if (success) {
+                        Log.i("JSON: ", "Response true");
+                    } else {
+                        Log.i("JSON: ", "Response false");
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        };
+
+       // String job_num = sharedPreference.getValue(context,"UserID");
+        String isactive = "0";
+
+        UpdateJobActiveRequest updateJobActiveRequest = new UpdateJobActiveRequest(job_num, isactive, responseListener2);
+        RequestQueue queue2 = Volley.newRequestQueue(ForegroundService.this);
+        queue2.add(updateJobActiveRequest);
+    }
+
     private void jobFinishedNotification(){
 
-        Intent notificationIntent = new Intent(this, Settings.class);
+        Intent notificationIntent = new Intent(this, Home.class);
         notificationIntent.setAction(Constants.ACTION.STOPFOREGROUND_ACTION);
         notificationIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK
                 | Intent.FLAG_ACTIVITY_CLEAR_TASK);
@@ -326,8 +397,7 @@ public class ForegroundService extends Service {
     public void onDestroy() {
         super.onDestroy();
         Log.i(LOG_TAG, "In onDestroy");
-        Toast.makeText(this, "Service Detroyed!", Toast.LENGTH_SHORT).show();
-        //Set Onjob boolean false here
+       // Toast.makeText(this, "Service Detroyed!", Toast.LENGTH_SHORT).show();
     }
 
     @Override
