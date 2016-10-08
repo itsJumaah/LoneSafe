@@ -256,4 +256,10 @@ public class Login extends AppCompatActivity {
         queue.add(loginRequest);
 
     }
+
+    @Override
+    public void onBackPressed() {
+        //DO Nothing!
+        //This Disables the back button.
+    }
 }

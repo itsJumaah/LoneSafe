@@ -63,8 +63,6 @@ public class Home extends AppCompatActivity {
         super.onResume();
         registerReceiver(br, new IntentFilter(ForegroundService.COUNTDOWN_BR));
         registerReceiver(serviceLife, new IntentFilter(ForegroundService.SERVICE_BR));
-       // registerReceiver(sendsostodb, new IntentFilter(ForegroundService.SendSOS_BR));
-
 
         /*
         if(!ForegroundService.IS_SERVICE_RUNNING){
@@ -199,7 +197,7 @@ public class Home extends AppCompatActivity {
         actionBar.setIcon(R.mipmap.ic_launcher);
         actionBar.setTitle(" LoneSafe");
 
-      //  registerReceiver(serviceLife, new IntentFilter(ForegroundService.SERVICE_BR));
+        registerReceiver(serviceLife, new IntentFilter(ForegroundService.SERVICE_BR));
 
         sharedPreference = new SharedPreference();
 

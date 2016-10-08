@@ -221,7 +221,7 @@ public class ForegroundService extends Service {
             checkinTimer();
 
             myTimer.schedule(myTask, FinTime);
-            Log.i("SERVIER TIMER: ", "STARTED");
+            Log.i("SERVICE TIMER: ", "STARTED");
 
 
             Log.i(LOG_TAG, "Received Start Foreground Intent ");
