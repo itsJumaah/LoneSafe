@@ -25,6 +25,10 @@ import com.android.volley.toolbox.Volley;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.DateFormat;
+import java.util.Calendar;
+import java.util.Date;
+
 public class Home extends AppCompatActivity {
 
 
@@ -111,7 +115,7 @@ public class Home extends AppCompatActivity {
 
     public AlertDialog onServiceFinish (){
 
-        updateOnJobtoZero();
+  //      updateOnJobtoZero();
 
        // unregisterReceiver(serviceLife);
 
@@ -296,7 +300,7 @@ public class Home extends AppCompatActivity {
                                 startService(service);
                             }
 
-                            updateOnJobtoZero();
+//                            updateOnJobtoZero();
 
                             Intent intent = new Intent(Home.this, Settings.class);
                             Home.this.startActivity(intent);
@@ -397,8 +401,41 @@ public class Home extends AppCompatActivity {
         RequestQueue queue = Volley.newRequestQueue(Home.this);
         queue.add(checkinRequest);
 
-    }
+        //UPDATE ENDTIME IN DB
+        Response.Listener<String> responseListener2 = new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                try {
 
+                    JSONObject jsonResponse = new JSONObject(response);
+                    boolean success = jsonResponse.getBoolean("success");
+
+                    if (success) {
+                        Log.i("JSON: ", "Response true");
+
+                    } else {
+                        Log.i("JSON: ", "Response false");
+
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        };
+
+        //get Current time
+        Calendar cal = Calendar.getInstance(); // creates calendar
+        cal.setTime(new Date()); // sets calendar time/date
+        Date time = cal.getTime();
+        DateFormat timeFormat = android.text.format.DateFormat.getTimeFormat(getApplicationContext()); // Gets system time format
+        String endtime = timeFormat.format(time);
+        //----
+
+        UpdateEndTimeRequest updateEndTimeRequest = new UpdateEndTimeRequest(job_num, endtime, responseListener2);
+        RequestQueue queue2 = Volley.newRequestQueue(Home.this);
+        queue2.add(updateEndTimeRequest);
+    }
+/*
     void updateOnJobtoZero(){
 
         Response.Listener<String> responseListener = new Response.Listener<String>() {
@@ -459,6 +496,7 @@ public class Home extends AppCompatActivity {
         queue2.add(updateJobActiveRequest);
 
     }
+    */
     @Override
     public void onBackPressed() {
         //DO Nothing!

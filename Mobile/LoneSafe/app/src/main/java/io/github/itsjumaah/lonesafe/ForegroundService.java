@@ -224,7 +224,7 @@ public class ForegroundService extends Service {
             job_num = intent.getStringExtra("job_num");
 
             FinTime = TimeUnit.HOURS.toMillis(jobTime);
-            // FinTime = 60000; // FOR TESTING 1 minutes
+           // FinTime = 60000; // FOR TESTING 1 minutes
 
             Log.i(TAG, ">>>>>>>>>>>>>>** FINISH Remaining:  " + jobTime + " Hour(s) ------");
             Log.i(TAG, ">>>>>>>>>>>>>>** FINISH Remaining:  " + FinTime + " Milliseonds ------");
@@ -243,6 +243,7 @@ public class ForegroundService extends Service {
 
         } else if (intent.getAction().equals(Constants.ACTION.STOPFOREGROUND_ACTION)) {
             Log.i(LOG_TAG, "Received Stop Foreground Intent");
+            UpdateonJobDB();
             checkinCountdown.cancel();
             if(EscalationActive){
                 EscalationCountdown.cancel();

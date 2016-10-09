@@ -44,6 +44,7 @@ public class Login extends AppCompatActivity {
 
         sharedPreference = new SharedPreference();
 
+
         //--- action bar icon
 
         ActionBar actionBar = getSupportActionBar();

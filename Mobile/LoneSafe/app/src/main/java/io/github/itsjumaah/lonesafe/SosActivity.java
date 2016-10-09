@@ -3,7 +3,13 @@ package io.github.itsjumaah.lonesafe;
 import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
+import android.os.Build;
 import android.os.Bundle;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -26,6 +32,11 @@ public class SosActivity extends AppCompatActivity {
     String sos = "0";
     public static boolean NEED_TO_SEND_SOS = false;
 
+    private LocationManager locationManager;
+    private LocationListener listener;
+    String lng;
+    String lat;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,16 +45,43 @@ public class SosActivity extends AppCompatActivity {
 
         sharedPreference = new SharedPreference();
 
+        locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
+
+        listener = new LocationListener() {
+            @Override
+            public void onLocationChanged(Location location) {
+                double longitude = location.getLongitude();
+                double latitude =  location.getLatitude();
+
+                lng =  String.valueOf(longitude);
+                lat = String.valueOf(latitude);
+            }
+
+            @Override
+            public void onStatusChanged(String s, int i, Bundle bundle) {
+
+            }
+
+            @Override
+            public void onProviderEnabled(String s) {
+
+            }
+
+            @Override
+            public void onProviderDisabled(String s) {
+
+            }
+        };
+        getLocation();
+
         if(NEED_TO_SEND_SOS){
             saveSosToDB();
+            SaveLocationToDB();
             NEED_TO_SEND_SOS = false;
-            System.out.print("SOSOS" + "NEED SOS SET TO false in sosAct =======++++++++++++++++&&&&&&&&&&&&&&&&&&&&&&&&&&&&" +
-                    "****************************" + NEED_TO_SEND_SOS);
             Toast.makeText(SosActivity.this, "SOS sent", Toast.LENGTH_SHORT).show();
 
             finish();
         }
-
 
         //  this.setFinishOnTouchOutside(false);
         //Custom size for the dialog --- Delete if not using
@@ -76,9 +114,6 @@ public class SosActivity extends AppCompatActivity {
                     sos = "1";
 
                     NEED_TO_SEND_SOS = true;
-                    System.out.print("SOSOS" + "NEED SOS SET TO TRUE =======++++++++++++++++&&&&&&&&&&&&&&&&&&&&&&&&&&&&" +
-                            "****************************" + NEED_TO_SEND_SOS);
-
 
                     final AlertDialog.Builder sosAlert = new AlertDialog.Builder(SosActivity.this);
                     sosAlert.setMessage("NO Network Connectivity, SOS will be sent when network is available!\n\n" +
@@ -99,6 +134,7 @@ public class SosActivity extends AppCompatActivity {
                 else{
                     sos="1";
                     saveSosToDB();
+                    SaveLocationToDB();
 
                     final AlertDialog.Builder sosAlert = new AlertDialog.Builder(SosActivity.this);
                     sosAlert.setMessage("SOS sent\n" +  "Someone will be notified");
@@ -118,6 +154,53 @@ public class SosActivity extends AppCompatActivity {
             }
         });
     }
+
+    void getLocation(){
+        // first check for permissions
+        if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                requestPermissions(new String[]{android.Manifest.permission.ACCESS_COARSE_LOCATION, android.Manifest.permission.ACCESS_FINE_LOCATION, android.Manifest.permission.INTERNET}
+                        ,10);
+            }
+            return;
+        }
+        // this code won't execute IF permissions are not allowed, because in the line above there is return statement.
+        locationManager.requestLocationUpdates("gps", 0, 0, listener);
+    }
+
+    void SaveLocationToDB(){
+
+        Response.Listener<String> responseListener = new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                try {
+
+                    Log.i("tagconvertstr", "["+response+"]");
+                    JSONObject jsonResponse = new JSONObject(response);
+                    boolean success = jsonResponse.getBoolean("success");
+
+                    if (success) {
+                        Log.i("JSON: ", "Response true");
+
+                    } else {
+                        Log.i("JSON: ", "Response false");
+
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        };
+
+        String job_num = sharedPreference.getValue(context,"UserID");
+
+
+        LocationRequest locationRequest = new LocationRequest(job_num, lng, lat, responseListener);
+        RequestQueue queue = Volley.newRequestQueue(SosActivity.this);
+        queue.add(locationRequest);
+
+    }
+
 
     void saveSosToDB (){
 

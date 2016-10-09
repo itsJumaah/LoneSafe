@@ -78,6 +78,24 @@
             android:layout_centerHorizontal="true"
             android:layout_marginTop="5dp" />
 
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="Long:"
+            android:id="@+id/tvLong"
+            android:layout_below="@+id/tvEscalation"
+            android:layout_centerHorizontal="true" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="Lat:"
+            android:id="@+id/tvLat"
+            android:layout_below="@+id/tvLong"
+            android:layout_centerHorizontal="true" />
+
     </RelativeLayout>
 
 

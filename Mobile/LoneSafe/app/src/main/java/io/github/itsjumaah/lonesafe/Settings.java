@@ -3,7 +3,13 @@ package io.github.itsjumaah.lonesafe;
 import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
+import android.os.Build;
 import android.os.Bundle;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -24,7 +30,7 @@ import com.android.volley.toolbox.Volley;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.text.SimpleDateFormat;
+import java.text.DateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
@@ -37,6 +43,9 @@ public class Settings extends AppCompatActivity {
     int RiskLevel = 1;
     String FinishTime;
     ProgressBar loadProgressBar;
+
+    private LocationManager locationManager;
+    private LocationListener listener;
 
 
     @Override
@@ -52,6 +61,8 @@ public class Settings extends AppCompatActivity {
         actionBar.setIcon(R.mipmap.ic_launcher);
         actionBar.setTitle(" LoneSafe");
 
+        //init GPS to ensure it is turned on in users device
+        InitiateGPS();
 
         // Display user details
         final TextView tvWelcomeMsg = (TextView) findViewById(R.id.tvUser);
@@ -283,10 +294,12 @@ public class Settings extends AppCompatActivity {
         };
 
         String username = sharedPreference.getValue(context,"User");
+        String starttime = sharedPreference.getValue(context,"TimeStart");
+        String endtime = sharedPreference.getValue(context,"FinishTime");
         String workinghours = sharedPreference.getValue(context,"Hours");
         String risklevel = sharedPreference.getValue(context,"SaveRiskLevel");
 
-        InsertDataRequest insertDataRequest = new InsertDataRequest(username, workinghours, risklevel ,responseListener);
+        InsertDataRequest insertDataRequest = new InsertDataRequest(username,starttime,endtime, workinghours, risklevel ,responseListener);
         RequestQueue queue = Volley.newRequestQueue(Settings.this);
         queue.add(insertDataRequest);
 
@@ -459,9 +472,9 @@ public class Settings extends AppCompatActivity {
         cal.setTime(new Date()); // sets calendar time/date
         Date time = cal.getTime();
 
-        SimpleDateFormat formatter = new SimpleDateFormat("hh:mm a");
-        String startTime = formatter.format(time);
-
+       // SimpleDateFormat formatter = new SimpleDateFormat("hh:mm a");
+        DateFormat timeFormat = android.text.format.DateFormat.getTimeFormat(getApplicationContext()); // Gets system time format
+        String startTime = timeFormat.format(time);
         sharedPreference.saveTimeStart(context, startTime);
 
     }
@@ -473,12 +486,53 @@ public class Settings extends AppCompatActivity {
         cal.add(Calendar.HOUR_OF_DAY, Hours); // adds one hour
         Date time = cal.getTime(); // returns new date object, one hour in the future
 
-        SimpleDateFormat formatter = new SimpleDateFormat("hh:mm a");
-        FinishTime = formatter.format(time);
+       // SimpleDateFormat formatter = new SimpleDateFormat("hh:mm a");
+       // FinishTime = formatter.format(time);
+
+        DateFormat timeFormat = android.text.format.DateFormat.getTimeFormat(getApplicationContext()); // Gets system time format
+        FinishTime = timeFormat.format(time);
 
         sharedPreference.saveTimeEnd(context, FinishTime);
 
 
+    }
+
+    /*
+    * Initiate GPS here to ensure GPS permission is turned on and user is notified if its not.
+    * Otherwise user only gets prompted when first checkin happens, which tends to cause problems of
+    * checkin not appearing.
+     */
+    public void InitiateGPS(){
+        locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
+
+        listener = new LocationListener() {
+            @Override
+            public void onLocationChanged(Location location) {
+
+            }
+
+            @Override
+            public void onStatusChanged(String s, int i, Bundle bundle) {
+
+            }
+
+            @Override
+            public void onProviderEnabled(String s) {
+
+            }
+
+            @Override
+            public void onProviderDisabled(String s) {
+
+            }
+        };
+        if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                requestPermissions(new String[]{android.Manifest.permission.ACCESS_COARSE_LOCATION, android.Manifest.permission.ACCESS_FINE_LOCATION, android.Manifest.permission.INTERNET}
+                        ,10);
+            }
+        }
+       // locationManager.requestLocationUpdates("gps", 5000, 0, listener);
     }
 
     @Override

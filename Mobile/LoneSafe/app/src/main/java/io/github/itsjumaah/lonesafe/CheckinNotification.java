@@ -1,21 +1,29 @@
 package io.github.itsjumaah.lonesafe;
 
+import android.Manifest;
 import android.animation.ObjectAnimator;
 import android.animation.PropertyValuesHolder;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.media.Ringtone;
 import android.media.RingtoneManager;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Vibrator;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.view.animation.FastOutSlowInInterpolator;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.TextView;
 
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -23,6 +31,8 @@ import com.android.volley.toolbox.Volley;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+
+//---
 
 public class CheckinNotification extends AppCompatActivity {
 
@@ -43,6 +53,9 @@ public class CheckinNotification extends AppCompatActivity {
     String Escalation2 = "2";
     String Escalation3 = "3";
     CountDownTimer countDownTimer;
+
+    private LocationManager locationManager;
+    private LocationListener listener;
 
     Uri uri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_RINGTONE);
     private Ringtone ringtone;
@@ -78,11 +91,60 @@ public class CheckinNotification extends AppCompatActivity {
         scaleDown.setRepeatMode(ObjectAnimator.REVERSE);
         scaleDown.start();
 
+        locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
+
+        listener = new LocationListener() {
+            @Override
+            public void onLocationChanged(Location location) {
+               // t.append("\n " + location.getLongitude() + " " + location.getLatitude());
+                double lng = location.getLongitude();
+                double lat =  location.getLatitude();
+
+                String longer =  String.valueOf(lng);
+                final TextView tvLong = (TextView) findViewById(R.id.tvLong);
+                tvLong.setText(longer);
+
+                String Latitude =  String.valueOf(lat);
+                final TextView tvLat = (TextView) findViewById(R.id.tvLat);
+                tvLat.setText(Latitude);
+            }
+
+            @Override
+            public void onStatusChanged(String s, int i, Bundle bundle) {
+
+            }
+
+            @Override
+            public void onProviderEnabled(String s) {
+
+            }
+
+            @Override
+            public void onProviderDisabled(String s) {
+
+            }
+        };
+        getLocation();
         getCheckinValue();
         DisplayNotification();
-
     }
 
+   void getLocation(){
+       // first check for permissions
+       if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+           if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+               requestPermissions(new String[]{Manifest.permission.ACCESS_COARSE_LOCATION,Manifest.permission.ACCESS_FINE_LOCATION,Manifest.permission.INTERNET}
+                       ,10);
+           }
+           return;
+       }
+       // this code won't execute IF permissions are not allowed, because in the line above there is return statement.
+       locationManager.requestLocationUpdates("gps", 5000, 0, listener);
+   }
+
+
+
+    //----------------------------------------------------------------------------------------------
 
     void DisplayNotification(){
 
@@ -93,10 +155,6 @@ public class CheckinNotification extends AppCompatActivity {
         long[] pattern = {0, 1000, 1000};
 
         */
-
-
-
-
 
         countDownTimer = new CountDownTimer(30000, 1000) { //Phone would ring for 30 seconds
             //If user hasn't checked in
@@ -160,8 +218,6 @@ public class CheckinNotification extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 userCheckedIn();
-
-
             }
         });
     }
