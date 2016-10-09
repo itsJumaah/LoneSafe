@@ -13,7 +13,7 @@
     <application
         android:name=".MyApplication"
         android:allowBackup="true"
-        android:icon="@mipmap/ic_launcher"
+        android:icon="@drawable/ic_launcher"
         android:label="LoneSafe"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
@@ -24,9 +24,6 @@
             android:windowSoftInputMode="adjustPan"/>
         <activity
             android:name=".Home"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name=".OLDSettings"
             android:screenOrientation="portrait" />
 
         <activity
@@ -70,16 +67,6 @@
             </intent-filter>
         </receiver>
 
-        <service android:name=".FirebaseMessagingService">
-            <intent-filter>
-                <action android:name="com.google.firebase.MESSAGING_EVENT" />
-            </intent-filter>
-        </service>
-        <service android:name=".FirebaseInstanceIDService">
-            <intent-filter>
-                <action android:name="com.google.firebase.INSTANCE_ID_EVENT" />
-            </intent-filter>
-        </service>
         <service android:name=".ForegroundService"></service>
 
         <activity android:name=".Settings"></activity>

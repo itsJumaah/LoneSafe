@@ -202,7 +202,7 @@ public class Home extends AppCompatActivity {
         //--- action bar icon
         ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayShowHomeEnabled(true);
-        actionBar.setIcon(R.mipmap.ic_launcher);
+        actionBar.setIcon(R.drawable.ic_launcher);
         actionBar.setTitle(" LoneSafe");
 
         registerReceiver(serviceLife, new IntentFilter(ForegroundService.SERVICE_BR));

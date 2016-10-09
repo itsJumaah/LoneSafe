@@ -58,7 +58,7 @@ public class Settings extends AppCompatActivity {
         //init action bar
         ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayShowHomeEnabled(true);
-        actionBar.setIcon(R.mipmap.ic_launcher);
+        actionBar.setIcon(R.drawable.ic_launcher);
         actionBar.setTitle(" LoneSafe");
 
         //init GPS to ensure it is turned on in users device
@@ -564,7 +564,18 @@ public class Settings extends AppCompatActivity {
                 logoutcheck.setPositiveButton("Logout", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        sharedPreference.clearSharedPreference(context);
+                      //  sharedPreference.clearSharedPreference(context);
+
+                        sharedPreference.removeValue(context,"User");
+                        sharedPreference.removeValue(context,"Name");
+                        sharedPreference.removeValue(context,"Pass");
+                        sharedPreference.removeValue(context,"UserID");
+                        sharedPreference.removeValue(context,"TimeStart");
+                        sharedPreference.removeValue(context,"FinishTime");
+                        sharedPreference.removeValue(context,"SaveRiskLevel");
+                        sharedPreference.removeValue(context,"Hours");
+
+
                         Intent logoutIntent = new Intent(Settings.this, Login.class);
                         Settings.this.startActivity(logoutIntent);
                         finish();

@@ -7,7 +7,7 @@ import android.content.SharedPreferences.Editor;
 
 public class SharedPreference {
 
-    public static final String PREFS_NAME = "AOP_PREFS";
+    public static final String PREFS_NAME = "APP_PREFS";
 
     public static final String User = "User";
     public static final String Name = "Name";

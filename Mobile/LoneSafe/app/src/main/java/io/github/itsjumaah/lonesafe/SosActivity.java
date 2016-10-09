@@ -126,7 +126,7 @@ public class SosActivity extends AppCompatActivity {
                             startActivity(intent);
                         }
                     });
-                    sosAlert.setIcon(R.mipmap.ic_launcher);
+                    sosAlert.setIcon(R.drawable.ic_launcher);
                     sosAlert.setCancelable(false);
                     sosAlert.setTitle("S.O.S").create().show();
 
@@ -146,7 +146,7 @@ public class SosActivity extends AppCompatActivity {
                             startActivity(intent);
                         }
                     });
-                    sosAlert.setIcon(R.mipmap.ic_launcher);
+                    sosAlert.setIcon(R.drawable.ic_launcher);
                     sosAlert.setCancelable(false);
                     sosAlert.setTitle("S.O.S").create().show();
                 }
