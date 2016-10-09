@@ -56,6 +56,8 @@ public class CheckinNotification extends AppCompatActivity {
 
     private LocationManager locationManager;
     private LocationListener listener;
+    String lng;
+    String lat;
 
     Uri uri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_RINGTONE);
     private Ringtone ringtone;
@@ -97,8 +99,11 @@ public class CheckinNotification extends AppCompatActivity {
             @Override
             public void onLocationChanged(Location location) {
                // t.append("\n " + location.getLongitude() + " " + location.getLatitude());
-                double lng = location.getLongitude();
-                double lat =  location.getLatitude();
+                double longitude = location.getLongitude();
+                double latitude =  location.getLatitude();
+
+                lng =  String.valueOf(longitude);
+                lat = String.valueOf(latitude);
 
                 String longer =  String.valueOf(lng);
                 final TextView tvLong = (TextView) findViewById(R.id.tvLong);
@@ -142,8 +147,6 @@ public class CheckinNotification extends AppCompatActivity {
        locationManager.requestLocationUpdates("gps", 5000, 0, listener);
    }
 
-
-
     //----------------------------------------------------------------------------------------------
 
     void DisplayNotification(){
@@ -174,6 +177,10 @@ public class CheckinNotification extends AppCompatActivity {
                 if(ForegroundService.EscalationCounter == 1 || ForegroundService.EscalationCounter == 2){
                     Log.i("*** Escalation1/2", "++++++++++++++++++++++++++++++++++++++++++++++++++++++++>> ESCAl counter is: " + ForegroundService.EscalationCounter);
 
+                   // getLocation();
+                    SaveLocationToDB();
+
+
                     Intent toServiceIntent = new Intent(CheckinNotification.this,ForegroundService.class);
                     if (ForegroundService.IS_SERVICE_RUNNING) {
                         toServiceIntent.setAction(ForegroundService.Constants.ACTION.ESCALATION_ACTION);
@@ -182,6 +189,10 @@ public class CheckinNotification extends AppCompatActivity {
                     finish();
                 }
                 if(ForegroundService.EscalationCounter == 3){
+
+                   // getLocation();
+                    SaveLocationToDB();
+
                     Log.i("*** Escalation3", "++++++++++++++++++++++++++++++++++++++++++++++++++++++++>> ESCAl counter is: " + ForegroundService.EscalationCounter);
                     ForegroundService.EscalationCounter = 0;
                     Log.i("*** Escalation3->0", "++++++++++++++++++++++++++++++++++++++++++++++++++++++++>> ESCAl counter is: " + ForegroundService.EscalationCounter);
@@ -472,6 +483,43 @@ public class CheckinNotification extends AppCompatActivity {
         RequestQueue queue = Volley.newRequestQueue(CheckinNotification.this);
         queue.add(checkinRequest);
     }
+
+
+    //----------------------------------------------------------------------------------------------
+
+    void SaveLocationToDB(){
+
+        Response.Listener<String> responseListener = new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                try {
+
+                    Log.i("tagconvertstr", "["+response+"]");
+                    JSONObject jsonResponse = new JSONObject(response);
+                    boolean success = jsonResponse.getBoolean("success");
+
+                    if (success) {
+                        Log.i("JSON: ", "Response true");
+
+                    } else {
+                        Log.i("JSON: ", "Response false");
+
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        };
+
+        String job_num = sharedPreference.getValue(context,"UserID");
+
+
+        LocationRequest locationRequest = new LocationRequest(job_num, lng, lat, responseListener);
+        RequestQueue queue = Volley.newRequestQueue(CheckinNotification.this);
+        queue.add(locationRequest);
+
+    }
+
 
     @Override
     public void onBackPressed() {
