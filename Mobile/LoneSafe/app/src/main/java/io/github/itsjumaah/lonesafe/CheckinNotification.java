@@ -23,7 +23,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
-import android.widget.TextView;
 
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -105,6 +104,7 @@ public class CheckinNotification extends AppCompatActivity {
                 lng =  String.valueOf(longitude);
                 lat = String.valueOf(latitude);
 
+                /*
                 String longer =  String.valueOf(lng);
                 final TextView tvLong = (TextView) findViewById(R.id.tvLong);
                 tvLong.setText(longer);
@@ -112,6 +112,8 @@ public class CheckinNotification extends AppCompatActivity {
                 String Latitude =  String.valueOf(lat);
                 final TextView tvLat = (TextView) findViewById(R.id.tvLat);
                 tvLat.setText(Latitude);
+                */
+
             }
 
             @Override
