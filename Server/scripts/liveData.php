@@ -39,7 +39,7 @@
         
 //***************************ACTUAL CODE BEGINS**********************************************
     
-      $cmd = "SELECT users.firstname, users.lastname, users.username, jobs.risklevel, jobs.needsos, jobs.checkin1, jobs.checkin2, jobs.checkin3, jobs.checkin4, jobs.checkin5, jobs.checkin6, jobs.checkin7, jobs.checkin8  FROM jobs JOIN users ON (jobs.username = users.username) WHERE users.onjob = 1";
+      $cmd = "SELECT users.firstname, users.lastname, users.username, users.mobile, users.phone, users.email, users.rego, jobs.starttime, jobs.endtime, jobs.risklevel, jobs.needsos, jobs.checkin1, jobs.checkin2, jobs.checkin3, jobs.checkin4, jobs.checkin5, jobs.checkin6, jobs.checkin7, jobs.checkin8, location.time, location.latitude, location.longitude FROM jobs JOIN users ON (jobs.username = users.username) JOIN location ON (jobs.job_num = location.job_num) WHERE users.onjob = 1 AND jobs.isactive = 1";
 
   
       $statement = mysqli_prepare($con, $cmd);
@@ -48,8 +48,9 @@
       
       mysqli_stmt_store_result($statement);
 
-      mysqli_stmt_bind_result($statement, $firstname, $lastname, $username, $risklevel, $needsos, $checkin1, $checkin2, $checkin3, $checkin4, $checkin5, $checkin6, $checkin7, $checkin8);
+      mysqli_stmt_bind_result($statement, $firstname, $lastname, $username, $mobile, $phone, $email, $rego, $starttime, $endtime, $risklevel, $needsos, $checkin1, $checkin2, $checkin3, $checkin4, $checkin5, $checkin6, $checkin7, $checkin8, $emtime, $latitude, $longitude);
 
+      $users = array();
       while(mysqli_stmt_fetch($statement)){
          
         $users[]=array(
@@ -57,6 +58,12 @@
                     'firstname' => $firstname,
                     'lastname'  => $lastname,
                     'username'  => $username,
+                    'mobile'    => $mobile,
+                    'phone'     => $phone,
+                    'email'     => $email,
+                    'rego'      => $rego,
+                    'starttime' => $starttime,
+                    'endtime'   => $endtime,
                     'risklevel' => $risklevel,
                     'needsos'   => $needsos,
                     'checkin1'  => $checkin1,
@@ -67,6 +74,9 @@
                     'checkin6'  => $checkin6,
                     'checkin7'  => $checkin7,
                     'checkin8'  => $checkin8,
+                    'emtime'    => $emtime,
+                    'latitude'  => $latitude,
+                    'longitude' => $longitude,
               ),
           );
       }

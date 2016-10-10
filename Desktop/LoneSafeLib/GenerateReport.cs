@@ -23,7 +23,7 @@ namespace LoneSafeLib
 
             //key words
             Font detailsFont = FontFactory.GetFont("Arial", 7);
-            Paragraph keywords = new Paragraph("DR = Duration in minutes | RL = Level of Risk (1 lowest - 5 highest)", detailsFont);
+            Paragraph keywords = new Paragraph("DR = Duration in minutes | RL = Level of Risk (1 lowest - 5 highest) | Escl. L# = Escalation Level (1 lowest - 3 highest)", detailsFont);
             keywords.Alignment = Element.ALIGN_LEFT;
 
             //details
@@ -34,7 +34,7 @@ namespace LoneSafeLib
 
 
             float[] widthpercentages = new float[] {
-            120f, 200f, 40f, 40f, //date name duration risklevel
+            110f, 200f, 90f, 90f, 38f, 38f, //date name start end duration risklevel
             100f, 100f, 100f, 100f, 100f, 100f, 100f, 100f}; //checkins
 
             //Creating iTextSharp Table from the DataTable data
@@ -47,7 +47,8 @@ namespace LoneSafeLib
 
             //BaseFont bf = BaseFont.CreateFont(BaseFont.TIMES_ROMAN, BaseFont.CP1252, BaseFont.EMBEDDED);
             //Font font = new Font(bf, 9); //font size
-            Font font = FontFactory.GetFont("Arial", 8);
+            
+            Font font = FontFactory.GetFont("Myriad", 8);
 
             //Adding Header row
             foreach (DataGridViewColumn column in reportGrid.Columns)
@@ -82,6 +83,19 @@ namespace LoneSafeLib
                     if (cell.Value == null)
                     {
                         cell.Value = "";
+                    }
+
+                    else if(cell.Value.ToString() == "Escalation 1")
+                    {
+                        cell.Value = "Escl. L1";
+                    }
+                    else if (cell.Value.ToString() == "Escalation 2")
+                    {
+                        cell.Value = "Escl. L2";
+                    }
+                    else if (cell.Value.ToString() == "Escalation 3")
+                    {
+                        cell.Value = "Escl. L3";
                     }
 
                     PdfPCell cl = new PdfPCell(new Phrase(cell.Value.ToString(), font));

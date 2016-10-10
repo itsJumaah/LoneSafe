@@ -14,6 +14,12 @@ namespace LoneSafeLib
         [JsonProperty("lastname")]
         public string Lastname { get; set; }
 
+        [JsonProperty("starttime")]
+        public string StartTime { get; set; }
+
+        [JsonProperty("endtime")]
+        public string EndTime { get; set; }
+
         [JsonProperty("workinghours")]
         public string WorkingHours { get; set; }
 

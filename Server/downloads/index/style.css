@@ -1,0 +1,49 @@
+body {
+	text-align: center;
+	background-color: rgb(1,140,255);
+	
+}
+
+.downloadIMG{
+	width: 100;
+	height: auto;
+}
+.buttonIMG{
+	width: 70;
+	height: auto;
+}
+
+table{
+	text-align: center;
+}
+h1 {
+	color: rgba(0,0,150, 1);
+}
+
+hr{
+	width: 400px;
+}
+
+p {
+
+	color: rgba(255,255,255, 1);
+	font-size: 9;
+	font-family: tahoma;
+}
+
+
+a:visited, a:link, a:active {
+
+	text-decoration: none;
+	color: rgba(0,70,255,1);
+
+}
+
+a:hover {
+	text-decoration: none;
+	color: rgba(0,70,255,0.4);
+	opacity: 0.5;
+    filter: alpha(opacity=50);
+
+
+}

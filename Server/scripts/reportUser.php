@@ -42,7 +42,7 @@
         
 //***************************ACTUAL CODE BEGINS**********************************************
     
-        $cmd = "SELECT users.firstname, users.lastname, jobs.date, jobs.workinghours, jobs.risklevel, jobs.needsos, jobs.checkin1, jobs.checkin2, jobs.checkin3, jobs.checkin4, jobs.checkin5, jobs.checkin6, jobs.checkin7, jobs.checkin8  FROM jobs JOIN users ON (jobs.username = users.username) WHERE jobs.date BETWEEN '$fromDate' AND '$toDate'"; 
+        $cmd = "SELECT users.firstname, users.lastname, jobs.date, jobs.starttime, jobs.endtime, jobs.workinghours, jobs.risklevel, jobs.needsos, jobs.checkin1, jobs.checkin2, jobs.checkin3, jobs.checkin4, jobs.checkin5, jobs.checkin6, jobs.checkin7, jobs.checkin8  FROM jobs JOIN users ON (jobs.username = users.username) WHERE jobs.date BETWEEN '$fromDate' AND '$toDate'"; 
 
         //from and to 
 
@@ -54,7 +54,7 @@
         
         mysqli_stmt_store_result($statement);
 
-        mysqli_stmt_bind_result($statement, $firstname, $lastname, $date, $workinghours, $risklevel, $needsos, $checkin1, $checkin2, $checkin3, $checkin4, $checkin5, $checkin6, $checkin7, $checkin8);
+        mysqli_stmt_bind_result($statement, $firstname, $lastname, $date, $starttime, $endtime, $workinghours, $risklevel, $needsos, $checkin1, $checkin2, $checkin3, $checkin4, $checkin5, $checkin6, $checkin7, $checkin8);
 
         while(mysqli_stmt_fetch($statement)){
            
@@ -63,6 +63,8 @@
                       'firstname' => $firstname,
                       'lastname'  => $lastname,
                       'date'      => $date,
+                      'starttime' => $starttime,
+                      'endtime'   => $endtime,
                       'workinghours'  => $workinghours,
                       'risklevel' => $risklevel,
                       'needsos'   => $needsos,

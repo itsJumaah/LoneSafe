@@ -30,7 +30,6 @@ namespace LoneSafe
 
             if (user.Success)
             {
-                //user = conn.User;
 
                 if(user.Manager)
                 {

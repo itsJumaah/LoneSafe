@@ -23,7 +23,7 @@ namespace LoneSafe
             this.server = login.server;
             this.FormClosing += MainWindow_FormClosing; //create a closing window event
 
-            LDC = new LiveDataControl(server.GetURL, dataGrid, notifyIcon1, this.Icon, user.Firstname, user.Email);
+            LDC = new LiveDataControl(server.GetURL, dataGrid, this.Icon, user.Firstname, user.Email);
             
         }
         

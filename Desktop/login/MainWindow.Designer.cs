@@ -28,7 +28,6 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainWindow));
             this.name = new System.Windows.Forms.Label();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
@@ -56,8 +55,11 @@
             this.logo = new System.Windows.Forms.PictureBox();
             this.tableLayoutPanel2 = new System.Windows.Forms.TableLayoutPanel();
             this.dataGrid = new System.Windows.Forms.DataGridView();
+            this.lblLiveData = new System.Windows.Forms.Label();
             this.fullName = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.rskLevel = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.st = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.et = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.c1 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.c2 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.c3 = new System.Windows.Forms.DataGridViewTextBoxColumn();
@@ -66,8 +68,6 @@
             this.c6 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.c7 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.c8 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.lblLiveData = new System.Windows.Forms.Label();
-            this.notifyIcon1 = new System.Windows.Forms.NotifyIcon(this.components);
             this.statusStrip1.SuspendLayout();
             this.menuStrip1.SuspendLayout();
             this.tableLayoutPanel1.SuspendLayout();
@@ -309,7 +309,6 @@
             // 
             this.dataGrid.AllowUserToAddRows = false;
             this.dataGrid.AllowUserToDeleteRows = false;
-            this.dataGrid.AllowUserToOrderColumns = true;
             this.dataGrid.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
             this.dataGrid.BackgroundColor = System.Drawing.Color.White;
             this.dataGrid.BorderStyle = System.Windows.Forms.BorderStyle.None;
@@ -317,6 +316,8 @@
             this.dataGrid.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.fullName,
             this.rskLevel,
+            this.st,
+            this.et,
             this.c1,
             this.c2,
             this.c3,
@@ -337,66 +338,6 @@
             this.dataGrid.TabIndex = 6;
             this.dataGrid.UseWaitCursor = true;
             // 
-            // fullName
-            // 
-            this.fullName.HeaderText = "Name";
-            this.fullName.Name = "fullName";
-            this.fullName.ReadOnly = true;
-            // 
-            // rskLevel
-            // 
-            this.rskLevel.HeaderText = "Risk Level";
-            this.rskLevel.Name = "rskLevel";
-            this.rskLevel.ReadOnly = true;
-            // 
-            // c1
-            // 
-            this.c1.HeaderText = "Check-in 1";
-            this.c1.Name = "c1";
-            this.c1.ReadOnly = true;
-            // 
-            // c2
-            // 
-            this.c2.HeaderText = "Check-in 2";
-            this.c2.Name = "c2";
-            this.c2.ReadOnly = true;
-            // 
-            // c3
-            // 
-            this.c3.HeaderText = "Check-in 3";
-            this.c3.Name = "c3";
-            this.c3.ReadOnly = true;
-            // 
-            // c4
-            // 
-            this.c4.HeaderText = "Check-in 4";
-            this.c4.Name = "c4";
-            this.c4.ReadOnly = true;
-            // 
-            // c5
-            // 
-            this.c5.HeaderText = "Check-in 5";
-            this.c5.Name = "c5";
-            this.c5.ReadOnly = true;
-            // 
-            // c6
-            // 
-            this.c6.HeaderText = "Check-in 6";
-            this.c6.Name = "c6";
-            this.c6.ReadOnly = true;
-            // 
-            // c7
-            // 
-            this.c7.HeaderText = "Check-in 7";
-            this.c7.Name = "c7";
-            this.c7.ReadOnly = true;
-            // 
-            // c8
-            // 
-            this.c8.HeaderText = "Check-in 8";
-            this.c8.Name = "c8";
-            this.c8.ReadOnly = true;
-            // 
             // lblLiveData
             // 
             this.lblLiveData.AutoSize = true;
@@ -413,10 +354,89 @@
             this.lblLiveData.Text = "Live Data";
             this.lblLiveData.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
-            // notifyIcon1
+            // fullName
             // 
-            this.notifyIcon1.Text = "notifyIcon1";
-            this.notifyIcon1.Visible = true;
+            this.fullName.FillWeight = 14F;
+            this.fullName.HeaderText = "Name";
+            this.fullName.Name = "fullName";
+            this.fullName.ReadOnly = true;
+            // 
+            // rskLevel
+            // 
+            this.rskLevel.FillWeight = 5F;
+            this.rskLevel.HeaderText = "Risk Level";
+            this.rskLevel.Name = "rskLevel";
+            this.rskLevel.ReadOnly = true;
+            // 
+            // st
+            // 
+            this.st.FillWeight = 10F;
+            this.st.HeaderText = "Start Time";
+            this.st.Name = "st";
+            this.st.ReadOnly = true;
+            // 
+            // et
+            // 
+            this.et.FillWeight = 10F;
+            this.et.HeaderText = "End Time";
+            this.et.Name = "et";
+            this.et.ReadOnly = true;
+            // 
+            // c1
+            // 
+            this.c1.FillWeight = 10F;
+            this.c1.HeaderText = "Check-in 1";
+            this.c1.Name = "c1";
+            this.c1.ReadOnly = true;
+            // 
+            // c2
+            // 
+            this.c2.FillWeight = 10F;
+            this.c2.HeaderText = "Check-in 2";
+            this.c2.Name = "c2";
+            this.c2.ReadOnly = true;
+            // 
+            // c3
+            // 
+            this.c3.FillWeight = 10F;
+            this.c3.HeaderText = "Check-in 3";
+            this.c3.Name = "c3";
+            this.c3.ReadOnly = true;
+            // 
+            // c4
+            // 
+            this.c4.FillWeight = 10F;
+            this.c4.HeaderText = "Check-in 4";
+            this.c4.Name = "c4";
+            this.c4.ReadOnly = true;
+            // 
+            // c5
+            // 
+            this.c5.FillWeight = 10F;
+            this.c5.HeaderText = "Check-in 5";
+            this.c5.Name = "c5";
+            this.c5.ReadOnly = true;
+            // 
+            // c6
+            // 
+            this.c6.FillWeight = 10F;
+            this.c6.HeaderText = "Check-in 6";
+            this.c6.Name = "c6";
+            this.c6.ReadOnly = true;
+            // 
+            // c7
+            // 
+            this.c7.FillWeight = 10F;
+            this.c7.HeaderText = "Check-in 7";
+            this.c7.Name = "c7";
+            this.c7.ReadOnly = true;
+            // 
+            // c8
+            // 
+            this.c8.FillWeight = 10F;
+            this.c8.HeaderText = "Check-in 8";
+            this.c8.Name = "c8";
+            this.c8.ReadOnly = true;
             // 
             // MainWindow
             // 
@@ -480,6 +500,8 @@
         private System.Windows.Forms.DataGridView dataGrid;
         private System.Windows.Forms.DataGridViewTextBoxColumn fullName;
         private System.Windows.Forms.DataGridViewTextBoxColumn rskLevel;
+        private System.Windows.Forms.DataGridViewTextBoxColumn st;
+        private System.Windows.Forms.DataGridViewTextBoxColumn et;
         private System.Windows.Forms.DataGridViewTextBoxColumn c1;
         private System.Windows.Forms.DataGridViewTextBoxColumn c2;
         private System.Windows.Forms.DataGridViewTextBoxColumn c3;
@@ -488,6 +510,5 @@
         private System.Windows.Forms.DataGridViewTextBoxColumn c6;
         private System.Windows.Forms.DataGridViewTextBoxColumn c7;
         private System.Windows.Forms.DataGridViewTextBoxColumn c8;
-        private System.Windows.Forms.NotifyIcon notifyIcon1;
     }
 }

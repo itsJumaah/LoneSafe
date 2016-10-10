@@ -42,6 +42,8 @@
             this.reportGrid = new System.Windows.Forms.DataGridView();
             this.date = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.n = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.st = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.et = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.duration = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.risklevel = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.c1 = new System.Windows.Forms.DataGridViewTextBoxColumn();
@@ -213,6 +215,8 @@
             this.reportGrid.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.date,
             this.n,
+            this.st,
+            this.et,
             this.duration,
             this.risklevel,
             this.c1,
@@ -246,6 +250,20 @@
             this.n.Name = "n";
             this.n.ReadOnly = true;
             // 
+            // st
+            // 
+            this.st.FillWeight = 80F;
+            this.st.HeaderText = "Start Time";
+            this.st.Name = "st";
+            this.st.ReadOnly = true;
+            // 
+            // et
+            // 
+            this.et.FillWeight = 80F;
+            this.et.HeaderText = "End Time";
+            this.et.Name = "et";
+            this.et.ReadOnly = true;
+            // 
             // duration
             // 
             this.duration.FillWeight = 50F;
@@ -263,56 +281,56 @@
             // c1
             // 
             this.c1.FillWeight = 81.40286F;
-            this.c1.HeaderText = "Check-in 1";
+            this.c1.HeaderText = "Check 1";
             this.c1.Name = "c1";
             this.c1.ReadOnly = true;
             // 
             // c2
             // 
             this.c2.FillWeight = 81.40286F;
-            this.c2.HeaderText = "Check-in 2";
+            this.c2.HeaderText = "Check 2";
             this.c2.Name = "c2";
             this.c2.ReadOnly = true;
             // 
             // c3
             // 
             this.c3.FillWeight = 81.40286F;
-            this.c3.HeaderText = "Check-in 3";
+            this.c3.HeaderText = "Check 3";
             this.c3.Name = "c3";
             this.c3.ReadOnly = true;
             // 
             // c4
             // 
             this.c4.FillWeight = 81.40286F;
-            this.c4.HeaderText = "Check-in 4";
+            this.c4.HeaderText = "Check 4";
             this.c4.Name = "c4";
             this.c4.ReadOnly = true;
             // 
             // c5
             // 
             this.c5.FillWeight = 81.40286F;
-            this.c5.HeaderText = "Check-in 5";
+            this.c5.HeaderText = "Check 5";
             this.c5.Name = "c5";
             this.c5.ReadOnly = true;
             // 
             // c6
             // 
             this.c6.FillWeight = 81.40286F;
-            this.c6.HeaderText = "Check-in 6";
+            this.c6.HeaderText = "Check 6";
             this.c6.Name = "c6";
             this.c6.ReadOnly = true;
             // 
             // c7
             // 
             this.c7.FillWeight = 81.40286F;
-            this.c7.HeaderText = "Check-in 7";
+            this.c7.HeaderText = "Check 7";
             this.c7.Name = "c7";
             this.c7.ReadOnly = true;
             // 
             // c8
             // 
             this.c8.FillWeight = 81.40286F;
-            this.c8.HeaderText = "Check-in 8";
+            this.c8.HeaderText = "Check 8";
             this.c8.Name = "c8";
             this.c8.ReadOnly = true;
             // 
@@ -357,6 +375,8 @@
         private System.Windows.Forms.Button btnSave;
         private System.Windows.Forms.DataGridViewTextBoxColumn date;
         private System.Windows.Forms.DataGridViewTextBoxColumn n;
+        private System.Windows.Forms.DataGridViewTextBoxColumn st;
+        private System.Windows.Forms.DataGridViewTextBoxColumn et;
         private System.Windows.Forms.DataGridViewTextBoxColumn duration;
         private System.Windows.Forms.DataGridViewTextBoxColumn risklevel;
         private System.Windows.Forms.DataGridViewTextBoxColumn c1;

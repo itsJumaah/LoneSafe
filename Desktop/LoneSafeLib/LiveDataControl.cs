@@ -1,15 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Diagnostics;
 using System.Drawing;
+using System.IO;
 using System.Media;
 using System.Net;
 using System.Net.Mail;
 using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 using System.Timers;
+using System.util;
 using System.Windows.Forms;
 
 namespace LoneSafeLib
@@ -21,7 +21,8 @@ namespace LoneSafeLib
         private LiveData liveData;
         private BackgroundWorker worker;
         private DataGridView dataGrid;
-        private NotifyIcon notifyIcon1;
+        private NotifyIcon escLittleNotif;
+        private NotifyIcon sosLittleNotif;
         private Icon icon;
 
         private List<LiveUser> newList = new List<LiveUser>();
@@ -29,19 +30,18 @@ namespace LoneSafeLib
         private string adminName;
         private string adminEmail;
 
-        private System.Timers.Timer timer = new System.Timers.Timer(3000); //3 sec
+        private System.Timers.Timer timer = new System.Timers.Timer(5000); //5 sec
         private delegate void InvokeDelegate();
 
         private SoundPlayer sosSound;
         private SoundPlayer escalationSound;
         
-        public LiveDataControl(string url, DataGridView dataGrid, NotifyIcon notifyIcon1, Icon icon, string adminName, string adminEmail)
+        public LiveDataControl(string url, DataGridView dataGrid, Icon icon, string adminName, string adminEmail)
         {
             this.url = url;
             this.icon = icon;
             this.liveData = new LiveData(url);
             this.dataGrid = dataGrid;
-            this.notifyIcon1 = notifyIcon1;
 
             this.adminEmail = adminEmail;
             this.adminName = adminName;
@@ -118,7 +118,7 @@ namespace LoneSafeLib
 
                     string fullName = user.Firstname + " " + user.Lastname;
 
-                    dataGrid.Rows.Add(fullName, user.Risklevel,
+                    dataGrid.Rows.Add(fullName, user.Risklevel, user.StartTime, user.EndTime,
                         checkin[0], checkin[1], checkin[2], checkin[3],
                         checkin[4], checkin[5], checkin[6], checkin[7]);
 
@@ -132,7 +132,7 @@ namespace LoneSafeLib
                         }
                         
                         //push sos notification to the gui
-                        sos(fullName, user.Username);
+                        sos(user);
                     }
 
 
@@ -153,22 +153,27 @@ namespace LoneSafeLib
                                     notifyEmail(adminName, adminEmail, fullName, user.Username, "ESCALATION LEVEL " + i.ToString());
                                 }
                                 //push gui notification
-                                notification(fullName, user.Username, "checkin" + num.ToString(), i);
+                                notification(user, "checkin" + num.ToString(), i);
                             }
                         }
                     }
                     //ended
+                    
                 }
             }
         }
         //escalation notifications
-        private void notification(string fullName, string username, string checkin, int esc)
+        private void notification(LiveUser user, string checkin, int esc)
         {
             string es = "Escalation " + esc.ToString();
+
+            string fullName = user.Firstname + " " + user.Lastname;
+
             //play sound
             try
             {
-                escalationSound = new SoundPlayer(@"res\escalation.wav");
+                escalationSound = new SoundPlayer(Properties.Resources.escalation);
+               // escalationSound = new SoundPlayer(@"res\escalation.wav");
                 escalationSound.PlayLooping();
             }
             catch (Exception e)
@@ -176,44 +181,58 @@ namespace LoneSafeLib
                 Console.WriteLine(e.Message);
             }
 
-           //make windows notification in the tool bar
-            notifyIcon1.Visible = true;
-            notifyIcon1.Icon = icon;// SystemIcons.Application;
-            notifyIcon1.Text = es + " Alert!";
-            notifyIcon1.BalloonTipTitle = es;
-            notifyIcon1.BalloonTipText = fullName + " might be in trouble";
-            notifyIcon1.BalloonTipIcon = ToolTipIcon.Warning;
-            notifyIcon1.ShowBalloonTip(15000);
+            //make windows notification in the tool bar
+            escLittleNotif = new NotifyIcon();
+            escLittleNotif.Visible = true;
+            escLittleNotif.Icon = icon;// SystemIcons.Application;
+            escLittleNotif.Text = es + " Alert!";
+            escLittleNotif.BalloonTipTitle = es;
+            escLittleNotif.BalloonTipText = fullName + " might be in trouble";
+            escLittleNotif.BalloonTipIcon = ToolTipIcon.Warning;
+            escLittleNotif.ShowBalloonTip(15000);
 
-            notifyIcon1.BalloonTipClosed += (sender, e) => {
+            escLittleNotif.BalloonTipClosed += (sender, e) => {
                 var thisIcon = (NotifyIcon)sender;
                 thisIcon.Visible = false;
                 thisIcon.Dispose();
                 escalationSound.Stop();
             };
             //make window notification
-            
-             if (MessageBox.Show(fullName + " might be in trouble\n Please contact him", es,
-                 MessageBoxButtons.OK, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button1, MessageBoxOptions.ServiceNotification)
+
+            string msg = fullName + " might be in trouble\n\n" +
+                "More Info about " + user.Firstname + ":\n" +
+                "Latitude: " + " " + "Longitude" + " \n"
+
+
+                ;
+           
+            if (MessageBox.Show(fullName + " might be in trouble\n Please contact him", es,
+                 MessageBoxButtons.OKCancel, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button1, MessageBoxOptions.ServiceNotification)
                  == DialogResult.OK)
              {
                  // if ok is pressed, set sos back to 0
-                 Connection.notified(url, username, checkin, es);
+                 Connection.notified(url, user.Username, checkin, es);
                 escalationSound.Stop();
                 Thread.Sleep(2000);
             }
-             
-            //Thread.Sleep(5000);
-           // Connection.notified(url, username, checkin, es);
-            //Thread.Sleep(2000);
-            //escalationSound.Stop();
+            else
+            {
+                Connection.notified(url, user.Username, checkin, es);
+                escalationSound.Stop();
+                Thread.Sleep(2000);
+                Console.WriteLine("open window");
+            }
+            
         }
         //sos notifications
-        private void sos(string fullName, string username)
+        private void sos(LiveUser user)
         {
+            string fullName = user.Firstname + " " + user.Lastname;
+
             try
             {
-                sosSound = new SoundPlayer(@"res\sos.wav");
+                sosSound = new SoundPlayer(Properties.Resources.sos);
+                //sosSound = new SoundPlayer(@"res\sos.wav");
                 sosSound.PlayLooping();
             }
             catch (Exception e)
@@ -222,107 +241,49 @@ namespace LoneSafeLib
             }
 
             //make windows notification in the tool bar
-            notifyIcon1.Visible = true;
-            notifyIcon1.Icon = icon;// SystemIcons.Application;
-            notifyIcon1.Text = "SOS Alert!";
-            notifyIcon1.BalloonTipTitle = "SOS NEEDED";
-            notifyIcon1.BalloonTipText = fullName + " needs your help";
-            notifyIcon1.BalloonTipIcon = ToolTipIcon.Error;
-            notifyIcon1.ShowBalloonTip(15000);
+            sosLittleNotif = new NotifyIcon();
+            sosLittleNotif.Visible = true;
+            sosLittleNotif.Icon = icon;// SystemIcons.Application;
+            sosLittleNotif.Text = "SOS Alert!";
+            sosLittleNotif.BalloonTipTitle = "SOS NEEDED";
+            sosLittleNotif.BalloonTipText = fullName + " needs your help";
+            sosLittleNotif.BalloonTipIcon = ToolTipIcon.Error;
+            sosLittleNotif.ShowBalloonTip(15000);
 
-            notifyIcon1.BalloonTipClosed += (sender, e) => {
+            sosLittleNotif.BalloonTipClosed += (sender, e) => {
                 var thisIcon = (NotifyIcon)sender;
                 thisIcon.Visible = false;
                 thisIcon.Dispose();
-                //sosSound.Stop();
             };
 
+            string msg = fullName + " needs your help\n\n" +
+                "More Info about " + user.Firstname + ":\n" +
+                "Latitude: " + " " + "Longitude" + " \n" 
+                
+
+                ;
             
-            if (MessageBox.Show(fullName + " needs your help", "SOS NEEDED",
-                MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1, MessageBoxOptions.ServiceNotification)
+
+            if (MessageBox.Show(msg, "SOS ALERT!!",
+                MessageBoxButtons.OKCancel, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1, MessageBoxOptions.ServiceNotification)
                 == DialogResult.OK)
             {
                 // if ok is pressed, set sos back to 0
-                Connection.noMoreSOS(url, username);
+                Connection.noMoreSOS(url, user.Username);
                 sosSound.Stop();
                 Thread.Sleep(2000);
             }
+            else
+            {
+                Connection.noMoreSOS(url, user.Username);
+                sosSound.Stop();
+                Thread.Sleep(2000);
+                Console.WriteLine("open window");
+            }
             
-            // if ok is pressed, set sos back to 0
-            //Thread.Sleep(5000);
-            //Connection.noMoreSOS(url, username);
-            //Thread.Sleep(2000);
-            //sosSound.Stop();
         }
         
-        /*
-        private void notifyIcon1_BalloonTipClosed(object sender, EventArgs e)
-        {
-            if(notiOption == "SOS")
-            {
-                Console.WriteLine("sos about to be dismissed");
-                Connection.noMoreSOS(url, usernameSOS);
-                Thread.Sleep(2000);
-                Console.WriteLine("sos done");
-            }
-            else if(notiOption == "ES")
-            {
-                Console.WriteLine("escalation about to be dismissed");
-                Connection.notified(url, usernameES, checkinES, esES);
-                Thread.Sleep(2000);
-                Console.WriteLine("escalation about to be dismissed");
-            }
-
-        }*/
-
-
-        /*
-         //escalation notifications
-        private void notification(string fullName, string username, string checkin, int esc)
-        {
-            string es = "Escalation " + esc.ToString();
-
-            SystemSounds.Hand.Play(); //play windows beep
-                                      //Console.Beep();
-                                      //make windows notification in the tool bar
-            notifyIcon1.Visible = true;
-            notifyIcon1.Icon = icon;// SystemIcons.Application;
-            notifyIcon1.BalloonTipTitle = es;
-            notifyIcon1.BalloonTipText = fullName + " might be in trouble";
-            notifyIcon1.BalloonTipIcon = ToolTipIcon.Warning;
-            notifyIcon1.ShowBalloonTip(10000);
-            //make window notification
-            if (MessageBox.Show(fullName + " might be in trouble\n Please contact him", es,
-                MessageBoxButtons.OK, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button1, MessageBoxOptions.ServiceNotification)
-                == DialogResult.OK)
-            {
-                // if ok is pressed, set sos back to 0
-                Connection.notified(url, username, checkin, es);
-                
-            }
-        }
-        //sos notifications
-        private void sos(string fullName, string username)
-        {
-            SystemSounds.Hand.Play(); //play windows beep
-                                      //Console.Beep();
-                                      //make windows notification in the tool bar
-            notifyIcon1.Visible = true;
-            notifyIcon1.Icon = icon;// SystemIcons.Application;
-            notifyIcon1.BalloonTipTitle = "SOS NEEDED";
-            notifyIcon1.BalloonTipText = fullName + " needs your help";
-            notifyIcon1.BalloonTipIcon = ToolTipIcon.Error;
-            notifyIcon1.ShowBalloonTip(10000);
-            //make window notification
-            if (MessageBox.Show(fullName + " needs your help", "SOS NEEDED",
-                MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1, MessageBoxOptions.ServiceNotification)
-                == DialogResult.OK)
-            {
-                // if ok is pressed, set sos back to 0
-                Connection.noMoreSOS(url, username);
-            }
-        } 
-         */
+        
 
         //email notification
         private void notifyEmail(string adminName, string toEmail, string fullname, string username, string eventType)

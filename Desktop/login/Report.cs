@@ -79,6 +79,9 @@ namespace LoneSafe
                         reportData.ReportUsersList[r].ReportUser.Date,
                         reportData.ReportUsersList[r].ReportUser.Firstname
                         + " " + reportData.ReportUsersList[r].ReportUser.Lastname,
+                        
+                        reportData.ReportUsersList[r].ReportUser.StartTime,
+                        reportData.ReportUsersList[r].ReportUser.EndTime,
                         reportData.ReportUsersList[r].ReportUser.WorkingHours,
                         reportData.ReportUsersList[r].ReportUser.Risklevel,
 
