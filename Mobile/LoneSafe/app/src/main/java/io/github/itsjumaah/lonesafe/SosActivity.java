@@ -164,8 +164,9 @@ public class SosActivity extends AppCompatActivity {
             }
             return;
         }
+        System.out.println("SOS LOCATION ACQUIRED!!");
         // this code won't execute IF permissions are not allowed, because in the line above there is return statement.
-        locationManager.requestLocationUpdates("gps", 0, 0, listener);
+        locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, listener);
     }
 
     void SaveLocationToDB(){

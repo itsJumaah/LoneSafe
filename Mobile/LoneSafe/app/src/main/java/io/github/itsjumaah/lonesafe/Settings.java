@@ -251,6 +251,7 @@ public class Settings extends AppCompatActivity {
 
                         updateOnJob();
                         updateJobActive();
+                        SaveLocationToDB();
 
                         String username = sharedPreference.getValue(context,"User");
                        // String job_num = sharedPreference.getValue(context,"UserID");
@@ -376,6 +377,45 @@ public class Settings extends AppCompatActivity {
         UpdateJobActiveRequest updateJobActiveRequest = new UpdateJobActiveRequest(job_num, isactive, responseListener);
         RequestQueue queue = Volley.newRequestQueue(Settings.this);
         queue.add(updateJobActiveRequest);
+    }
+
+    /*
+    * Not sending location here.
+    * Creates an entry in the locations table with is then grabbed by the desktop app. The values for Longitude
+    * and Latitude would by NULL unless a SOS or Escalation is triggered.
+    */
+    void SaveLocationToDB(){
+
+        Response.Listener<String> responseListener = new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                try {
+
+                    Log.i("tagconvertstr", "["+response+"]");
+                    JSONObject jsonResponse = new JSONObject(response);
+                    boolean success = jsonResponse.getBoolean("success");
+
+                    if (success) {
+                        Log.i("JSON: ", "Response true");
+
+                    } else {
+                        Log.i("JSON: ", "Response false");
+
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        };
+
+        String job_num = sharedPreference.getValue(context,"UserID");
+        String lng ="null";
+        String lat = "null";
+
+        LocationRequest locationRequest = new LocationRequest(job_num, lng, lat, responseListener);
+        RequestQueue queue = Volley.newRequestQueue(Settings.this);
+        queue.add(locationRequest);
+
     }
 
     public long checkinInterval (long hours, int risklvl) {

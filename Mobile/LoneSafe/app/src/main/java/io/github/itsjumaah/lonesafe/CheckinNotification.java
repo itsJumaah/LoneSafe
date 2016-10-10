@@ -143,8 +143,9 @@ public class CheckinNotification extends AppCompatActivity {
            }
            return;
        }
+       System.out.println("CheckinEsc LOCATION ACQUIRED!!");
        // this code won't execute IF permissions are not allowed, because in the line above there is return statement.
-       locationManager.requestLocationUpdates("gps", 5000, 0, listener);
+       locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, listener);
    }
 
     //----------------------------------------------------------------------------------------------

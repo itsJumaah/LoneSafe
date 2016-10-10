@@ -17,7 +17,6 @@ import android.widget.TextView;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.toolbox.Volley;
-import com.google.firebase.iid.FirebaseInstanceId;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -147,7 +146,7 @@ public class Login extends AppCompatActivity {
         final EditText etPassword = (EditText) findViewById(R.id.etPassword);
 
         final String username = etUser.getText().toString();
-      //  final String password = etPassword.getText().toString();
+      // final String password = etPassword.getText().toString();
 
 
         try{
@@ -172,7 +171,7 @@ public class Login extends AppCompatActivity {
 
 
         //TODO Remove Firebase
-        String token = FirebaseInstanceId.getInstance().getToken();
+//        String token = FirebaseInstanceId.getInstance().getToken();
         //Get user data from DB
 
         // }
