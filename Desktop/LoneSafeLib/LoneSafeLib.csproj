@@ -49,6 +49,18 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AlertSO.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="AlertSO.Designer.cs">
+      <DependentUpon>AlertSO.cs</DependentUpon>
+    </Compile>
+    <Compile Include="AlertES.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="AlertES.Designer.cs">
+      <DependentUpon>AlertES.cs</DependentUpon>
+    </Compile>
     <Compile Include="Connection.cs" />
     <Compile Include="DisplayUser.cs" />
     <Compile Include="DisplayUserJson.cs" />
@@ -74,6 +86,12 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="AlertSO.resx">
+      <DependentUpon>AlertSO.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="AlertES.resx">
+      <DependentUpon>AlertES.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>

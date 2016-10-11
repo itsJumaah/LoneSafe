@@ -10,6 +10,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LoneSafeGUI", "login\LoneSa
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LoneSafeLib", "LoneSafeLib\LoneSafeLib.csproj", "{CC0B770B-02CD-4330-A294-ECE0F4EE5ACB}"
 EndProject
+Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "LoneInstaller", "LoneInstaller\LoneInstaller.vdproj", "{6B152D9E-0FA2-4EEC-A9D9-BE705116B8B3}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -20,10 +22,16 @@ Global
 		{6E619455-D891-4AD4-9B8D-C411B590E6EB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6E619455-D891-4AD4-9B8D-C411B590E6EB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6E619455-D891-4AD4-9B8D-C411B590E6EB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6E619455-D891-4AD4-9B8D-C411B590E6EB}.Release|Any CPU.Deploy.0 = Release|Any CPU
 		{CC0B770B-02CD-4330-A294-ECE0F4EE5ACB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{CC0B770B-02CD-4330-A294-ECE0F4EE5ACB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CC0B770B-02CD-4330-A294-ECE0F4EE5ACB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{CC0B770B-02CD-4330-A294-ECE0F4EE5ACB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6B152D9E-0FA2-4EEC-A9D9-BE705116B8B3}.Debug|Any CPU.ActiveCfg = Debug
+		{6B152D9E-0FA2-4EEC-A9D9-BE705116B8B3}.Debug|Any CPU.Build.0 = Debug
+		{6B152D9E-0FA2-4EEC-A9D9-BE705116B8B3}.Release|Any CPU.ActiveCfg = Release
+		{6B152D9E-0FA2-4EEC-A9D9-BE705116B8B3}.Release|Any CPU.Build.0 = Release
+		{6B152D9E-0FA2-4EEC-A9D9-BE705116B8B3}.Release|Any CPU.Deploy.0 = Release
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

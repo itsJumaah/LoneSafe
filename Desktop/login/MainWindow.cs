@@ -22,7 +22,7 @@ namespace LoneSafe
             this.login = login; //this will copy the login hidden window across
             this.server = login.server;
             this.FormClosing += MainWindow_FormClosing; //create a closing window event
-
+            
             LDC = new LiveDataControl(server.GetURL, dataGrid, this.Icon, user.Firstname, user.Email);
             
         }
