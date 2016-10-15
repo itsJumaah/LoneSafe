@@ -39,13 +39,12 @@ public class Settings extends AppCompatActivity {
 
     private SharedPreference sharedPreference;
     Activity context = this; //For shared Pref
+
     int Hours = 1;
     int RiskLevel = 1;
     String FinishTime;
     ProgressBar loadProgressBar;
 
-    private LocationManager locationManager;
-    private LocationListener listener;
 
 
     @Override
@@ -75,17 +74,16 @@ public class Settings extends AppCompatActivity {
         //------------------------------------------------------------------------------------------
 
 
+        //--------------------------------RiskLvl Picker--------------------------------------------
+
         final String getRL = sharedPreference.getValue(context,"SaveRiskLevel");
         if (getRL != null){
             RiskLevel = Integer.parseInt(getRL);
             System.out.println("---------> #RISKLEVELSP = " + RiskLevel);
+
         }
 
         android.widget.NumberPicker npRiskLvl = (android.widget.NumberPicker) findViewById(R.id.numberPicker2);
-       // String[] num = new String[4];
-       // String[] arrayString= new String[]{"5 - Very High","4 - High","3 - Medium","2 - Low","1 - Very Low"};
-       // for(int i=0; i<num.length; i++)
-       //     num[i] = Integer.toString(i);
 
         npRiskLvl.setMinValue(0);
         npRiskLvl.setMaxValue(4);
@@ -104,12 +102,10 @@ public class Settings extends AppCompatActivity {
                 System.out.println("---------> #RL = " + RiskLevel);
                 sharedPreference.saveRL(context, SaveRiskLevel);
 
-                // Toast.makeText(Settings.this, "Value was: " + Integer.toString(oldVal) + " is now: " + Integer.toString(RiskLevel), Toast.LENGTH_SHORT).show();
-
             }
         });
 
-        //------------------------------------------------------------------------------------------
+        //--------------------------------Hours Picker----------------------------------------------
 
         final String getHour = sharedPreference.getValue(context,"Hours");
         if (getHour != null){
@@ -118,9 +114,6 @@ public class Settings extends AppCompatActivity {
         }
 
         NumberPicker npHours = (NumberPicker) findViewById(R.id.numberPicker);
-       // String[] nums = new String[23];
-        //  for(int i=0; i<nums.length; i++)
-      //      nums[i] = Integer.toString(i);
         String[] test = getResources().getStringArray(R.array.hours);
 
         npHours.setMinValue(0);
@@ -139,10 +132,6 @@ public class Settings extends AppCompatActivity {
                 String SaveHourStr = String.valueOf(Hours);
                 System.out.println("---------> #HOURSSAVED = " + Hours);
                 sharedPreference.saveHours(context, SaveHourStr);
-
-              //  Toast.makeText(Settings.this, "Value was: " + Integer.toString(oldVal) + " is now: " + Integer.toString(Hours), Toast.LENGTH_SHORT).show();
-
-              //  getTime();
             }
         });
 
@@ -205,6 +194,7 @@ public class Settings extends AppCompatActivity {
                             loadProgressBar.setVisibility(View.VISIBLE);
 
                             setCheckinnull();
+                            checkForActiveJobs();
                             createJobDB();
                           //  updateOnJob();
 
@@ -225,6 +215,15 @@ public class Settings extends AppCompatActivity {
         });
 
     }
+
+    //----------------------------------------------------------------------------------------------
+    //------------------------------------- Save Job to Database -----------------------------------
+    //----------------------------------------------------------------------------------------------
+
+    /*
+    * Creates a new entry in jobs table, and starts the foreground service
+    */
+
     void createJobDB(){
         final long interval = checkinInterval (Hours, RiskLevel);
 
@@ -249,13 +248,15 @@ public class Settings extends AppCompatActivity {
 
                         Log.i("JSON: ", "JOB ID = " + userId);
 
+                       // checkForActiveJobs();
+
                         updateOnJob();
                         updateJobActive();
                         SaveLocationToDB();
 
+
                         String username = sharedPreference.getValue(context,"User");
                        // String job_num = sharedPreference.getValue(context,"UserID");
-
 
 
                         //START FOREGROUND SERVICE
@@ -305,6 +306,12 @@ public class Settings extends AppCompatActivity {
         queue.add(insertDataRequest);
 
     }
+
+    /*
+    * set the value for checkin null incase the user starts another job. This ensures there are no values
+    * stored from the previous job
+    */
+
     void setCheckinnull(){
         ((MyApplication) this.getApplication()).setCheckin1("null");
         ((MyApplication) this.getApplication()).setCheckin2("null");
@@ -316,6 +323,10 @@ public class Settings extends AppCompatActivity {
         ((MyApplication) this.getApplication()).setCheckin8("null");
     }
 
+    /*
+    * method updates a variable called onjob in the users table to indicate the user is active
+    * updateJobActive updates a similar variable in the jobs table to show the current job
+    */
     void updateOnJob(){
 
         Response.Listener<String> responseListener = new Response.Listener<String>() {
@@ -380,9 +391,9 @@ public class Settings extends AppCompatActivity {
     }
 
     /*
-    * Not sending location here.
-    * Creates an entry in the locations table with is then grabbed by the desktop app. The values for Longitude
-    * and Latitude would by NULL unless a SOS or Escalation is triggered.
+    * -- Not sending location here. --
+    * Creates an entry in the locations table which is then grabbed by the desktop app.
+    * The values for Longitude and Latitude would by NULL unless a SOS or Escalation is triggered.
     */
     void SaveLocationToDB(){
 
@@ -418,6 +429,40 @@ public class Settings extends AppCompatActivity {
 
     }
 
+    void checkForActiveJobs(){
+
+        Response.Listener<String> responseListener = new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                try {
+                    Log.i("tagconvertstr_JOBACTIVE", "["+response+"]");
+                    JSONObject jsonResponse = new JSONObject(response);
+                    boolean success = jsonResponse.getBoolean("success");
+                    if (success) {
+                        Log.i("JSON: ", "Response true");
+                    } else {
+                        Log.i("JSON: ", "Response false");
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        };
+
+        String username = sharedPreference.getValue(context,"User");
+
+        DeleteJobRequest deleteJobRequest = new DeleteJobRequest(username, responseListener);
+        RequestQueue queue = Volley.newRequestQueue(Settings.this);
+        queue.add(deleteJobRequest);
+    }
+    //----------------------------------------------------------------------------------------------
+    //----------------------------- Calculate Checkin Interval  + Time   ---------------------------
+    //----------------------------------------------------------------------------------------------
+
+    /*
+    * Method checkinInterval calculates the checkin interval based on the risk level and the hours
+    * See the Developers manual for the checkin interval rules
+    */
     public long checkinInterval (long hours, int risklvl) {
 
         long inMinutes = TimeUnit.HOURS.toMinutes(hours);
@@ -505,6 +550,9 @@ public class Settings extends AppCompatActivity {
 
     }
 
+    /*
+    * Gets the current system time as the start time
+    */
     void saveStartTime(){
         //save current time as start time
 
@@ -519,6 +567,9 @@ public class Settings extends AppCompatActivity {
 
     }
 
+    /*
+    * Gets the finish time based on the hours user selected
+    */
     void getTime(){
 
         Calendar cal = Calendar.getInstance(); // creates calendar
@@ -537,12 +588,20 @@ public class Settings extends AppCompatActivity {
 
     }
 
+
+    //----------------------------------------------------------------------------------------------
+    //------------------------------------- Init Location Services ---------------------------------
+    //----------------------------------------------------------------------------------------------
     /*
     * Initiate GPS here to ensure GPS permission is turned on and user is notified if its not.
     * Otherwise user only gets prompted when first checkin happens, which tends to cause problems of
     * checkin not appearing.
-     */
+    */
     public void InitiateGPS(){
+
+         LocationManager locationManager;
+         LocationListener listener;
+
         locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
 
         listener = new LocationListener() {
@@ -572,7 +631,7 @@ public class Settings extends AppCompatActivity {
                         ,10);
             }
         }
-       // locationManager.requestLocationUpdates("gps", 5000, 0, listener);
+       // locationManager.requestLocationUpdates("gps", 0, 0, listener);
     }
 
     @Override

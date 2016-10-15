@@ -21,7 +21,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.Timer;
-import java.util.TimerTask;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -31,7 +30,9 @@ public class ForegroundService extends Service {
 
     private static final String LOG_TAG = "ForegroundService";
     public static boolean IS_SERVICE_RUNNING = false;
-   // public static boolean SOS_TRIGGERED = false;
+    public static boolean LAST_CHECKIN = false;
+
+    // public static boolean SOS_TRIGGERED = false;
 
 
     public final static String TAG = "BroadcastService";
@@ -44,6 +45,7 @@ public class ForegroundService extends Service {
 
     CountDownTimer checkinCountdown = null;
     CountDownTimer EscalationCountdown = null;
+    CountDownTimer JobCountdown = null;
     Timer myTimer = new Timer();
 
     long jobTime = 54;
@@ -52,14 +54,16 @@ public class ForegroundService extends Service {
     String username;
     String job_num;
 
-    long FinTime = jobTime; //
+    long jobTimerCurrentValue = 9000000;
+
+    long FinTime; // = jobTime;
 
     public static int counter = 1;
     public static int EscalationCounter = 0;
     public Boolean EscalationActive = false;
     public Boolean CheckinCounterActive = false;
 
-
+/*
     TimerTask myTask = new TimerTask() {
 
         public void run()
@@ -70,7 +74,11 @@ public class ForegroundService extends Service {
 
                 sendBroadcast(serviceIntent);
                 jobFinishedNotification();
-                UpdateonJobDB();
+               // UpdateonJobDB();
+
+                stopForeground(true);
+                stopSelf();
+
 
                 if(CheckinCounterActive){
                     checkinCountdown.cancel();
@@ -78,20 +86,71 @@ public class ForegroundService extends Service {
                 if(EscalationActive){
                     EscalationCountdown.cancel();
                 }
-                stopForeground(true);
-                stopSelf();
+
             }
         }
     };
+    */
+
+    private void jobTimer(){
+        Log.i(TAG, "Starting Job timer");
+
+        Log.i(TAG, ">>>>>>>>>>>>>>** FINISH Remaining:  " + jobTime + " Hour(s) ------");
+        Log.i(TAG, ">>>>>>>>>>>>>>** FINISH Remaining:  " + FinTime + " Milliseonds ------");
+
+        FinTime = TimeUnit.HOURS.toMillis(jobTime);
+        final int max = (int) TimeUnit.MILLISECONDS.toSeconds(FinTime);
+
+        JobCountdown = new CountDownTimer(FinTime, 1000) { //20 minutes
+            @Override
+            public void onTick(long millisUntilFinished) {
+
+               // jobTimerCurrentValue = TimeUnit.MILLISECONDS.toMinutes(millisUntilFinished);
+                jobTimerCurrentValue = millisUntilFinished;
+                long FinishminutesRemaining = TimeUnit.MILLISECONDS.toMinutes(millisUntilFinished);
+
+                if(LAST_CHECKIN){
+                    bi.putExtra("DisplayCheckin",true);
+                    bi.putExtra("remaining", FinishminutesRemaining);
+                    int progress = (int) (millisUntilFinished/1000);
+                    bi.putExtra("countdown", progress);
+                    bi.putExtra("max", max);
+                    sendBroadcast(bi);
+                }
+            }
+
+            @Override
+            public void onFinish() {
+
+                IS_SERVICE_RUNNING = false;
+                Log.i("SERVER TIMER: ", "OnFinish");
+
+                if(CheckinCounterActive){
+                    checkinCountdown.cancel();
+                }
+                if(EscalationActive){
+                    EscalationCountdown.cancel();
+                }
+
+                sendBroadcast(serviceIntent);
+                jobFinishedNotification();
+                stopForeground(true);
+                stopSelf();
+
+            }
+        };
+        JobCountdown.start();
+
+    }
 
     private void checkinTimer (){
+
         Log.i(TAG, "Starting timer...");
 
         final int max = (int) TimeUnit.MILLISECONDS.toSeconds(checkInterval);
         bi.putExtra("max", max);
         sendBroadcast(bi);
 
-        //checkinInterval instead of 30000
         checkinCountdown = new CountDownTimer(checkInterval, 1000) {
             @Override
             public void onTick(long millisUntilFinished) {
@@ -119,7 +178,7 @@ public class ForegroundService extends Service {
                 int progress = (int) (minutesRemaining/1000);
                 bi.putExtra("countdown", progress);
                 bi.putExtra("remaining", minutesRemaining);
-                bi.putExtra("DisplayCheckin",true);
+              //  bi.putExtra("DisplayCheckin",true);
                 sendBroadcast(bi);
 
                 Intent checkinIntent = new Intent(ForegroundService.this, CheckinNotification.class);
@@ -134,6 +193,10 @@ public class ForegroundService extends Service {
 
     }
     private void EscalationTimer(){
+
+        final int max = (int) TimeUnit.MILLISECONDS.toSeconds(180000);
+        bi.putExtra("max", max);
+        sendBroadcast(bi);
 
         EscalationCountdown = new CountDownTimer(180000, 1000) { //3 minute timer
             @Override
@@ -182,9 +245,6 @@ public class ForegroundService extends Service {
     public void onCreate() {
         super.onCreate();
 
-
-      //  Log.i("BOOOL", "IS_SERVICE_RUNNING" + IS_SERVICE_RUNNING);
-
     }
 
     @Override
@@ -197,9 +257,19 @@ public class ForegroundService extends Service {
                     EscalationCountdown.cancel();
                 }
             }
-            if(!CheckinCounterActive){
-                checkinTimer();
+
+            if(jobTimerCurrentValue <= checkInterval){
+                System.out.println("LAST CHECKIN:" + checkInterval + "jobRemaining:" + jobTimerCurrentValue);
+                LAST_CHECKIN = true;
+               // bi.putExtra("DisplayCheckin",true);
+               // sendBroadcast(bi);
             }
+
+            else if(!CheckinCounterActive) {
+               checkinTimer();
+            }
+
+
         }
         if (intent.getAction().equals(Constants.ACTION.ESCALATION_ACTION)){
 
@@ -223,16 +293,18 @@ public class ForegroundService extends Service {
             username = intent.getStringExtra("username");
             job_num = intent.getStringExtra("job_num");
 
-            FinTime = TimeUnit.HOURS.toMillis(jobTime);
-           // FinTime = 60000; // FOR TESTING 1 minutes
+         //   FinTime = TimeUnit.HOURS.toMillis(jobTime);
+           // FinTime = 960000; // FOR TESTING 16 minutes
 
-            Log.i(TAG, ">>>>>>>>>>>>>>** FINISH Remaining:  " + jobTime + " Hour(s) ------");
-            Log.i(TAG, ">>>>>>>>>>>>>>** FINISH Remaining:  " + FinTime + " Milliseonds ------");
+          //  Log.i(TAG, ">>>>>>>>>>>>>>** FINISH Remaining:  " + jobTime + " Hour(s) ------");
+         //   Log.i(TAG, ">>>>>>>>>>>>>>** FINISH Remaining:  " + FinTime + " Milliseonds ------");
             Log.i(TAG, ">>>>>>>>>>>>>>** Checkin Remaining:  " + checkInterval);
 
+            jobTimer();
             checkinTimer();
 
-            myTimer.schedule(myTask, FinTime);
+
+           // myTimer.schedule(myTask, FinTime);
             Log.i("SERVICE TIMER: ", "STARTED");
 
 
@@ -241,9 +313,11 @@ public class ForegroundService extends Service {
             Toast.makeText(this, "Job Started!", Toast.LENGTH_SHORT).show();
 
 
-        } else if (intent.getAction().equals(Constants.ACTION.STOPFOREGROUND_ACTION)) {
+        }
+        if (intent.getAction().equals(Constants.ACTION.STOPFOREGROUND_ACTION)) {
             Log.i(LOG_TAG, "Received Stop Foreground Intent");
             UpdateonJobDB();
+            JobCountdown.cancel();
             checkinCountdown.cancel();
             if(EscalationActive){
                 EscalationCountdown.cancel();

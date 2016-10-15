@@ -115,11 +115,11 @@ public class Home extends AppCompatActivity {
 
     public AlertDialog onServiceFinish (){
 
-  //      updateOnJobtoZero();
+        updateOnJobtoZero();
 
        // unregisterReceiver(serviceLife);
 
-        return  jobfinished = new AlertDialog.Builder(this)
+        return jobfinished = new AlertDialog.Builder(this)
                 .setTitle("Job Finished")
                // .setMessage(mymessage)
                 .setPositiveButton("Start a new job",
@@ -134,6 +134,7 @@ public class Home extends AppCompatActivity {
                                 finish();
                             }
                         })
+                .show();
                /* .setNegativeButton("Exit LoneSafe",
                         new DialogInterface.OnClickListener(){
                             public void onClick(DialogInterface dialog, int whichButton) {
@@ -147,11 +148,10 @@ public class Home extends AppCompatActivity {
                             }
 
                         })*/
-                .show();
+               // .show();
 
         //--------------
     }
-
 
 
     private void updateGUI(Intent intent) {
@@ -168,16 +168,28 @@ public class Home extends AppCompatActivity {
             System.out.println("|||MINUTES: " +  minutesRemaining);
             System.out.println("|||MAX: " +  max);
 
+            if(displayCheckin){
+                final TextView tvTimer = (TextView) findViewById(R.id.tvNextCheckLbl);
+                tvTimer.setText("No More Checkin ");
 
+                final TextView TvMinute = (TextView) findViewById(R.id.tvTimer);
+                TvMinute.setText(" Job ends in: " + minutesRemaining + " Minutes");
 
-            progressBar = (ProgressBar) findViewById(R.id.progressBar);
-            progressBar.setMax(max);
+               // progressBar.setVisibility(View.INVISIBLE);
 
-            final TextView tvTimer = (TextView) findViewById(R.id.tvTimer);
-            tvTimer.setText(" " + minutesRemaining + " Minutes");
-            progressBar.setProgress(progressBar.getMax()-progress); //max set as default in xml atm
-            //progressBar.setProgress(max - progress); //max set as default in xml atm
+                progressBar = (ProgressBar) findViewById(R.id.progressBar);
+                progressBar.setMax(max);
+                progressBar.setProgress(progressBar.getMax()-progress);
+            }
+            else{
+                progressBar = (ProgressBar) findViewById(R.id.progressBar);
+                progressBar.setMax(max);
 
+                final TextView tvTimer = (TextView) findViewById(R.id.tvTimer);
+                tvTimer.setText(" " + minutesRemaining + " Minutes");
+                progressBar.setProgress(progressBar.getMax()-progress); //max set as default in xml atm
+                //progressBar.setProgress(max - progress); //max set as default in xml atm
+            }
 
             System.out.println("|||BOOLCHECK: " +  displayCheckin);
 
@@ -191,7 +203,6 @@ public class Home extends AppCompatActivity {
             */
         }
     }
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -300,7 +311,7 @@ public class Home extends AppCompatActivity {
                                 startService(service);
                             }
 
-//                            updateOnJobtoZero();
+                            updateOnJobtoZero();
 
                             Intent intent = new Intent(Home.this, Settings.class);
                             Home.this.startActivity(intent);
@@ -435,7 +446,7 @@ public class Home extends AppCompatActivity {
         RequestQueue queue2 = Volley.newRequestQueue(Home.this);
         queue2.add(updateEndTimeRequest);
     }
-/*
+
     void updateOnJobtoZero(){
 
         Response.Listener<String> responseListener = new Response.Listener<String>() {
@@ -496,7 +507,7 @@ public class Home extends AppCompatActivity {
         queue2.add(updateJobActiveRequest);
 
     }
-    */
+
     @Override
     public void onBackPressed() {
         //DO Nothing!

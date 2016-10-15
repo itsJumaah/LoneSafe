@@ -39,7 +39,7 @@
         <activity
             android:name=".SosActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/SOSAppTheme" />
+            android:theme="@style/SOSAppTheme"/>
         <activity
             android:name=".Terms"
             android:screenOrientation="portrait" />

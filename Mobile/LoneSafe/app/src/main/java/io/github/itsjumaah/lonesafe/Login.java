@@ -81,6 +81,7 @@ public class Login extends AppCompatActivity {
 
                 // Hardcoded user and password incase server doesn't work
                 //TODO DELETE!!--------
+               /*
                 if (username.equals("johndoe") && password.equals("pass")) {
 
                     String name = ("John");
@@ -92,7 +93,9 @@ public class Login extends AppCompatActivity {
 
 
                 }
-                else { provokeDatabase(); }
+                else {
+                    */
+                provokeDatabase();
 
             }
 
@@ -168,13 +171,6 @@ public class Login extends AppCompatActivity {
 
         }
 
-
-
-        //TODO Remove Firebase
-//        String token = FirebaseInstanceId.getInstance().getToken();
-        //Get user data from DB
-
-        // }
 
         // Response received from the server
         Response.Listener<String> responseListener = new Response.Listener<String>() {
