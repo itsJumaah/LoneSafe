@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Windows.Forms;
-using System.Net;
-using System.Text.RegularExpressions;
 using LoneSafeLib;
 
 namespace LoneSafe

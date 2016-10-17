@@ -80,6 +80,7 @@
             this.mobile.Name = "mobile";
             this.mobile.Size = new System.Drawing.Size(100, 20);
             this.mobile.TabIndex = 6;
+            this.mobile.TextChanged += new System.EventHandler(this.mobile_TextChanged);
             // 
             // home
             // 
@@ -101,6 +102,7 @@
             this.email.Name = "email";
             this.email.Size = new System.Drawing.Size(100, 20);
             this.email.TabIndex = 8;
+            this.email.TextChanged += new System.EventHandler(this.email_TextChanged);
             // 
             // label1
             // 

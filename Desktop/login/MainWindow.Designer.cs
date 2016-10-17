@@ -55,7 +55,6 @@
             this.logo = new System.Windows.Forms.PictureBox();
             this.tableLayoutPanel2 = new System.Windows.Forms.TableLayoutPanel();
             this.dataGrid = new System.Windows.Forms.DataGridView();
-            this.lblLiveData = new System.Windows.Forms.Label();
             this.fullName = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.rskLevel = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.st = new System.Windows.Forms.DataGridViewTextBoxColumn();
@@ -68,6 +67,7 @@
             this.c6 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.c7 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.c8 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.lblLiveData = new System.Windows.Forms.Label();
             this.statusStrip1.SuspendLayout();
             this.menuStrip1.SuspendLayout();
             this.tableLayoutPanel1.SuspendLayout();
@@ -227,15 +227,16 @@
             // 
             // manualToolStripMenuItem
             // 
+            this.manualToolStripMenuItem.Enabled = false;
             this.manualToolStripMenuItem.Name = "manualToolStripMenuItem";
-            this.manualToolStripMenuItem.Size = new System.Drawing.Size(116, 22);
+            this.manualToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.manualToolStripMenuItem.Text = "Manual";
             this.manualToolStripMenuItem.Click += new System.EventHandler(this.manualToolStripMenuItem_Click);
             // 
             // contactToolStripMenuItem
             // 
             this.contactToolStripMenuItem.Name = "contactToolStripMenuItem";
-            this.contactToolStripMenuItem.Size = new System.Drawing.Size(116, 22);
+            this.contactToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.contactToolStripMenuItem.Text = "Contact";
             this.contactToolStripMenuItem.Click += new System.EventHandler(this.contactToolStripMenuItem_Click);
             // 
@@ -338,22 +339,6 @@
             this.dataGrid.TabIndex = 6;
             this.dataGrid.UseWaitCursor = true;
             // 
-            // lblLiveData
-            // 
-            this.lblLiveData.AutoSize = true;
-            this.lblLiveData.BackColor = System.Drawing.Color.White;
-            this.lblLiveData.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.lblLiveData.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.lblLiveData.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.lblLiveData.Font = new System.Drawing.Font("Segoe UI", 11.25F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Bold | System.Drawing.FontStyle.Underline))), System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblLiveData.ForeColor = System.Drawing.SystemColors.Highlight;
-            this.lblLiveData.Location = new System.Drawing.Point(3, 0);
-            this.lblLiveData.Name = "lblLiveData";
-            this.lblLiveData.Size = new System.Drawing.Size(930, 40);
-            this.lblLiveData.TabIndex = 2;
-            this.lblLiveData.Text = "Live Data";
-            this.lblLiveData.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
             // fullName
             // 
             this.fullName.FillWeight = 14F;
@@ -437,6 +422,22 @@
             this.c8.HeaderText = "Check-in 8";
             this.c8.Name = "c8";
             this.c8.ReadOnly = true;
+            // 
+            // lblLiveData
+            // 
+            this.lblLiveData.AutoSize = true;
+            this.lblLiveData.BackColor = System.Drawing.Color.White;
+            this.lblLiveData.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.lblLiveData.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.lblLiveData.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.lblLiveData.Font = new System.Drawing.Font("Segoe UI", 11.25F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Bold | System.Drawing.FontStyle.Underline))), System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblLiveData.ForeColor = System.Drawing.SystemColors.Highlight;
+            this.lblLiveData.Location = new System.Drawing.Point(3, 0);
+            this.lblLiveData.Name = "lblLiveData";
+            this.lblLiveData.Size = new System.Drawing.Size(930, 40);
+            this.lblLiveData.TabIndex = 2;
+            this.lblLiveData.Text = "Live Data";
+            this.lblLiveData.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // MainWindow
             // 

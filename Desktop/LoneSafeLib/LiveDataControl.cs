@@ -2,14 +2,9 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
-using System.IO;
 using System.Media;
-using System.Net;
-using System.Net.Mail;
-using System.Text;
 using System.Threading;
 using System.Timers;
-using System.util;
 using System.Windows.Forms;
 
 namespace LoneSafeLib
@@ -28,6 +23,7 @@ namespace LoneSafeLib
         private List<LiveUser> newList = new List<LiveUser>();
 
         private string adminName;
+        private string adminLname;
         private string adminEmail;
 
         private System.Timers.Timer timer = new System.Timers.Timer(4000); //4 sec
@@ -39,7 +35,7 @@ namespace LoneSafeLib
         private AlertES esInfo;
         private AlertSO sosInfo;
 
-        public LiveDataControl(string url, DataGridView dataGrid, Icon icon, string adminName, string adminEmail)
+        public LiveDataControl(string url, DataGridView dataGrid, Icon icon, string adminName, string adminLname, string adminEmail)
         {
             this.url = url;
             this.icon = icon;
@@ -48,6 +44,7 @@ namespace LoneSafeLib
             
             this.adminEmail = adminEmail;
             this.adminName = adminName;
+            this.adminLname = adminLname;
 
             worker = new BackgroundWorker();
             worker.DoWork += worker_DoWork;
@@ -108,6 +105,7 @@ namespace LoneSafeLib
         }
         private void live()
         {
+            
             reset();
             //load the list to the data grid
             try
@@ -116,7 +114,6 @@ namespace LoneSafeLib
                 {
                     if (user != null)
                     {
-                    
                         string[] checkin = new string[8] { user.Checkin1, user.Checkin2,
                         user.Checkin3, user.Checkin4, user.Checkin5,
                         user.Checkin6, user.Checkin7, user.Checkin8};
@@ -133,7 +130,7 @@ namespace LoneSafeLib
                             if (adminEmail != null)
                             {
                                 //send an email to the admin as long as his email provided
-                                notifyEmail(adminName, adminEmail, user, "S.O.S.");
+                                notifyEmail(adminName, adminLname, adminEmail, user, "S.O.S.");
                             }
                         
                             //push sos notification to the gui
@@ -155,7 +152,7 @@ namespace LoneSafeLib
                                 {
                                     if (adminEmail != null)
                                     {//send admin email as long as its provided
-                                        notifyEmail(adminName, adminEmail, user, "ESCALATION LEVEL " + i.ToString());
+                                        notifyEmail(adminName, adminLname, adminEmail, user, "ESCALATION LEVEL " + i.ToString());
                                     }
                                     //push gui notification
                                     notification(user, "checkin" + num.ToString(), i);
@@ -306,70 +303,10 @@ namespace LoneSafeLib
         
 
         //email notification
-        private void notifyEmail(string adminName, string toEmail, LiveUser user, string eventType)
+        private void notifyEmail(string adminName, string adminLname, string adminEmail, LiveUser user, string eventType)
         {
-
-            string senderEmail = "lonesafeapp@gmail.com";
-            string senderPassword = "Lonesafe2016";
-
-            string header = "LoneSafe Alert";
-
-            string fullName = user.Firstname + " " + user.Lastname;
-
-            string body = "Hello " + adminName + ",\n\n" +
-
-                    "The user " + fullName + " (" + user.Username + ") has triggered " +
-                    eventType + " event at " + user.EmTime + "! Please make sure someone is following up on this.\n\n" +
-
-
-                    "More Info about this event:\n" +
-                    "Risk of level: " + user.Risklevel + "\n" +
-                    "Started at: " + user.StartTime + "\n" +
-                    "Ends at: " + user.EndTime + "\n\n" +
-                    
-                    user.Firstname + "'s Details:\n" +
-                    "Mobile: " + user.Mobile + "\n" +
-                    "Email: " + user.Email + "\n" +
-                    "Home phone: " + user.Phone + "\n" +
-                    "Vehicle Rego: " + user.Rego + "\n" +
-                    "Last known location: \n" +
-                    "Longitude: " + user.Longitude + "   Latitude: " + user.Latitude +
-
-                    "\n\n\n" +
-
-                    "You have recieved this email because you were logged in to LoneSafe system during this event.\n\n" +
-
-
-                    "If you wish to stop recieving this email, ask an admin to remove it from the system.\n\n" +
-
-
-                    "This is an auto generated email, please do NOT reply!\n\n\n" +
-
-
-
-                    "Thanks,\nLoneSafe by BAIT\n";
-
-            SmtpClient client = new SmtpClient();
-            client.Port = 587; //465
-            client.Host = "smtp.gmail.com";
-            client.EnableSsl = true;
-            client.Timeout = 10000;
-            client.DeliveryMethod = SmtpDeliveryMethod.Network;
-            client.UseDefaultCredentials = false;
-            client.Credentials = new NetworkCredential(senderEmail, senderPassword);
-
-            MailMessage mail = new MailMessage(senderEmail, toEmail, header, body);
-            mail.BodyEncoding = UTF8Encoding.UTF8;
-            mail.DeliveryNotificationOptions = DeliveryNotificationOptions.OnFailure;
-            try
-            {
-                client.Send(mail);
-            }
-            catch(SmtpException e)
-            {
-                Console.WriteLine(e.Message);
-            }
-            
+            Connection.email(url, eventType, adminName, adminLname, user.Firstname, user.Lastname, user.Username, user.EmTime, user.Risklevel.ToString(), user.StartTime, user.EndTime, user.Mobile, user.Email, user.Phone, user.Rego, user.Longitude, user.Latitude, adminEmail);
+ 
         }
     }
 }

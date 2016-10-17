@@ -1,10 +1,6 @@
 ﻿using Newtonsoft.Json;
-using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Net;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace LoneSafeLib
 {
@@ -36,17 +32,24 @@ namespace LoneSafeLib
                 xx.ReportUser = null;
             }
 
+            try
+            {
+                string m_URL = URL + "/scripts/reportUser.php";
+                string param = "fromDate=" + fromDate + "&ABEX=" + LoneUtil.sha256(LoneUtil.SECRET_KEY);
 
-            string m_URL = URL + "/scripts/reportUser.php";
-            string param = "fromDate=" + fromDate + "&ABEX=" + LoneUtil.sha256(LoneUtil.SECRET_KEY);
+                WebClient server = new WebClient();
+                server.Headers[HttpRequestHeader.ContentType] = "application/x-www-form-urlencoded";
+                string htmlResult = server.UploadString(m_URL, param);
+                //string htmlResult = server.DownloadString(m_URL);
 
-            WebClient server = new WebClient();
-            server.Headers[HttpRequestHeader.ContentType] = "application/x-www-form-urlencoded";
-            string htmlResult = server.UploadString(m_URL, param);
-            //string htmlResult = server.DownloadString(m_URL);
+                reportUsersList = JsonConvert.DeserializeObject<List<ReportUserJson>>(htmlResult);
 
-            reportUsersList = JsonConvert.DeserializeObject<List<ReportUserJson>>(htmlResult);
-
+            }
+            catch (WebException e)
+            {
+                System.Windows.Forms.MessageBox.Show("ERROR: " + e);
+            }
+            
         }
 
 

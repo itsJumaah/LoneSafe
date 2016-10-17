@@ -1,7 +1,6 @@
 ﻿
 
 using Newtonsoft.Json;
-using System;
 using System.Net;
 
 namespace LoneSafeLib
@@ -68,85 +67,116 @@ namespace LoneSafeLib
         //add a new user to the db
         public static void Add(string URL, string fname, string lname, string username, string password, string email, string rego, string mnum, string hnum, int manager)
         {
+            try
+            {
+                string p = LoneUtil.sha256(password);
 
-            string p = LoneUtil.sha256(password);
+                string m_URL = URL + "/scripts/addUser.php";
 
-            string m_URL = URL + "/scripts/addUser.php";
+                string param = "username=" + username +
+                               "&password=" + p +
+                               "&firstname=" + fname +
+                               "&lastname=" + lname +
+                               "&email=" + email +
+                               "&rego=" + rego +
+                               "&mobile=" + mnum +
+                               "&phone=" + hnum +
+                               "&manager=" + manager
+                               + "&ABEX=" + LoneUtil.sha256(LoneUtil.SECRET_KEY);
+
+
+                WebClient server = new WebClient();
+                server.Headers[HttpRequestHeader.ContentType] = "application/x-www-form-urlencoded";
+                string HtmlResult = server.UploadString(m_URL, param);
+
+                //Console.WriteLine(HtmlResult);
+            }
+            catch (WebException e)
+            {
+                System.Windows.Forms.MessageBox.Show("ERROR: " + e);
+            }
             
-            string param = "username=" + username +
-                           "&password=" + p +
-                           "&firstname=" + fname +
-                           "&lastname=" + lname +
-                           "&email=" + email +
-                           "&rego=" + rego +
-                           "&mobile=" + mnum +
-                           "&phone=" + hnum +
-                           "&manager=" + manager
-                           + "&ABEX=" + LoneUtil.sha256(LoneUtil.SECRET_KEY);
+
             
-
-            WebClient server = new WebClient();
-            server.Headers[HttpRequestHeader.ContentType] = "application/x-www-form-urlencoded";
-            string HtmlResult = server.UploadString(m_URL, param);
-
-            Console.WriteLine(HtmlResult);
 
         }
         //edit a user in the db
         public static void Edit(string URL, string fname, string lname, string username, string email, string rego, string mnum, string hnum)
         {
+            try
+            {
+                string m_URL = URL + "/scripts/editUser.php";
 
-            string m_URL = URL + "/scripts/editUser.php";
-
-            string param = "username=" + username +
-                           "&firstname=" + fname +
-                           "&lastname=" + lname +
-                           "&email=" + email +
-                           "&rego=" + rego +
-                           "&mobile=" + mnum +
-                           "&phone=" + hnum
-                           + "&ABEX=" + LoneUtil.sha256(LoneUtil.SECRET_KEY);
+                string param = "username=" + username +
+                               "&firstname=" + fname +
+                               "&lastname=" + lname +
+                               "&email=" + email +
+                               "&rego=" + rego +
+                               "&mobile=" + mnum +
+                               "&phone=" + hnum
+                               + "&ABEX=" + LoneUtil.sha256(LoneUtil.SECRET_KEY);
 
 
-            WebClient server = new WebClient();
-            server.Headers[HttpRequestHeader.ContentType] = "application/x-www-form-urlencoded";
-            string HtmlResult = server.UploadString(m_URL, param);
+                WebClient server = new WebClient();
+                server.Headers[HttpRequestHeader.ContentType] = "application/x-www-form-urlencoded";
+                string HtmlResult = server.UploadString(m_URL, param);
 
-            Console.WriteLine(HtmlResult);
+               // Console.WriteLine(HtmlResult);
+            }
+            catch (WebException e)
+            {
+                System.Windows.Forms.MessageBox.Show("ERROR: " + e);
+            }
+            
 
         }
 
         //delete a user from the db
         public static void Delete(string URL, string username)
         {
+            try
+            {
+                string m_URL = URL + "/scripts/delUser.php";
 
-            string m_URL = URL + "/scripts/delUser.php";
+                string param = "username=" + username + "&ABEX=" + LoneUtil.sha256(LoneUtil.SECRET_KEY);
+
+                WebClient server = new WebClient();
+                server.Headers[HttpRequestHeader.ContentType] = "application/x-www-form-urlencoded";
+                string HtmlResult = server.UploadString(m_URL, param);
+
+                //Console.WriteLine(HtmlResult);
+            }
+            catch (WebException e)
+            {
+                System.Windows.Forms.MessageBox.Show("ERROR: " + e);
+            }
             
-            string param = "username=" + username + "&ABEX=" + LoneUtil.sha256(LoneUtil.SECRET_KEY);
-
-            WebClient server = new WebClient();
-            server.Headers[HttpRequestHeader.ContentType] = "application/x-www-form-urlencoded";
-            string HtmlResult = server.UploadString(m_URL, param);
-
-            Console.WriteLine(HtmlResult);
 
         }
         //check user
         public static User Check(string URL, string username)
         {
+            try
+            {
+                User _user = new User();
 
-            User _user = new User();
+                string m_URL = URL + "/scripts/delPrepare.php";
+                string param = "username=" + username + "&ABEX=" + LoneUtil.sha256(LoneUtil.SECRET_KEY);
 
-            string m_URL = URL + "/scripts/delPrepare.php";
-            string param = "username=" + username + "&ABEX=" + LoneUtil.sha256(LoneUtil.SECRET_KEY);
+                WebClient server = new WebClient();
+                server.Headers[HttpRequestHeader.ContentType] = "application/x-www-form-urlencoded";
+                string HtmlResult = server.UploadString(m_URL, param);
 
-            WebClient server = new WebClient();
-            server.Headers[HttpRequestHeader.ContentType] = "application/x-www-form-urlencoded";
-            string HtmlResult = server.UploadString(m_URL, param);
+                _user = JsonConvert.DeserializeObject<User>(HtmlResult);
 
-            _user = JsonConvert.DeserializeObject<User>(HtmlResult);
-
-            return _user;
+                return _user;
+            }
+            catch (WebException e)
+            {
+                System.Windows.Forms.MessageBox.Show("ERROR: " + e);
+                return null;
+            }
+           
         }
 
 

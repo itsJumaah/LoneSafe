@@ -1,11 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using LoneSafeLib;
 
@@ -37,6 +31,7 @@ namespace LoneSafe
 
             if (fname.Text == "" || lname.Text == "" || uname.Text == "" || password.Text == "" || title.SelectedIndex == -1 || password.Text != password2.Text || user.Success)
             {
+
                 //error checking
                 if (fname.Text == "")
                 {
@@ -78,7 +73,21 @@ namespace LoneSafe
                     uerror.Text = "Username " + uname.Text + " already exists in the system";
                 }
             }
-            
+
+            else if (title.SelectedIndex == 1 && email.Text == "")
+            {
+
+                email.BackColor = Color.MistyRose;
+                rerror.Text = "You must set an email for the manager";
+            }
+
+            else if (title.SelectedIndex == 0 && mobile.Text == "")
+            {
+
+                mobile.BackColor = Color.MistyRose;
+                rerror.Text = "You must enter a mobile number for the lone worker";
+            }
+
             else
             {
                 User.Add(url, fname.Text, lname.Text, uname.Text, password.Text, email.Text, rego.Text, mobile.Text, home.Text, title.SelectedIndex);
@@ -86,8 +95,11 @@ namespace LoneSafe
                 user = null;
 
                 this.Close();
-
             }
+                
+
+            
+
 
         }
 
@@ -127,6 +139,18 @@ namespace LoneSafe
         private void title_SelectedValueChanged(object sender, EventArgs e)
         {
             title.BackColor = Color.White;
+            rerror.Text = "";
+        }
+
+        private void email_TextChanged(object sender, EventArgs e)
+        {
+            email.BackColor = Color.White;
+            rerror.Text = "";
+        }
+
+        private void mobile_TextChanged(object sender, EventArgs e)
+        {
+            mobile.BackColor = Color.White;
             rerror.Text = "";
         }
     }
