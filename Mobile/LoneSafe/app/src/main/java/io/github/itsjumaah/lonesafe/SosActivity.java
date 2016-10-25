@@ -36,8 +36,12 @@ public class SosActivity extends AppCompatActivity {
     private LocationManager locationManager;
     private LocationListener listener;
     ProgressBar loadProgressBar;
+
     String lng;
     String lat;
+
+    boolean gps_enabled = false;
+    boolean network_enabled = false;
 
 
     @Override
@@ -52,17 +56,31 @@ public class SosActivity extends AppCompatActivity {
         listener = new LocationListener() {
             @Override
             public void onLocationChanged(Location location) {
+
                 double longitude = location.getLongitude();
                 double latitude = location.getLatitude();
+
+                Log.v("onLocationChanged", "IN ON LOCATION CHANGE, lat=" + latitude + ", lon=" + longitude);
 
                 lng = String.valueOf(longitude);
                 lat = String.valueOf(latitude);
 
-                Log.d("SOSLOCATION","SOS LOCATION CHANGED!!");
+                try {
+
+                    locationManager.removeUpdates(listener);
+
+
+                    Log.d("SOSLOCATION", "SOS LOCATION STOPPED!!");
+                } catch (SecurityException e) {
+                    Log.e("PERMISSION_EXCEPTION", "PERMISSION_NOT_GRANTED");
+                }
+
+
+                Log.d("SOSLOCATION", "SOS LOCATION CHANGED!!");
 
 
                 //  saveSosToDB();
-              //  SaveLocationToDB();
+                SaveLocationToDB();
                 showSentAlert();
 
             }
@@ -86,8 +104,6 @@ public class SosActivity extends AppCompatActivity {
 
         if (NEED_TO_SEND_SOS) {
             getLocation();
-            //  saveSosToDB();
-            //  SaveLocationToDB();
             NEED_TO_SEND_SOS = false;
             Toast.makeText(SosActivity.this, "SOS sent", Toast.LENGTH_SHORT).show();
 
@@ -175,25 +191,22 @@ public class SosActivity extends AppCompatActivity {
 
     void getLocation() {
         // first check for permissions
-        if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+        if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
+                && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                requestPermissions(new String[]{android.Manifest.permission.ACCESS_COARSE_LOCATION, android.Manifest.permission.ACCESS_FINE_LOCATION, android.Manifest.permission.INTERNET}
+                requestPermissions(new String[]{android.Manifest.permission.ACCESS_COARSE_LOCATION, android.Manifest.permission.ACCESS_FINE_LOCATION,
+                        android.Manifest.permission.INTERNET}
                         , 10);
             }
             return;
         }
-        System.out.println("SOS LOCATION ACQUIRED!!");
         // this code won't execute IF permissions are not allowed, because in the line above there is return statement.
+
         locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, listener);
+        System.out.println("SOS LOCATION ACQUIRED _ Network!!");
     }
 
     void SaveLocationToDB() {
-
-        if (lng == null || lat == null) {
-            System.out.println("SOS REQUESTING LOCATION AGAIN!!");
-
-            getLocation();
-        }
 
         Response.Listener<String> responseListener = new Response.Listener<String>() {
             @Override
@@ -276,10 +289,21 @@ public class SosActivity extends AppCompatActivity {
         locationManager.removeUpdates(listener);
     }
 
+
     void showSentAlert(){
+        /*
+        if (lng == null || lat == null) {
+            System.out.println("SOS REQUESTING LOCATION AGAIN!!");
+            getLocation();
+        }
+        */
 
         loadProgressBar = (ProgressBar)findViewById(R.id.progressBar1);
         loadProgressBar.setVisibility(View.INVISIBLE);
+
+        saveSosToDB();
+      //  SaveLocationToDB();
+
 
         final AlertDialog.Builder sosAlert = new AlertDialog.Builder(SosActivity.this);
         sosAlert.setMessage("SOS sent\n" +  "Someone will be notified");
@@ -287,8 +311,8 @@ public class SosActivity extends AppCompatActivity {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 //dialog.dismiss();
-                saveSosToDB();
-                SaveLocationToDB();
+              //  saveSosToDB();
+              //  SaveLocationToDB();
                 Intent intent = new Intent(SosActivity.this,Home.class);
                 startActivity(intent);
             }

@@ -1,6 +1,8 @@
 package io.github.itsjumaah.lonesafe;
 
 import android.app.Activity;
+import android.app.NotificationManager;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -148,6 +150,9 @@ public class Settings extends AppCompatActivity {
             public void onClick(View v) {
             //    final long interval = checkinInterval (Hours, RiskLevel);
 
+                String ns = Context.NOTIFICATION_SERVICE;
+                NotificationManager nMgr = (NotificationManager) getApplicationContext().getSystemService(ns);
+                nMgr.cancel(105);
 
 
                 saveStartTime();
@@ -541,7 +546,7 @@ public class Settings extends AppCompatActivity {
         }
 
        // interval = 3;
-        interval = interval - 1; //minus 1 minute so last checkin comes before job ends
+     //   interval = interval - 1; //minus 1 minute so last checkin comes before job ends
        // long milli = TimeUnit.MINUTES.toMillis(interval);
 
         long intervalInMilli = TimeUnit.MINUTES.toMillis(interval);

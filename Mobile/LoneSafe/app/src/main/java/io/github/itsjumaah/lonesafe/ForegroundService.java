@@ -20,7 +20,6 @@ import com.android.volley.toolbox.Volley;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.Timer;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -46,7 +45,7 @@ public class ForegroundService extends Service {
     CountDownTimer checkinCountdown = null;
     CountDownTimer EscalationCountdown = null;
     CountDownTimer JobCountdown = null;
-    Timer myTimer = new Timer();
+   // Timer myTimer = new Timer();
 
     long jobTime = 54;
     long checkInterval = 21;
@@ -57,6 +56,8 @@ public class ForegroundService extends Service {
     long jobTimerCurrentValue = 9000000;
 
     long FinTime; // = jobTime;
+
+    final long TestInterval = 120000;
 
     public static int counter = 1;
     public static int EscalationCounter = 0;
@@ -101,7 +102,7 @@ public class ForegroundService extends Service {
         FinTime = TimeUnit.HOURS.toMillis(jobTime);
         final int max = (int) TimeUnit.MILLISECONDS.toSeconds(FinTime);
 
-        JobCountdown = new CountDownTimer(FinTime, 1000) { //20 minutes
+        JobCountdown = new CountDownTimer(FinTime, 1000) { //1 minutes
             @Override
             public void onTick(long millisUntilFinished) {
 
@@ -122,20 +123,27 @@ public class ForegroundService extends Service {
             @Override
             public void onFinish() {
 
-                IS_SERVICE_RUNNING = false;
+                //IS_SERVICE_RUNNING = false;
                 Log.i("SERVER TIMER: ", "OnFinish");
 
+                /*
                 if(CheckinCounterActive){
                     checkinCountdown.cancel();
                 }
                 if(EscalationActive){
                     EscalationCountdown.cancel();
                 }
+                */
 
-                sendBroadcast(serviceIntent);
-                jobFinishedNotification();
-                stopForeground(true);
-                stopSelf();
+               // sendBroadcast(serviceIntent);
+               // jobFinishedNotification();
+               // stopForeground(true);
+               // stopSelf();
+
+                //16-10-16 TEST
+                Intent checkinIntent = new Intent(ForegroundService.this, CheckinNotification.class);
+                checkinIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                ForegroundService.this.startActivity(checkinIntent);
 
             }
         };
@@ -145,18 +153,20 @@ public class ForegroundService extends Service {
 
     private void checkinTimer (){
 
+        // LAST_CHECKIN = false;
+
         Log.i(TAG, "Starting timer...");
 
-        final int max = (int) TimeUnit.MILLISECONDS.toSeconds(checkInterval);
+        final int max = (int) TimeUnit.MILLISECONDS.toSeconds(30000);
         bi.putExtra("max", max);
         sendBroadcast(bi);
 
-        checkinCountdown = new CountDownTimer(checkInterval, 1000) {
+        checkinCountdown = new CountDownTimer(30000, 1000) { // 2 mins //TODO change back to checkInterval
             @Override
             public void onTick(long millisUntilFinished) {
                 CheckinCounterActive = true;
 
-                minutesRemaining = TimeUnit.MILLISECONDS.toMinutes(millisUntilFinished);
+                minutesRemaining = TimeUnit.MILLISECONDS.toSeconds(millisUntilFinished);  //TODO change back toMinutes
                 Log.i(TAG, ">>>>>>>>>>>>>>** minutes Remaining:  " + minutesRemaining);
 
                 int progress = (int) (millisUntilFinished/1000);
@@ -165,8 +175,6 @@ public class ForegroundService extends Service {
 
                 bi.putExtra("countdown", progress);
                 bi.putExtra("remaining", minutesRemaining);
-               // bi.putExtra("max", max);
-                bi.putExtra("DisplayCheckin",false);
                 sendBroadcast(bi);
             }
 
@@ -193,6 +201,7 @@ public class ForegroundService extends Service {
 
     }
     private void EscalationTimer(){
+
 
         final int max = (int) TimeUnit.MILLISECONDS.toSeconds(180000);
         bi.putExtra("max", max);
@@ -258,8 +267,8 @@ public class ForegroundService extends Service {
                 }
             }
 
-            if(jobTimerCurrentValue <= checkInterval){
-                System.out.println("LAST CHECKIN:" + checkInterval + "jobRemaining:" + jobTimerCurrentValue);
+            if(jobTimerCurrentValue <= checkInterval){ //checkInterval
+                System.out.println("LAST CHECKIN: " + checkInterval + "jobRemaining: " + jobTimerCurrentValue);
                 LAST_CHECKIN = true;
                // bi.putExtra("DisplayCheckin",true);
                // sendBroadcast(bi);
@@ -275,6 +284,13 @@ public class ForegroundService extends Service {
 
            // EscalationActive = true;
             EscalationTimer();
+
+            /*
+            if(jobTimerCurrentValue <= 180000){ //checkInterval
+                System.out.println("Extend Escalation: " + checkInterval + "jobRemaining: " + jobTimerCurrentValue);
+                FinTime = jobTimerCurrentValue + 180000;
+            }
+            */
         }
         if(intent.getAction().equals(Constants.ACTION.SOS_ACTION)){
             if(EscalationActive){
@@ -322,14 +338,30 @@ public class ForegroundService extends Service {
             if(EscalationActive){
                 EscalationCountdown.cancel();
             }
+
             stopForeground(true);
             stopSelf();
 
+            if(LAST_CHECKIN){
+               // sendBroadcast(serviceIntent);
+                jobFinishedNotification();
+
+                LAST_CHECKIN = false;
+                IS_SERVICE_RUNNING = false;
+
+                Intent Finishintent = new Intent(ForegroundService.this, Settings.class);
+                Finishintent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                ForegroundService.this.startActivity(Finishintent);
+            }
         }
+        /*
         if(intent.getAction().equals(Constants.ACTION.STOP_ACTION)){
-            Intent intent1 = new Intent(this, Home.class);
+
+            Intent intent1 = new Intent(this, Settings.class);
             this.startActivity(intent1);
+
         }
+        */
         return START_STICKY;
     }
 
@@ -394,7 +426,7 @@ public class ForegroundService extends Service {
 
     private void jobFinishedNotification(){
 
-        Intent notificationIntent = new Intent(this, Home.class);
+        Intent notificationIntent = new Intent(this, Settings.class);
         notificationIntent.setAction(Constants.ACTION.STOPFOREGROUND_ACTION);
         notificationIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK
                 | Intent.FLAG_ACTIVITY_CLEAR_TASK);
@@ -407,13 +439,15 @@ public class ForegroundService extends Service {
         final Notification notification = new NotificationCompat.Builder(this)
                 .setContentTitle("LoneSafe")
                 .setTicker("LoneSafe")
+                .setStyle(new NotificationCompat.BigTextStyle()
+                        .bigText("Job Finished - Click to start new job or swipe to dismiss"))
                 .setContentText("Job Finished")
                 .setSmallIcon(R.drawable.ic_launcher)
                 .setLargeIcon(Bitmap.createScaledBitmap(icon, 128, 128, true))
                 .setContentIntent(pendingIntent)
-                .setOngoing(true)
-                .addAction(0, "Dismiss",
-                        pendingIntent)
+                .setOngoing(false)
+               // .addAction(0, "Dismiss",
+               //         pendingIntent)
 
                 //android.R.drawable.ic_media_previous
                 .build();
@@ -432,7 +466,7 @@ public class ForegroundService extends Service {
 
     private void showNotification() {
         Intent notificationIntent = new Intent(this, Home.class);
-        notificationIntent.setAction(Constants.ACTION.STOP_ACTION);
+       // notificationIntent.setAction(Constants.ACTION.STOP_ACTION);
         notificationIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK
                 | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0,
@@ -456,8 +490,8 @@ public class ForegroundService extends Service {
                 .setContentIntent(pendingIntent)
                 .setOngoing(true)
                 .setProgress(0, 0, true) //indeterminate progress bar. --> maybe update to determinate later?
-                .addAction(0, "",
-                        null)
+               // .addAction(0, "",
+                 //       null)
 
 
                 //android.R.drawable.ic_media_previous

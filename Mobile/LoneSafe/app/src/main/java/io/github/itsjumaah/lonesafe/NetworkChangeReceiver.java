@@ -26,8 +26,6 @@ public class NetworkChangeReceiver extends BroadcastReceiver{
 
 
     static TSnackbar snackbar; //make it as global
-    private SharedPreference sharedPreference;
-
 
     @Override
     public void onReceive(Context context, Intent intent) {
@@ -59,12 +57,6 @@ public class NetworkChangeReceiver extends BroadcastReceiver{
         }else{
             NetworkChangeReceiver.hideSnackbar();
             return true;
-
-           // String job_num = sharedPreference.getValue(context.getApplicationContext(),"UserID");
-
-
-
-            //  MyApplication.appactivity.setTheme(R.style.AppTheme);
         }
     }
 

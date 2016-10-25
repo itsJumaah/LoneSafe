@@ -101,7 +101,6 @@ public class MyApplication extends Application implements Application.ActivityLi
         appactivity = activity;//here we get the activity
         Intent i = new Intent(this, NetworkChangeReceiver.class);
         sendBroadcast(i);//here we are calling the broadcastreceiver to check connection state.
-
     }
 
     public void onActivityStopped(Activity activity){

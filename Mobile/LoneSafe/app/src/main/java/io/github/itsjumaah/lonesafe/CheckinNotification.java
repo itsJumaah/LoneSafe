@@ -23,6 +23,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.Toast;
 
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -57,6 +58,8 @@ public class CheckinNotification extends AppCompatActivity {
     private LocationListener listener;
     String lng;
     String lat;
+    boolean gps_enabled = false;
+    boolean network_enabled = false;
 
     Uri uri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_RINGTONE);
     private Ringtone ringtone;
@@ -104,16 +107,12 @@ public class CheckinNotification extends AppCompatActivity {
                 lng =  String.valueOf(longitude);
                 lat = String.valueOf(latitude);
 
-                /*
-                String longer =  String.valueOf(lng);
-                final TextView tvLong = (TextView) findViewById(R.id.tvLong);
-                tvLong.setText(longer);
-
-                String Latitude =  String.valueOf(lat);
-                final TextView tvLat = (TextView) findViewById(R.id.tvLat);
-                tvLat.setText(Latitude);
-                */
-
+                try {
+                    locationManager.removeUpdates(listener);
+                    Log.d("SOSLOCATION","SOS LOCATION STOPPED!!");
+                } catch (SecurityException e) {
+                    Log.e("PERMISSION_EXCEPTION","PERMISSION_NOT_GRANTED");
+                }
             }
 
             @Override
@@ -145,9 +144,27 @@ public class CheckinNotification extends AppCompatActivity {
            }
            return;
        }
-       System.out.println("CheckinEsc LOCATION ACQUIRED!!");
+
        // this code won't execute IF permissions are not allowed, because in the line above there is return statement.
+
        locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, listener);
+       System.out.println("CHECKIN LOCATION ACQUIRED _ NETWORK!!");
+
+
+       // gps_enabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
+      // network_enabled = locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
+
+       /*
+       if (gps_enabled){
+           System.out.println("CHECKIN LOCATION ACQUIRED _GPS!!");
+           locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, listener);
+
+       }
+       else if (network_enabled){
+           System.out.println("CHECKIN LOCATION ACQUIRED _ NETWORK!!");
+           locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, listener);
+       }
+       */
    }
 
     //----------------------------------------------------------------------------------------------
@@ -185,11 +202,24 @@ public class CheckinNotification extends AppCompatActivity {
 
 
                     Intent toServiceIntent = new Intent(CheckinNotification.this,ForegroundService.class);
+
+                    /*
+                    if(ForegroundService.IS_SERVICE_RUNNING && ForegroundService.LAST_CHECKIN){
+                        toServiceIntent.setAction(ForegroundService.Constants.ACTION.STOPFOREGROUND_ACTION);
+                        startService(toServiceIntent);
+                        finish();
+                    }
+                    else
+                    */
                     if (ForegroundService.IS_SERVICE_RUNNING) {
                         toServiceIntent.setAction(ForegroundService.Constants.ACTION.ESCALATION_ACTION);
                         startService(toServiceIntent);
+                        finish();
                     }
-                    finish();
+                    else {
+                        finish();
+                    }
+
                 }
                 if(ForegroundService.EscalationCounter == 3){
 
@@ -201,11 +231,25 @@ public class CheckinNotification extends AppCompatActivity {
                     Log.i("*** Escalation3->0", "++++++++++++++++++++++++++++++++++++++++++++++++++++++++>> ESCAl counter is: " + ForegroundService.EscalationCounter);
 
                     Intent toServiceIntent = new Intent(CheckinNotification.this,ForegroundService.class);
-                    if (ForegroundService.IS_SERVICE_RUNNING) {
+                    if(ForegroundService.IS_SERVICE_RUNNING && ForegroundService.LAST_CHECKIN){
+                        toServiceIntent.setAction(ForegroundService.Constants.ACTION.STOPFOREGROUND_ACTION);
+                        Toast.makeText(CheckinNotification.this, "Job Ended!", Toast.LENGTH_LONG).show();
+                        startService(toServiceIntent);
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+                            finishAffinity();
+                        }
+                        else {
+                            finish();
+                        }
+                    }
+                    else if (ForegroundService.IS_SERVICE_RUNNING) {
                         toServiceIntent.setAction(ForegroundService.Constants.ACTION.CHECKIN_ACTION);
                         startService(toServiceIntent);
+                        finish();
                     }
-                    finish();
+                    else {
+                        finish();
+                    }
                 }
 
             }
@@ -253,7 +297,6 @@ public class CheckinNotification extends AppCompatActivity {
         vibrator.cancel();
         countDownTimer.cancel();
 
-
         if(ForegroundService.EscalationCounter == 1){
             Escalation1 = "Escalation 1";
         }
@@ -273,15 +316,33 @@ public class CheckinNotification extends AppCompatActivity {
 
         Intent toServiceIntent = new Intent(CheckinNotification.this,ForegroundService.class);
 
-        if (ForegroundService.IS_SERVICE_RUNNING) {
+        if(ForegroundService.IS_SERVICE_RUNNING && ForegroundService.LAST_CHECKIN){
+            toServiceIntent.setAction(ForegroundService.Constants.ACTION.STOPFOREGROUND_ACTION);
+            System.out.println("STOP Service called from Checkin...");
+            Toast.makeText(CheckinNotification.this, "Job Ended!", Toast.LENGTH_LONG).show();
+            startService(toServiceIntent);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+                finishAffinity();
+            }
+            else {
+                finish();
+            }
+
+        }
+        else if (ForegroundService.IS_SERVICE_RUNNING) {
             toServiceIntent.setAction(ForegroundService.Constants.ACTION.CHECKIN_ACTION);
             startService(toServiceIntent);
+            finish();
         }
-        finish();
+        else {
+            finish();
+        }
 
+       // finish();
     }
 
     void setCheckinValue(){
+
         if(ForegroundService.counter == 1){
            if(ForegroundService.EscalationCounter == 0){
                 ((MyApplication) this.getApplication()).setCheckin1(Checkedin);
@@ -292,9 +353,11 @@ public class CheckinNotification extends AppCompatActivity {
             }
             else if(ForegroundService.EscalationCounter == 2){
                 ((MyApplication) this.getApplication()).setCheckin1(Escalation2);
+
             }
             else if(ForegroundService.EscalationCounter == 3){
                 ((MyApplication) this.getApplication()).setCheckin1(Escalation3);
+
                // ForegroundService.EscalationCounter = 0;
                 ForegroundService.counter = 2;
             }

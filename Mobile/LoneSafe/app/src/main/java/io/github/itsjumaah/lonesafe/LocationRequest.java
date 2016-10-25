@@ -7,9 +7,7 @@ import com.android.volley.toolbox.StringRequest;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * Created by ashneelkumar on 8/10/16.
- */
+
 public class LocationRequest extends StringRequest {
 
     private static final String GPS_REQUEST = "http://202.89.41.210/scripts/location.php";

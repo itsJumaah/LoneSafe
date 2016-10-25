@@ -1,7 +1,6 @@
 package io.github.itsjumaah.lonesafe;
 
 import android.app.Activity;
-import android.app.NotificationManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -50,6 +49,7 @@ public class Home extends AppCompatActivity {
     };
 
 
+    /*
     //Broadcast receiver listens for service finish...
     private BroadcastReceiver serviceLife = new BroadcastReceiver() {
         @Override
@@ -61,21 +61,20 @@ public class Home extends AppCompatActivity {
         }
     };
 
+    */
+
 
     @Override
     public void onResume() {
         super.onResume();
         registerReceiver(br, new IntentFilter(ForegroundService.COUNTDOWN_BR));
-        registerReceiver(serviceLife, new IntentFilter(ForegroundService.SERVICE_BR));
+       // registerReceiver(serviceLife, new IntentFilter(ForegroundService.SERVICE_BR));
 
         /*
-        * Ensures that the onServiceFinish method is called if user presses Job Finished Notification
-        *
-        */
-
         if(!ForegroundService.IS_SERVICE_RUNNING){
             onServiceFinish();
         }
+        */
 
         // Log.i(TAG, "Registered broacast receiver");
         System.out.println("Registered broacast receiver");
@@ -86,7 +85,7 @@ public class Home extends AppCompatActivity {
     public void onPause() {
         super.onPause();
         unregisterReceiver(br);
-        unregisterReceiver(serviceLife);
+       // unregisterReceiver(serviceLife);
 
 
         System.out.println("Unregistered broacast receiver");
@@ -97,7 +96,7 @@ public class Home extends AppCompatActivity {
     public void onStop() {
         try {
             unregisterReceiver(br);
-            unregisterReceiver(serviceLife);
+          //  unregisterReceiver(serviceLife);
         } catch (Exception e) {
             // Receiver was probably already stopped in onPause()
         }
@@ -113,13 +112,14 @@ public class Home extends AppCompatActivity {
 
     }
 
+    /*
     public AlertDialog onServiceFinish (){
 
         updateOnJobtoZero();
 
-       // unregisterReceiver(serviceLife);
+        // unregisterReceiver(serviceLife); // <--- WIll this fix the problem Mornez has??
 
-        return jobfinished = new AlertDialog.Builder(this)
+         return jobfinished = new AlertDialog.Builder(this)
                 .setTitle("Job Finished")
                // .setMessage(mymessage)
                 .setPositiveButton("Start a new job",
@@ -135,24 +135,13 @@ public class Home extends AppCompatActivity {
                             }
                         })
                 .show();
-               /* .setNegativeButton("Exit LoneSafe",
-                        new DialogInterface.OnClickListener(){
-                            public void onClick(DialogInterface dialog, int whichButton) {
-                                String ns = Context.NOTIFICATION_SERVICE;
-                                NotificationManager nMgr = (NotificationManager) getApplicationContext().getSystemService(ns);
-                                nMgr.cancel(105);
 
-                                // dialog.dismiss();
-                                //finish();
-                                System.exit(0);
-                            }
-
-                        })*/
-               // .show();
+       // return jobfinished; <--- WIll this fix the problem Mornez has??
 
         //--------------
     }
 
+    */
 
     private void updateGUI(Intent intent) {
         if (intent.getExtras() != null) {
@@ -170,10 +159,10 @@ public class Home extends AppCompatActivity {
 
             if(displayCheckin){
                 final TextView tvTimer = (TextView) findViewById(R.id.tvNextCheckLbl);
-                tvTimer.setText("No More Checkin ");
+                tvTimer.setText("Final checkin will be in: ");
 
                 final TextView TvMinute = (TextView) findViewById(R.id.tvTimer);
-                TvMinute.setText(" Job ends in: " + minutesRemaining + " Minutes");
+                TvMinute.setText(" " + minutesRemaining + " Minutes");
 
                // progressBar.setVisibility(View.INVISIBLE);
 
@@ -186,7 +175,7 @@ public class Home extends AppCompatActivity {
                 progressBar.setMax(max);
 
                 final TextView tvTimer = (TextView) findViewById(R.id.tvTimer);
-                tvTimer.setText(" " + minutesRemaining + " Minutes");
+                tvTimer.setText(" " + minutesRemaining + " Seconds");
                 progressBar.setProgress(progressBar.getMax()-progress); //max set as default in xml atm
                 //progressBar.setProgress(max - progress); //max set as default in xml atm
             }
@@ -209,14 +198,13 @@ public class Home extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
 
-
         //--- action bar icon
         ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayShowHomeEnabled(true);
         actionBar.setIcon(R.drawable.ic_launcher);
         actionBar.setTitle(" LoneSafe");
 
-        registerReceiver(serviceLife, new IntentFilter(ForegroundService.SERVICE_BR));
+//        registerReceiver(serviceLife, new IntentFilter(ForegroundService.SERVICE_BR));
 
         sharedPreference = new SharedPreference();
 

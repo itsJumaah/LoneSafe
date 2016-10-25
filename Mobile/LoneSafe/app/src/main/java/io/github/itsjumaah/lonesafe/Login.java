@@ -110,7 +110,7 @@ public class Login extends AppCompatActivity {
 
     public void showAlert (View view){
         AlertDialog.Builder myAlert = new AlertDialog.Builder(this);
-        myAlert.setMessage("This application is designed for specific users, please see your manager if need a login")
+        myAlert.setMessage("This application is designed for specific users, please see your manager if you need a login")
                 .setPositiveButton("Dismiss", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
