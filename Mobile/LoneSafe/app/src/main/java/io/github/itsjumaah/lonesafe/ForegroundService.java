@@ -20,6 +20,7 @@ import com.android.volley.toolbox.Volley;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.DateFormat;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -52,8 +53,9 @@ public class ForegroundService extends Service {
     long minutesRemaining = 60;
     String username;
     String job_num;
+    String NextCheckin;
 
-    long jobTimerCurrentValue = 9000000;
+    public static long jobTimerCurrentValue = 9000000;
 
     long FinTime; // = jobTime;
 
@@ -157,16 +159,16 @@ public class ForegroundService extends Service {
 
         Log.i(TAG, "Starting timer...");
 
-        final int max = (int) TimeUnit.MILLISECONDS.toSeconds(30000);
+        final int max = (int) TimeUnit.MILLISECONDS.toSeconds(checkInterval); //checkInterval
         bi.putExtra("max", max);
         sendBroadcast(bi);
 
-        checkinCountdown = new CountDownTimer(30000, 1000) { // 2 mins //TODO change back to checkInterval
+        checkinCountdown = new CountDownTimer(checkInterval, 1000) {  //checkInterval
             @Override
             public void onTick(long millisUntilFinished) {
                 CheckinCounterActive = true;
 
-                minutesRemaining = TimeUnit.MILLISECONDS.toSeconds(millisUntilFinished);  //TODO change back toMinutes
+                minutesRemaining = TimeUnit.MILLISECONDS.toMinutes(millisUntilFinished);
                 Log.i(TAG, ">>>>>>>>>>>>>>** minutes Remaining:  " + minutesRemaining);
 
                 int progress = (int) (millisUntilFinished/1000);
@@ -175,6 +177,7 @@ public class ForegroundService extends Service {
 
                 bi.putExtra("countdown", progress);
                 bi.putExtra("remaining", minutesRemaining);
+                bi.putExtra("interval",checkInterval);
                 sendBroadcast(bi);
             }
 
@@ -186,7 +189,9 @@ public class ForegroundService extends Service {
                 int progress = (int) (minutesRemaining/1000);
                 bi.putExtra("countdown", progress);
                 bi.putExtra("remaining", minutesRemaining);
-              //  bi.putExtra("DisplayCheckin",true);
+                bi.putExtra("interval",checkInterval);
+
+                //  bi.putExtra("DisplayCheckin",true);
                 sendBroadcast(bi);
 
                 Intent checkinIntent = new Intent(ForegroundService.this, CheckinNotification.class);
@@ -270,6 +275,7 @@ public class ForegroundService extends Service {
             if(jobTimerCurrentValue <= checkInterval){ //checkInterval
                 System.out.println("LAST CHECKIN: " + checkInterval + "jobRemaining: " + jobTimerCurrentValue);
                 LAST_CHECKIN = true;
+                nextCheckinTime();
                // bi.putExtra("DisplayCheckin",true);
                // sendBroadcast(bi);
             }
@@ -365,6 +371,74 @@ public class ForegroundService extends Service {
         return START_STICKY;
     }
 
+    //---------------------
+
+    void getCheckinValue(){
+        //get all current checkin Value
+
+
+    }
+
+    void nextCheckinTime(){
+
+        //long interval = ((MyApplication) this.getApplication()).getinterval();
+        DateFormat timeFormat = android.text.format.DateFormat.getTimeFormat(getApplicationContext()); // Gets system time format
+
+        if(ForegroundService.LAST_CHECKIN) {
+            long nextTime = System.currentTimeMillis() + ForegroundService.jobTimerCurrentValue;
+            NextCheckin = timeFormat.format(nextTime);
+        }
+
+        SaveToDataBase();
+        System.out.print(" @@@@@@@@@@@@@@@@@@ ## NEXT CHECKIN TIME = " + NextCheckin);
+
+    }
+
+    void SaveToDataBase(){
+        // Response received from the server
+        Response.Listener<String> responseListener = new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                try {
+
+                    Log.i("tagconvertstr", "["+response+"]");
+                    JSONObject jsonResponse = new JSONObject(response);
+                    boolean success = jsonResponse.getBoolean("success");
+
+                    if (success) {
+                        Log.i("JSON: ", "Response true");
+
+                    } else {
+                        Log.i("JSON: ", "Response false");
+
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        };
+
+        //String job_num = sharedPreference.getValue(context,"UserID");
+        //Log.i("JSON: ", "JOB NUM IS: " + job_num);
+
+       // getCheckinValue();
+        String checkin1 = ((MyApplication) this.getApplication()).getCheckin1();
+        String checkin2 = ((MyApplication) this.getApplication()).getCheckin2();
+        String checkin3 = ((MyApplication) this.getApplication()).getCheckin3();
+        String checkin4 = ((MyApplication) this.getApplication()).getCheckin4();
+        String checkin5 = ((MyApplication) this.getApplication()).getCheckin5();
+        String checkin6 = ((MyApplication) this.getApplication()).getCheckin6();
+        String checkin7 = ((MyApplication) this.getApplication()).getCheckin7();
+        String checkin8 = ((MyApplication) this.getApplication()).getCheckin8();
+
+        CheckinRequest checkinRequest = new CheckinRequest(job_num,checkin1, checkin2, checkin3, checkin4, checkin5,
+                checkin6, checkin7, checkin8,NextCheckin, responseListener);
+        RequestQueue queue = Volley.newRequestQueue(ForegroundService.this);
+        queue.add(checkinRequest);
+    }
+
+    //---------
+
     private void UpdateonJobDB(){
         Response.Listener<String> responseListener = new Response.Listener<String>() {
             @Override
@@ -389,6 +463,7 @@ public class ForegroundService extends Service {
                 }
             }
         };
+
 
       //  String username = sharedPreference.getValue(context,"User");
         String onjob = "0";

@@ -32,6 +32,10 @@ import com.android.volley.toolbox.Volley;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.DateFormat;
+import java.util.Calendar;
+import java.util.Date;
+
 //---
 
 public class CheckinNotification extends AppCompatActivity {
@@ -47,6 +51,7 @@ public class CheckinNotification extends AppCompatActivity {
     String checkin6 = "null";
     String checkin7 = "null";
     String checkin8 = "null";
+    String NextCheckin = "null";
 
     String Checkedin = "Checked";
     String Escalation1 = "1";
@@ -58,8 +63,8 @@ public class CheckinNotification extends AppCompatActivity {
     private LocationListener listener;
     String lng;
     String lat;
-    boolean gps_enabled = false;
-    boolean network_enabled = false;
+    //boolean gps_enabled = false;
+    //boolean network_enabled = false;
 
     Uri uri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_RINGTONE);
     private Ringtone ringtone;
@@ -191,6 +196,7 @@ public class CheckinNotification extends AppCompatActivity {
 
                 ForegroundService.EscalationCounter++;
                 setCheckinValue();
+                nextCheckinOnEscalationTime();
                 SaveToDataBase();
 
 
@@ -308,10 +314,12 @@ public class CheckinNotification extends AppCompatActivity {
         }
 
         setCheckinValue();
+        nextCheckinTime();
         SaveToDataBase();
 
         ForegroundService.EscalationCounter = 0;
         ForegroundService.counter++;
+
 
 
         Intent toServiceIntent = new Intent(CheckinNotification.this,ForegroundService.class);
@@ -341,21 +349,71 @@ public class CheckinNotification extends AppCompatActivity {
        // finish();
     }
 
+    void getCurrentTime(){
+        Calendar cal = Calendar.getInstance(); // creates calendar
+        cal.setTime(new Date()); // sets calendar time/date
+        Date time = cal.getTime();
+
+        // SimpleDateFormat formatter = new SimpleDateFormat("hh:mm a");
+        DateFormat timeFormat = android.text.format.DateFormat.getTimeFormat(getApplicationContext()); // Gets system time format
+        // String startTime = timeFormat.format(time);
+        Checkedin = timeFormat.format(time);
+        System.out.print(" @@@@@@@@@@@@@@  Current TIME = " + Checkedin);
+
+
+    }
+
+    // 25th JAN Implementation for nextCheckinTime
+    //Todo
+    void nextCheckinTime(){
+
+        long interval = ((MyApplication) this.getApplication()).getinterval();
+        DateFormat timeFormat = android.text.format.DateFormat.getTimeFormat(getApplicationContext()); // Gets system time format
+
+        if(ForegroundService.LAST_CHECKIN){
+            long nextTime = System.currentTimeMillis() + ForegroundService.jobTimerCurrentValue;
+            NextCheckin = timeFormat.format(nextTime);
+
+        } else{
+            long nextTime = System.currentTimeMillis() + interval;
+            NextCheckin = timeFormat.format(nextTime);
+        }
+
+        System.out.print(" @@@@@@@@@@@@@@@@@@ ## NEXT CHECKIN TIME = " + NextCheckin);
+
+    }
+    void nextCheckinOnEscalationTime(){
+
+        DateFormat timeFormat = android.text.format.DateFormat.getTimeFormat(getApplicationContext()); // Gets system time format
+
+        long nextTime = System.currentTimeMillis() + 180000; //+3mins
+        NextCheckin = timeFormat.format(nextTime);
+        System.out.print(" @@@@@@@@@@@@@@@@@@ ## NEXT CHECKIN ESC TIME = " + NextCheckin);
+
+    }
+
+
     void setCheckinValue(){
 
         if(ForegroundService.counter == 1){
            if(ForegroundService.EscalationCounter == 0){
-                ((MyApplication) this.getApplication()).setCheckin1(Checkedin);
+               getCurrentTime();
+              // nextCheckinTime();
+               ((MyApplication) this.getApplication()).setNextCheckin(NextCheckin);
+               ((MyApplication) this.getApplication()).setCheckin1(Checkedin);
                 //ForegroundService.counter = 2;
             }
             else if(ForegroundService.EscalationCounter == 1){
-                ((MyApplication) this.getApplication()).setCheckin1(Escalation1);
+              // nextCheckinOnEscalationTime();
+               ((MyApplication) this.getApplication()).setCheckin1(Escalation1);
             }
             else if(ForegroundService.EscalationCounter == 2){
+               //nextCheckinOnEscalationTime();
                 ((MyApplication) this.getApplication()).setCheckin1(Escalation2);
 
             }
             else if(ForegroundService.EscalationCounter == 3){
+               //nextCheckinOnEscalationTime();
                 ((MyApplication) this.getApplication()).setCheckin1(Escalation3);
 
                // ForegroundService.EscalationCounter = 0;
@@ -366,16 +424,24 @@ public class CheckinNotification extends AppCompatActivity {
         else if(ForegroundService.counter == 2 ){
             ((MyApplication) this.getApplication()).setCheckin1("null");
             if(ForegroundService.EscalationCounter == 0){
+                getCurrentTime();
+               // nextCheckinTime();
+                Log.i("CheckinVal", "++++++++++++++++++++++++++++++++++++++++++++++++++++++++>> Checkedin = : " + Checkedin);
+
+                ((MyApplication) this.getApplication()).setNextCheckin(NextCheckin);
                 ((MyApplication) this.getApplication()).setCheckin2(Checkedin);
                // ForegroundService.counter = 3;
             }
             else if(ForegroundService.EscalationCounter == 1){
+                //nextCheckinOnEscalationTime();
                 ((MyApplication) this.getApplication()).setCheckin2(Escalation1);
             }
             else if(ForegroundService.EscalationCounter == 2){
+                //nextCheckinOnEscalationTime();
                 ((MyApplication) this.getApplication()).setCheckin2(Escalation2);
             }
             else if(ForegroundService.EscalationCounter == 3){
+                //nextCheckinOnEscalationTime();
                 ((MyApplication) this.getApplication()).setCheckin2(Escalation3);
               //  ForegroundService.EscalationCounter = 0;
                 ForegroundService.counter = 3;
@@ -386,16 +452,23 @@ public class CheckinNotification extends AppCompatActivity {
             ((MyApplication) this.getApplication()).setCheckin2("null");
 
             if(ForegroundService.EscalationCounter == 0){
+                getCurrentTime();
+               // nextCheckinTime();
+                Log.i("CheckinVal", "++++++++++++++++++++++++++++++++++++++++++++++++++++++++>> Checkedin = : " + Checkedin);
+                ((MyApplication) this.getApplication()).setNextCheckin(NextCheckin);
                 ((MyApplication) this.getApplication()).setCheckin3(Checkedin);
                 //ForegroundService.counter = 4;
             }
             else if(ForegroundService.EscalationCounter == 1){
+                //nextCheckinOnEscalationTime();
                 ((MyApplication) this.getApplication()).setCheckin3(Escalation1);
             }
             else if(ForegroundService.EscalationCounter == 2){
+                //nextCheckinOnEscalationTime();
                 ((MyApplication) this.getApplication()).setCheckin3(Escalation2);
             }
             else if(ForegroundService.EscalationCounter == 3){
+                //nextCheckinOnEscalationTime();
                 ((MyApplication) this.getApplication()).setCheckin3(Escalation3);
               //  ForegroundService.EscalationCounter = 0;
                 ForegroundService.counter = 4;
@@ -406,16 +479,23 @@ public class CheckinNotification extends AppCompatActivity {
             ((MyApplication) this.getApplication()).setCheckin3("null");
 
             if(ForegroundService.EscalationCounter == 0){
+                getCurrentTime();
+               // nextCheckinTime();
+                Log.i("CheckinVal", "++++++++++++++++++++++++++++++++++++++++++++++++++++++++>> Checkedin = : " + Checkedin);
+                ((MyApplication) this.getApplication()).setNextCheckin(NextCheckin);
                 ((MyApplication) this.getApplication()).setCheckin4(Checkedin);
                // ForegroundService.counter = 5;
             }
             else if(ForegroundService.EscalationCounter == 1){
+                //nextCheckinOnEscalationTime();
                 ((MyApplication) this.getApplication()).setCheckin4(Escalation1);
             }
             else if(ForegroundService.EscalationCounter == 2){
+                //nextCheckinOnEscalationTime();
                 ((MyApplication) this.getApplication()).setCheckin4(Escalation2);
             }
             else if(ForegroundService.EscalationCounter == 3){
+                //nextCheckinOnEscalationTime();
                 ((MyApplication) this.getApplication()).setCheckin4(Escalation3);
               //  ForegroundService.EscalationCounter = 0;
                 ForegroundService.counter = 5;
@@ -426,16 +506,22 @@ public class CheckinNotification extends AppCompatActivity {
             ((MyApplication) this.getApplication()).setCheckin4("null");
 
             if(ForegroundService.EscalationCounter == 0){
+                getCurrentTime();
+               // nextCheckinTime();
+                ((MyApplication) this.getApplication()).setNextCheckin(NextCheckin);
                 ((MyApplication) this.getApplication()).setCheckin5(Checkedin);
                // ForegroundService.counter = 6;
             }
             else if(ForegroundService.EscalationCounter == 1){
+                //nextCheckinOnEscalationTime();
                 ((MyApplication) this.getApplication()).setCheckin5(Escalation1);
             }
             else if(ForegroundService.EscalationCounter == 2){
+                //nextCheckinOnEscalationTime();
                 ((MyApplication) this.getApplication()).setCheckin5(Escalation2);
             }
             else if(ForegroundService.EscalationCounter == 3){
+                //nextCheckinOnEscalationTime();
                 ((MyApplication) this.getApplication()).setCheckin5(Escalation3);
               //  ForegroundService.EscalationCounter = 0;
                 ForegroundService.counter = 6;
@@ -446,16 +532,22 @@ public class CheckinNotification extends AppCompatActivity {
             ((MyApplication) this.getApplication()).setCheckin5("null");
 
             if(ForegroundService.EscalationCounter == 0){
+                getCurrentTime();
+              //  nextCheckinTime();
+                ((MyApplication) this.getApplication()).setNextCheckin(NextCheckin);
                 ((MyApplication) this.getApplication()).setCheckin6(Checkedin);
               //  ForegroundService.counter = 7;
             }
             else if(ForegroundService.EscalationCounter == 1){
+                //nextCheckinOnEscalationTime();
                 ((MyApplication) this.getApplication()).setCheckin6(Escalation1);
             }
             else if(ForegroundService.EscalationCounter == 2){
+                //nextCheckinOnEscalationTime();
                 ((MyApplication) this.getApplication()).setCheckin6(Escalation2);
             }
             else if(ForegroundService.EscalationCounter == 3){
+                //nextCheckinOnEscalationTime();
                 ((MyApplication) this.getApplication()).setCheckin6(Escalation3);
              //   ForegroundService.EscalationCounter = 0;
                 ForegroundService.counter = 7;
@@ -466,16 +558,22 @@ public class CheckinNotification extends AppCompatActivity {
             ((MyApplication) this.getApplication()).setCheckin6("null");
 
             if(ForegroundService.EscalationCounter == 0){
+                getCurrentTime();
+              //  nextCheckinTime();
+                ((MyApplication) this.getApplication()).setNextCheckin(NextCheckin);
                 ((MyApplication) this.getApplication()).setCheckin7(Checkedin);
                // ForegroundService.counter = 8;
             }
             else if(ForegroundService.EscalationCounter == 1){
+                //nextCheckinOnEscalationTime();
                 ((MyApplication) this.getApplication()).setCheckin7(Escalation1);
             }
             else if(ForegroundService.EscalationCounter == 2){
+                //nextCheckinOnEscalationTime();
                 ((MyApplication) this.getApplication()).setCheckin7(Escalation2);
             }
             else if(ForegroundService.EscalationCounter == 3){
+                //nextCheckinOnEscalationTime();
                 ((MyApplication) this.getApplication()).setCheckin7(Escalation3);
               //  ForegroundService.EscalationCounter = 0;
                 ForegroundService.counter = 8;
@@ -486,16 +584,23 @@ public class CheckinNotification extends AppCompatActivity {
             ((MyApplication) this.getApplication()).setCheckin7("null");
 
             if(ForegroundService.EscalationCounter == 0){
+                getCurrentTime();
+                //nextCheckinTime();
+               // NextCheckin = "Job Ended";
+                ((MyApplication) this.getApplication()).setNextCheckin(NextCheckin);
                 ((MyApplication) this.getApplication()).setCheckin8(Checkedin);
                // ForegroundService.counter = -1;
             }
             else if(ForegroundService.EscalationCounter == 1){
+                //nextCheckinOnEscalationTime();
                 ((MyApplication) this.getApplication()).setCheckin8(Escalation1);
             }
             else if(ForegroundService.EscalationCounter == 2){
+                //nextCheckinOnEscalationTime();
                 ((MyApplication) this.getApplication()).setCheckin8(Escalation2);
             }
             else if(ForegroundService.EscalationCounter == 3){
+                //nextCheckinOnEscalationTime();
                 ((MyApplication) this.getApplication()).setCheckin8(Escalation3);
               //  ForegroundService.EscalationCounter = 0;
                 ForegroundService.counter = 9;
@@ -523,6 +628,7 @@ public class CheckinNotification extends AppCompatActivity {
             public void onResponse(String response) {
                 try {
 
+                    Log.i("tagconvertstr", "["+response+"]");
                     JSONObject jsonResponse = new JSONObject(response);
                     boolean success = jsonResponse.getBoolean("success");
 
@@ -545,7 +651,7 @@ public class CheckinNotification extends AppCompatActivity {
         getCheckinValue();
 
         CheckinRequest checkinRequest = new CheckinRequest(job_num,checkin1, checkin2, checkin3, checkin4, checkin5,
-                checkin6, checkin7, checkin8, responseListener);
+                checkin6, checkin7, checkin8,NextCheckin, responseListener);
         RequestQueue queue = Volley.newRequestQueue(CheckinNotification.this);
         queue.add(checkinRequest);
     }

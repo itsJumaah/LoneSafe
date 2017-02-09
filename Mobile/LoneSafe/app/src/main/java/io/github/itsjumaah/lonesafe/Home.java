@@ -175,7 +175,7 @@ public class Home extends AppCompatActivity {
                 progressBar.setMax(max);
 
                 final TextView tvTimer = (TextView) findViewById(R.id.tvTimer);
-                tvTimer.setText(" " + minutesRemaining + " Seconds");
+                tvTimer.setText(" " + minutesRemaining + " Minutes");
                 progressBar.setProgress(progressBar.getMax()-progress); //max set as default in xml atm
                 //progressBar.setProgress(max - progress); //max set as default in xml atm
             }
@@ -367,6 +367,8 @@ public class Home extends AppCompatActivity {
         String checkin6 = ((MyApplication) this.getApplication()).getCheckin6();
         String checkin7 = ((MyApplication) this.getApplication()).getCheckin7();
         String checkin8 = ((MyApplication) this.getApplication()).getCheckin8();
+        String NextCheckin = ((MyApplication) this.getApplication()).getNextCheckin();
+
 
         //Save to db
         // Response received from the server
@@ -396,7 +398,7 @@ public class Home extends AppCompatActivity {
 
 
         CheckinRequest checkinRequest = new CheckinRequest(job_num,checkin1, checkin2, checkin3, checkin4, checkin5,
-                checkin6, checkin7, checkin8, responseListener);
+                checkin6, checkin7, checkin8, NextCheckin, responseListener);
         RequestQueue queue = Volley.newRequestQueue(Home.this);
         queue.add(checkinRequest);
 

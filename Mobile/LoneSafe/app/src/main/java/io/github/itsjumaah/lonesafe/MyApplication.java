@@ -21,6 +21,7 @@ public class MyApplication extends Application implements Application.ActivityLi
     public String checkin6 = "null";
     public String checkin7 = "null";
     public String checkin8 = "null";
+    public String NextCheckin = "null";
 
     public long interval = 0;
 
@@ -79,6 +80,13 @@ public class MyApplication extends Application implements Application.ActivityLi
     public void setCheckin8(String checkin8){
         this.checkin8 = checkin8;
     }
+    public String getNextCheckin(){
+        return NextCheckin;
+    }
+    public void setNextCheckin(String NextCheckin){
+        this.NextCheckin = NextCheckin;
+    }
+
 
     public static Activity appactivity;
     @Override

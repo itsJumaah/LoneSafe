@@ -158,6 +158,7 @@ public class Settings extends AppCompatActivity {
                 saveStartTime();
                 getTime();
 
+
                 //Checks if SharedPref Null---------------
 
                 if(getHour == null){
@@ -201,6 +202,7 @@ public class Settings extends AppCompatActivity {
                             setCheckinnull();
                             checkForActiveJobs();
                             createJobDB();
+                           // setNextCheckinInit();
                           //  updateOnJob();
 
                         }
@@ -258,6 +260,7 @@ public class Settings extends AppCompatActivity {
                         updateOnJob();
                         updateJobActive();
                         SaveLocationToDB();
+                        setNextCheckinInit();
 
 
                         String username = sharedPreference.getValue(context,"User");
@@ -592,6 +595,67 @@ public class Settings extends AppCompatActivity {
 
 
     }
+
+
+    //------------->>>>
+
+    void setNextCheckinInit(){
+
+        //Set NextCheckin Value
+        long interval = ((MyApplication) this.getApplication()).getinterval();
+        DateFormat timeFormat = android.text.format.DateFormat.getTimeFormat(getApplicationContext()); // Gets system time format
+
+        long nextTime = System.currentTimeMillis() + interval;
+        String NextCheckin = timeFormat.format(nextTime);
+        System.out.print(" @@@@@@@@@@@@@@@@@@ ## NEXT CHECKIN TIME = " + NextCheckin);
+
+
+        //Save to db
+        // Response received from the server
+        Response.Listener<String> responseListener = new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                try {
+
+                    Log.i("tagconvertstr_NEXTCHECK", "["+response+"]");
+                    JSONObject jsonResponse = new JSONObject(response);
+                    boolean success = jsonResponse.getBoolean("success");
+
+                    if (success) {
+                        Log.i("JSON: ", "Response true");
+
+                    } else {
+                        Log.i("JSON: ", "Response false");
+
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        };
+
+        String job_num = sharedPreference.getValue(context,"UserID");
+        Log.i("JSON: ", "JOB NUM IS: " + job_num);
+
+        //get all current checkin Value
+        String checkin1 = ((MyApplication) this.getApplication()).getCheckin1();
+        String checkin2 = ((MyApplication) this.getApplication()).getCheckin2();
+        String checkin3 = ((MyApplication) this.getApplication()).getCheckin3();
+        String checkin4 = ((MyApplication) this.getApplication()).getCheckin4();
+        String checkin5 = ((MyApplication) this.getApplication()).getCheckin5();
+        String checkin6 = ((MyApplication) this.getApplication()).getCheckin6();
+        String checkin7 = ((MyApplication) this.getApplication()).getCheckin7();
+        String checkin8 = ((MyApplication) this.getApplication()).getCheckin8();
+        //  String NextCheckin = ((MyApplication) this.getApplication()).getNextCheckin();
+
+        CheckinRequest checkinRequest = new CheckinRequest(job_num,checkin1, checkin2, checkin3, checkin4, checkin5,
+                checkin6, checkin7, checkin8, NextCheckin, responseListener);
+        RequestQueue queue = Volley.newRequestQueue(Settings.this);
+        queue.add(checkinRequest);
+
+    }
+
+    //------------<<<
 
 
     //----------------------------------------------------------------------------------------------
