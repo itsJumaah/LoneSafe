@@ -247,7 +247,7 @@ public class Settings extends AppCompatActivity {
                     if (success) {
                         Log.i("JSON: ", "Response true");
 
-                        //TODO note temp storing as userid, change to jobid in sharedpref
+                        //TODO note storing as userid, change to jobid in sharedpref
                         int job_num = jsonResponse.getInt("job_num");
                         String userId = String.valueOf(job_num);
 
@@ -261,6 +261,7 @@ public class Settings extends AppCompatActivity {
                         updateJobActive();
                         SaveLocationToDB();
                         setNextCheckinInit();
+                        setCoverage();
 
 
                         String username = sharedPreference.getValue(context,"User");
@@ -396,6 +397,38 @@ public class Settings extends AppCompatActivity {
         UpdateJobActiveRequest updateJobActiveRequest = new UpdateJobActiveRequest(job_num, isactive, responseListener);
         RequestQueue queue = Volley.newRequestQueue(Settings.this);
         queue.add(updateJobActiveRequest);
+    }
+
+    void setCoverage(){
+
+        Response.Listener<String> responseListener = new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                try {
+
+                    Log.i("tagconvertstr", "["+response+"]");
+                    JSONObject jsonResponse = new JSONObject(response);
+                    boolean success = jsonResponse.getBoolean("success");
+
+                    if (success) {
+                        Log.i("JSON: ", "Response true");
+
+                    } else {
+                        Log.i("JSON: ", "Response false");
+
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        };
+
+        String job_num = sharedPreference.getValue(context,"UserID");
+
+        CoverageRequest coverageRequest = new CoverageRequest(job_num, responseListener);
+        RequestQueue queue = Volley.newRequestQueue(Settings.this);
+        queue.add(coverageRequest);
+
     }
 
     /*

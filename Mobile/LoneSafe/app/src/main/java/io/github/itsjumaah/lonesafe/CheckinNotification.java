@@ -196,14 +196,17 @@ public class CheckinNotification extends AppCompatActivity {
 
                 ForegroundService.EscalationCounter++;
                 setCheckinValue();
-                nextCheckinOnEscalationTime();
-                SaveToDataBase();
+               // nextCheckinOnEscalationTime();
+              //  SaveToDataBase();
 
 
                 if(ForegroundService.EscalationCounter == 1 || ForegroundService.EscalationCounter == 2){
                     Log.i("*** Escalation1/2", "++++++++++++++++++++++++++++++++++++++++++++++++++++++++>> ESCAl counter is: " + ForegroundService.EscalationCounter);
 
                    // getLocation();
+                    nextCheckinOnEscalationTime();
+                    //TODO
+                    SaveToDataBase();
                     SaveLocationToDB();
 
 
@@ -230,6 +233,11 @@ public class CheckinNotification extends AppCompatActivity {
                 if(ForegroundService.EscalationCounter == 3){
 
                    // getLocation();
+
+
+                    //TODO
+                    nextCheckinTime();
+                    SaveToDataBase();
                     SaveLocationToDB();
 
                     Log.i("*** Escalation3", "++++++++++++++++++++++++++++++++++++++++++++++++++++++++>> ESCAl counter is: " + ForegroundService.EscalationCounter);
