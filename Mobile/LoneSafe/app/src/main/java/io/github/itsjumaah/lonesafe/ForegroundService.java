@@ -31,6 +31,7 @@ public class ForegroundService extends Service {
     private static final String LOG_TAG = "ForegroundService";
     public static boolean IS_SERVICE_RUNNING = false;
     public static boolean LAST_CHECKIN = false;
+    public static boolean NEED_TO_SEND_CHECKIN = false;
 
     // public static boolean SOS_TRIGGERED = false;
 

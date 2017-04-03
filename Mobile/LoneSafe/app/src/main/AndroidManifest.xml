@@ -29,6 +29,9 @@
         <activity
             android:name=".Settings"
             android:screenOrientation="portrait"/>
+        <activity
+            android:name=".PendingCheckin"
+            android:screenOrientation="portrait"/>
 
         <activity
             android:name=".Launcher"

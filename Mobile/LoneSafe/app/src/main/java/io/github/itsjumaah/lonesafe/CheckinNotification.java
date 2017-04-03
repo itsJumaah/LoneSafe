@@ -43,6 +43,9 @@ public class CheckinNotification extends AppCompatActivity {
     private SharedPreference sharedPreference;
     Activity context = this; //For shared Pref
 
+   // public static boolean NEED_TO_SEND_CHECKIN = false;
+
+
     String checkin1 = "null";
     String checkin2 = "null";
     String checkin3 = "null";
@@ -321,8 +324,8 @@ public class CheckinNotification extends AppCompatActivity {
             Escalation3 = "Escalation 3";
         }
 
-        setCheckinValue();
         nextCheckinTime();
+        setCheckinValue();
         SaveToDataBase();
 
         ForegroundService.EscalationCounter = 0;
@@ -381,10 +384,12 @@ public class CheckinNotification extends AppCompatActivity {
         if(ForegroundService.LAST_CHECKIN){
             long nextTime = System.currentTimeMillis() + ForegroundService.jobTimerCurrentValue;
             NextCheckin = timeFormat.format(nextTime);
+            ((MyApplication) this.getApplication()).setNextCheckin(NextCheckin);
 
         } else{
             long nextTime = System.currentTimeMillis() + interval;
             NextCheckin = timeFormat.format(nextTime);
+            ((MyApplication) this.getApplication()).setNextCheckin(NextCheckin);
         }
 
         System.out.print(" @@@@@@@@@@@@@@@@@@ ## NEXT CHECKIN TIME = " + NextCheckin);
@@ -396,6 +401,7 @@ public class CheckinNotification extends AppCompatActivity {
 
         long nextTime = System.currentTimeMillis() + 180000; //+3mins
         NextCheckin = timeFormat.format(nextTime);
+        ((MyApplication) this.getApplication()).setNextCheckin(NextCheckin);
         System.out.print(" @@@@@@@@@@@@@@@@@@ ## NEXT CHECKIN ESC TIME = " + NextCheckin);
 
     }
@@ -404,7 +410,12 @@ public class CheckinNotification extends AppCompatActivity {
     void setCheckinValue(){
 
         if(ForegroundService.counter == 1){
-           if(ForegroundService.EscalationCounter == 0){
+            if (!NetworkChangeReceiver.isNetworkStatusAvialable(context)) {
+                ForegroundService.NEED_TO_SEND_CHECKIN = true;
+                ((MyApplication) this.getApplication()).setCheckin1("Coverage");
+            }
+
+            else if(ForegroundService.EscalationCounter == 0){
                getCurrentTime();
               // nextCheckinTime();
                ((MyApplication) this.getApplication()).setNextCheckin(NextCheckin);
@@ -430,8 +441,18 @@ public class CheckinNotification extends AppCompatActivity {
             Log.i("****1 COUNTER", "++++++++++++++++++++++++++++++++++++++++++++++++++++++++>> Checkin counter is: " + ForegroundService.counter);
         }
         else if(ForegroundService.counter == 2 ){
-            ((MyApplication) this.getApplication()).setCheckin1("null");
-            if(ForegroundService.EscalationCounter == 0){
+            if(checkin1 != "Coverage"){
+                ((MyApplication) this.getApplication()).setCheckin1("null");
+            }
+
+
+            if (!NetworkChangeReceiver.isNetworkStatusAvialable(context)) {
+                ForegroundService.NEED_TO_SEND_CHECKIN = true;
+                ((MyApplication) this.getApplication()).setCheckin2("Coverage");
+            }
+
+
+            else if(ForegroundService.EscalationCounter == 0){
                 getCurrentTime();
                // nextCheckinTime();
                 Log.i("CheckinVal", "++++++++++++++++++++++++++++++++++++++++++++++++++++++++>> Checkedin = : " + Checkedin);
@@ -457,9 +478,17 @@ public class CheckinNotification extends AppCompatActivity {
             Log.i("****2 COUNTER", "++++++++++++++++++++++++++++++++++++++++++++++++++++++++>> Checkin counter is: " + ForegroundService.counter);
         }
         else if(ForegroundService.counter == 3 ){
-            ((MyApplication) this.getApplication()).setCheckin2("null");
+            if(checkin2 != "Coverage"){
+                ((MyApplication) this.getApplication()).setCheckin2("null");
+            }
 
-            if(ForegroundService.EscalationCounter == 0){
+
+            if (!NetworkChangeReceiver.isNetworkStatusAvialable(context)) {
+                ForegroundService.NEED_TO_SEND_CHECKIN = true;
+                ((MyApplication) this.getApplication()).setCheckin3("Coverage");
+            }
+
+            else if(ForegroundService.EscalationCounter == 0){
                 getCurrentTime();
                // nextCheckinTime();
                 Log.i("CheckinVal", "++++++++++++++++++++++++++++++++++++++++++++++++++++++++>> Checkedin = : " + Checkedin);
@@ -484,9 +513,18 @@ public class CheckinNotification extends AppCompatActivity {
             Log.i("****3 COUNTER", "++++++++++++++++++++++++++++++++++++++++++++++++++++++++>> Checkin counter is: " + ForegroundService.counter);
         }
         else if(ForegroundService.counter == 4 ){
-            ((MyApplication) this.getApplication()).setCheckin3("null");
+            if(checkin3 != "Coverage"){
+                ((MyApplication) this.getApplication()).setCheckin3("null");
+            }
 
-            if(ForegroundService.EscalationCounter == 0){
+
+            if (!NetworkChangeReceiver.isNetworkStatusAvialable(context)) {
+                ForegroundService.NEED_TO_SEND_CHECKIN = true;
+                ((MyApplication) this.getApplication()).setCheckin4("Coverage");
+            }
+
+
+            else if(ForegroundService.EscalationCounter == 0){
                 getCurrentTime();
                // nextCheckinTime();
                 Log.i("CheckinVal", "++++++++++++++++++++++++++++++++++++++++++++++++++++++++>> Checkedin = : " + Checkedin);
@@ -511,9 +549,18 @@ public class CheckinNotification extends AppCompatActivity {
             Log.i("****4 COUNTER", "++++++++++++++++++++++++++++++++++++++++++++++++++++++++>> Checkin counter is: " + ForegroundService.counter);
         }
         else if(ForegroundService.counter == 5 ){
-            ((MyApplication) this.getApplication()).setCheckin4("null");
+            if(checkin4 != "Coverage"){
+                ((MyApplication) this.getApplication()).setCheckin4("null");
+            }
 
-            if(ForegroundService.EscalationCounter == 0){
+
+            if (!NetworkChangeReceiver.isNetworkStatusAvialable(context)) {
+                ForegroundService.NEED_TO_SEND_CHECKIN = true;
+                ((MyApplication) this.getApplication()).setCheckin5("Coverage");
+            }
+
+
+            else if(ForegroundService.EscalationCounter == 0){
                 getCurrentTime();
                // nextCheckinTime();
                 ((MyApplication) this.getApplication()).setNextCheckin(NextCheckin);
@@ -537,9 +584,17 @@ public class CheckinNotification extends AppCompatActivity {
             Log.i("** COUNTER", "++++++++++++++++++++++++++++++++++++++++++++++++++++++++>> Checkin counter is: " + ForegroundService.counter);
         }
         else if(ForegroundService.counter == 6 ){
-            ((MyApplication) this.getApplication()).setCheckin5("null");
+            if(checkin5 != "Coverage"){
+                ((MyApplication) this.getApplication()).setCheckin5("null");
+            }
 
-            if(ForegroundService.EscalationCounter == 0){
+            if (!NetworkChangeReceiver.isNetworkStatusAvialable(context)) {
+                ForegroundService.NEED_TO_SEND_CHECKIN = true;
+                ((MyApplication) this.getApplication()).setCheckin6("Coverage");
+            }
+
+
+            else if(ForegroundService.EscalationCounter == 0){
                 getCurrentTime();
               //  nextCheckinTime();
                 ((MyApplication) this.getApplication()).setNextCheckin(NextCheckin);
@@ -563,9 +618,18 @@ public class CheckinNotification extends AppCompatActivity {
             Log.i("** COUNTER", "++++++++++++++++++++++++++++++++++++++++++++++++++++++++>> Checkin counter is: " + ForegroundService.counter);
         }
         else if(ForegroundService.counter == 7 ){
-            ((MyApplication) this.getApplication()).setCheckin6("null");
+            if(checkin6 != "Coverage"){
+                ((MyApplication) this.getApplication()).setCheckin6("null");
+            }
 
-            if(ForegroundService.EscalationCounter == 0){
+
+            if (!NetworkChangeReceiver.isNetworkStatusAvialable(context)) {
+                ForegroundService.NEED_TO_SEND_CHECKIN = true;
+                ((MyApplication) this.getApplication()).setCheckin7("Coverage");
+            }
+
+
+            else if(ForegroundService.EscalationCounter == 0){
                 getCurrentTime();
               //  nextCheckinTime();
                 ((MyApplication) this.getApplication()).setNextCheckin(NextCheckin);
@@ -589,9 +653,17 @@ public class CheckinNotification extends AppCompatActivity {
             Log.i("** COUNTER", "++++++++++++++++++++++++++++++++++++++++++++++++++++++++>> Checkin counter is: " + ForegroundService.counter);
         }
         else if(ForegroundService.counter == 8 ){
-            ((MyApplication) this.getApplication()).setCheckin7("null");
+            if(checkin7 != "Coverage"){
+                ((MyApplication) this.getApplication()).setCheckin7("null");
+            }
 
-            if(ForegroundService.EscalationCounter == 0){
+            if (!NetworkChangeReceiver.isNetworkStatusAvialable(context)) {
+                ForegroundService.NEED_TO_SEND_CHECKIN = true;
+                ((MyApplication) this.getApplication()).setCheckin8("Coverage");
+            }
+
+
+            else if(ForegroundService.EscalationCounter == 0){
                 getCurrentTime();
                 //nextCheckinTime();
                // NextCheckin = "Job Ended";
@@ -630,6 +702,11 @@ public class CheckinNotification extends AppCompatActivity {
     }
 
     void SaveToDataBase(){
+
+        if (!NetworkChangeReceiver.isNetworkStatusAvialable(context)) {
+            ForegroundService.NEED_TO_SEND_CHECKIN = true;
+        }
+
         // Response received from the server
         Response.Listener<String> responseListener = new Response.Listener<String>() {
             @Override

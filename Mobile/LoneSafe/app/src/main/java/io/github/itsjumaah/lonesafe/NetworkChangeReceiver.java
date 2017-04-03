@@ -40,6 +40,16 @@ public class NetworkChangeReceiver extends BroadcastReceiver{
                 intent1.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 context.getApplicationContext().startActivity(intent1);
             }
+            if(ForegroundService.NEED_TO_SEND_CHECKIN){
+                System.out.print("NET_CHECKIN" + "NEED CHECKIN IS TRUE in BR =======++++++++++++++++&&&&&&&&&&&&&&&&&&&&&&&&&&&&" +
+                        "****************************" + ForegroundService.NEED_TO_SEND_CHECKIN);
+
+
+                Intent intent1 = new Intent(context.getApplicationContext(),PendingCheckin.class);
+                intent1.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                context.getApplicationContext().startActivity(intent1);
+
+            }
         }
 
     }
