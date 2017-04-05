@@ -2,7 +2,6 @@
 LoneSafe Tracking platform for loneworkers
 Created by Bilal Jumaah
           Ashneel Kumar
-          Toby Garner
           
   The repo contain 3 main folders
   
