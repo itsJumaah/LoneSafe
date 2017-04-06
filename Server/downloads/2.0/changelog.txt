@@ -1,0 +1,12 @@
+Update Release 2.0 - Change Log:
+
+	# 13th Feb 2017
+
+	- Added the checkin time 24hrs format instead of "Checked".
+	- Added Next Checkin which is the expected time of the next checkin.
+	- All times are now based on Auckland timezone.
+	- Fixed bugs with the timezone pointing to Berlin timezone instead of Auckland which caused of issues in the checkin times previously.
+	- The application is now more colourful.
+	- Fixed the contact view page colours.
+	- The application current version is now printed in the app.
+	- All user data are now being stored in the database including the checkin times and the next expected checkin.

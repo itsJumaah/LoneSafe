@@ -5,10 +5,10 @@
     $con = mysqli_connect(DATAHOST, DATAUSER, DATAPASS, DATABASE) or die("connection failed");
 
     //-----------------------------
-
-    $jobnum = $_POST["jobnum"];
-    $checkin = $_POST["checkin"];
-    $esc     = $_POST["esc"];
+    $job_num = $_POST["job_num"];
+    $secondbool = $_POST["secondbool"];
+    
+    
 
     $secret = $_POST["ABEX"];
 
@@ -42,35 +42,14 @@
     if($response["success"]==true) { //if its true then delete
         
 //***************************ACTUAL CODE BEGINS**********************************************
-        
-        if($checkin == "checkin1") {
-            $cmd1 = "UPDATE jobs SET checkin1 = '$esc' WHERE job_num = '$jobnum'";
-        }
-        else if($checkin == "checkin2") {
-            $cmd1 = "UPDATE jobs SET checkin2 = '$esc' WHERE job_num = '$jobnum'";
-        }
-        else if($checkin == "checkin3") {
-            $cmd1 = "UPDATE jobs SET checkin3 = '$esc' WHERE job_num = '$jobnum'";
-        }
-        else if($checkin == "checkin4") {
-            $cmd1 = "UPDATE jobs SET checkin4 = '$esc' WHERE job_num = '$jobnum'";
-        }
-        else if($checkin == "checkin5") {
-            $cmd1 = "UPDATE jobs SET checkin5 = '$esc' WHERE job_num = '$jobnum'";
-        }
-        else if($checkin == "checkin6") {
-            $cmd1 = "UPDATE jobs SET checkin6 = '$esc' WHERE job_num = '$jobnum'";
-        }
-        else if($checkin == "checkin7") {
-            $cmd1 = "UPDATE jobs SET checkin7 = '$esc' WHERE job_num = '$jobnum'";
-        }
-        else if($checkin == "checkin8") {
-            $cmd1 = "UPDATE jobs SET checkin8 = '$esc' WHERE job_num = '$jobnum'";
-        }
-        
-        $statement1 = mysqli_prepare($con, $cmd1);
-        
-        mysqli_stmt_execute($statement1);
+    
+        $cmd = "UPDATE coverage SET secondbool = '$secondbool' WHERE job_num = '$job_num'";
+
+        $statement = mysqli_prepare($con, $cmd);
+    
+        // mysqli_stmt_bind_param($statement, "ssssssss", $firstname, $lastname, $mobile, $phone, $email, $rego, $username);
+    
+        mysqli_stmt_execute($statement);
 
 
 //***************************ACTUAL CODE ENDS************************************************
@@ -83,3 +62,4 @@
     echo json_encode($response);
     mysqli_close($con);
 ?>
+

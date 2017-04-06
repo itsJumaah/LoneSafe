@@ -6,7 +6,7 @@
 
     //-----------------------------
 
-    $secret = $_POST["ABEX"];
+    $secret = "b5a15c2a6bf6a815e426e97cdac732261840e16e92c46f80a3077f7f236cf148";
 
     //-----------------------------
 
@@ -38,10 +38,8 @@
     if($response["success"]==true) { //if its true then delete
         
 //***************************ACTUAL CODE BEGINS**********************************************
-    
-      //$cmd = "SELECT users.firstname, users.lastname, users.username, users.mobile, users.phone, users.email, users.rego, jobs.job_num ,jobs.starttime, jobs.endtime, jobs.risklevel, jobs.needsos, jobs.checkin1, jobs.checkin2, jobs.checkin3, jobs.checkin4, jobs.checkin5, jobs.checkin6, jobs.checkin7, jobs.checkin8, location.time, location.latitude, location.longitude, jobs.NextCheckin FROM jobs JOIN users ON (jobs.username = users.username) JOIN location ON (jobs.job_num = location.job_num) WHERE users.onjob = 1 AND jobs.isactive = 1";
-
-        $cmd = "SELECT users.firstname, users.lastname, users.username, users.mobile, users.phone, users.email, users.rego, jobs.job_num ,jobs.starttime, jobs.endtime, jobs.risklevel, jobs.needsos, jobs.checkin1, jobs.checkin2, jobs.checkin3, jobs.checkin4, jobs.checkin5, jobs.checkin6, jobs.checkin7, jobs.checkin8, jobs.NextCheckin, location.time, location.latitude, location.longitude, coverage.firstbool, coverage.secondbool FROM jobs JOIN users ON (jobs.username = users.username) JOIN location ON (jobs.job_num = location.job_num) JOIN coverage On (jobs.job_num = coverage.job_num) WHERE users.onjob = 1 AND jobs.isactive = 1";
+      
+      $cmd = "SELECT users.firstname, users.lastname, users.username, users.mobile, users.phone, users.email, users.rego, jobs.job_num ,jobs.starttime, jobs.endtime, jobs.risklevel, jobs.needsos, jobs.checkin1, jobs.checkin2, jobs.checkin3, jobs.checkin4, jobs.checkin5, jobs.checkin6, jobs.checkin7, jobs.checkin8, jobs.NextCheckin, location.time, location.latitude, location.longitude, coverage.firstbool, coverage.secondbool FROM jobs JOIN users ON (jobs.username = users.username) JOIN location ON (jobs.job_num = location.job_num) JOIN coverage On (jobs.job_num = coverage.job_num) WHERE users.onjob = 1 AND jobs.isactive = 1";
 
   
       $statement = mysqli_prepare($con, $cmd);
@@ -50,7 +48,6 @@
       
       mysqli_stmt_store_result($statement);
 
-      //mysqli_stmt_bind_result($statement, $firstname, $lastname, $username, $mobile, $phone, $email, $rego, $job_num, $starttime, $endtime, $risklevel, $needsos, $checkin1, $checkin2, $checkin3, $checkin4, $checkin5, $checkin6, $checkin7, $checkin8, $emtime, $latitude, $longitude, $NextCheckin);
       mysqli_stmt_bind_result($statement, $firstname, $lastname, $username, $mobile, $phone, $email, $rego, $job_num, $starttime, $endtime, $risklevel, $needsos, $checkin1, $checkin2, $checkin3, $checkin4, $checkin5, $checkin6, $checkin7, $checkin8, $NextCheckin, $emtime, $latitude, $longitude, $firstbool, $secondbool);
 
       $users = array();
@@ -86,6 +83,7 @@
               ),
           );
       }
+
 
 
 //***************************ACTUAL CODE ENDS************************************************

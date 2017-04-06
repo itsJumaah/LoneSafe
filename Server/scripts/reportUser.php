@@ -2,6 +2,8 @@
 
     require 'var.php';
 
+    date_default_timezone_set('NZ');
+
     $con = mysqli_connect(DATAHOST, DATAUSER, DATAPASS, DATABASE) or die("connection failed");
 
     //-----------------------------

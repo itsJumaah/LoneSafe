@@ -1,0 +1,52 @@
+Final Release 1.1 - Change Log
+
+## Android Final Release Version 1.1.1 [17-10-2016]
+
+## Fixed:
+		- Short checkin time at the end due to checkin time being 1 minute less.
+		- Removed GPS provider for now. Causes problems when GPS not available
+
+## Android Final Release Version 1.1.0 [17-10-2016]
+
+### Fixed:
+		- text flickering 
+		- Problem with job finish taking user to old job on a loop.
+		- User is directed to settings page once job finished instead of popup in Home which Caused problems on some devices.
+		- Location service optimized to save battery. (only uses location service when needed)
+		
+### Added:
+		- Checkin at the end of job. 
+		- Added GPS provider for more accurate location. 
+		  [If not available then gets location from Network provider]
+
+------------------------------------------------------------
+
+## Android Final Release Version 1.0.0 [15-10-2016]
+
+### Fixed:
+		- Problem with job continuing until stopped by user.
+		- Problem where location is sometimes not sent on SOS.
+
+### Added
+		- Save start time and end time in database.
+		- Update end-time with current time if job ended early.
+		- If job will end before next checkin, progressBar instead tells "No more checkin" and when job will end.
+
+
+
+
+## Windows Final Release Version 1.0.0 [15-10-2016]
+
+### Fixed:
+		- Emergency manager emailing, using the server to send the email rather than the actual application.
+		- Connection error handling with the network and the database.
+		- The database take longer email addresses, it takes up to 100 characters instead of 30 per email address.
+		- Showing random location when the user location is unknown due to no GPS signal or any other reasons.
+
+### Added
+		- Requirement of email address when adding a manager to the system
+		- Requirement of a mobile number when adding a lone worker to the system
+		- More details to the email being sent at emergency.
+			* Location, google maps url
+			* users details
+			* users job details

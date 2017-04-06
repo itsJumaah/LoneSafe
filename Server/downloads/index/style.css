@@ -19,6 +19,13 @@ table{
 h1 {
 	color: rgba(0,0,150, 1);
 }
+h3 {
+	color: rgba(255,255,255, 1);
+}
+h3:hover {
+	color: rgba(255,255,255, 0.5);
+}
+
 
 hr{
 	width: 400px;
@@ -44,6 +51,4 @@ a:hover {
 	color: rgba(0,70,255,0.4);
 	opacity: 0.5;
     filter: alpha(opacity=50);
-
-
 }
