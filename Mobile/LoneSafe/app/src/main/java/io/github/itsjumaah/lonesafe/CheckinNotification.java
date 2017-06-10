@@ -32,11 +32,18 @@ import com.android.volley.toolbox.Volley;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
-//---
+/*
+  |------------------------------------------------------------|
+  | This class generates and displays the checkin notification |
+  | Handles Escalations                                        |
+  | Saves Checkin and locaton information to the database      |
+  |------------------------------------------------------------|
+*/
+
 
 public class CheckinNotification extends AppCompatActivity {
 
@@ -69,6 +76,7 @@ public class CheckinNotification extends AppCompatActivity {
     //boolean gps_enabled = false;
     //boolean network_enabled = false;
 
+    //Gets the default ringtone for the device
     Uri uri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_RINGTONE);
     private Ringtone ringtone;
 
@@ -91,6 +99,7 @@ public class CheckinNotification extends AppCompatActivity {
      //   checkinCounter = ((MyApplication) this.getApplication()).getCheckinCounter();
        // ForegroundService.counter = 1;
 
+        // Generates an animated "tick" image on screen
         final View ImageView = findViewById(R.id.imageView4);
 
         ObjectAnimator scaleDown = ObjectAnimator.ofPropertyValuesHolder(ImageView,
@@ -102,13 +111,14 @@ public class CheckinNotification extends AppCompatActivity {
         scaleDown.setRepeatCount(ObjectAnimator.INFINITE);
         scaleDown.setRepeatMode(ObjectAnimator.REVERSE);
         scaleDown.start();
+        //...
 
+        //Location Service
         locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
 
         listener = new LocationListener() {
             @Override
             public void onLocationChanged(Location location) {
-               // t.append("\n " + location.getLongitude() + " " + location.getLatitude());
                 double longitude = location.getLongitude();
                 double latitude =  location.getLatitude();
 
@@ -174,18 +184,13 @@ public class CheckinNotification extends AppCompatActivity {
        }
        */
    }
+    //... Location Service
 
     //----------------------------------------------------------------------------------------------
+    //Displays the notification for 30 seconds
 
     void DisplayNotification(){
 
-/*
-        Uri notification = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_RINGTONE);
-        final Ringtone ringtone = RingtoneManager.getRingtone(getApplicationContext(), notification);
-        final Vibrator vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
-        long[] pattern = {0, 1000, 1000};
-
-        */
 
         countDownTimer = new CountDownTimer(30000, 1000) { //Phone would ring for 30 seconds
             //If user hasn't checked in
@@ -206,23 +211,13 @@ public class CheckinNotification extends AppCompatActivity {
                 if(ForegroundService.EscalationCounter == 1 || ForegroundService.EscalationCounter == 2){
                     Log.i("*** Escalation1/2", "++++++++++++++++++++++++++++++++++++++++++++++++++++++++>> ESCAl counter is: " + ForegroundService.EscalationCounter);
 
-                   // getLocation();
                     nextCheckinOnEscalationTime();
-                    //TODO
                     SaveToDataBase();
                     SaveLocationToDB();
 
 
                     Intent toServiceIntent = new Intent(CheckinNotification.this,ForegroundService.class);
 
-                    /*
-                    if(ForegroundService.IS_SERVICE_RUNNING && ForegroundService.LAST_CHECKIN){
-                        toServiceIntent.setAction(ForegroundService.Constants.ACTION.STOPFOREGROUND_ACTION);
-                        startService(toServiceIntent);
-                        finish();
-                    }
-                    else
-                    */
                     if (ForegroundService.IS_SERVICE_RUNNING) {
                         toServiceIntent.setAction(ForegroundService.Constants.ACTION.ESCALATION_ACTION);
                         startService(toServiceIntent);
@@ -235,10 +230,6 @@ public class CheckinNotification extends AppCompatActivity {
                 }
                 if(ForegroundService.EscalationCounter == 3){
 
-                   // getLocation();
-
-
-                    //TODO
                     nextCheckinTime();
                     SaveToDataBase();
                     SaveLocationToDB();
@@ -283,10 +274,7 @@ public class CheckinNotification extends AppCompatActivity {
         ringtone.play();
         vibrator.vibrate(pattern, 0);
 
-//        final Button btnCheckin = (Button) findViewById(R.id.btnCheckin);
         final View ImageView = findViewById(R.id.imageView4);
-
-     //   assert btnCheckin != null;
         assert ImageView != null;
 
         ImageView.setOnClickListener(new View.OnClickListener(){
@@ -297,6 +285,7 @@ public class CheckinNotification extends AppCompatActivity {
         });
     }
 
+    //If user presses the go-back or home button this is registered as a checkin
     @Override
     protected void onUserLeaveHint() {
         super.onUserLeaveHint();
@@ -305,8 +294,6 @@ public class CheckinNotification extends AppCompatActivity {
     }
 
     void userCheckedIn(){
-       // Uri notification = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_RINGTONE);
-       // final Ringtone ringtone = RingtoneManager.getRingtone(getApplicationContext(), notification);
         Vibrator vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
 
 
@@ -330,7 +317,6 @@ public class CheckinNotification extends AppCompatActivity {
 
         ForegroundService.EscalationCounter = 0;
         ForegroundService.counter++;
-
 
 
         Intent toServiceIntent = new Intent(CheckinNotification.this,ForegroundService.class);
@@ -359,54 +345,61 @@ public class CheckinNotification extends AppCompatActivity {
 
        // finish();
     }
-
+//TODO -----------------------
     void getCurrentTime(){
         Calendar cal = Calendar.getInstance(); // creates calendar
         cal.setTime(new Date()); // sets calendar time/date
         Date time = cal.getTime();
 
-        // SimpleDateFormat formatter = new SimpleDateFormat("hh:mm a");
-        DateFormat timeFormat = android.text.format.DateFormat.getTimeFormat(getApplicationContext()); // Gets system time format
-        // String startTime = timeFormat.format(time);
-        Checkedin = timeFormat.format(time);
+        SimpleDateFormat formatter = new SimpleDateFormat("HH:mm");
+       // DateFormat timeFormat = android.text.format.DateFormat.getTimeFormat(getApplicationContext()); // Gets system time format
+        //String startTime = timeFormat.format(time);
+
+        Checkedin = formatter.format(time);
+        // Checkedin = timeFormat.format(time);
         System.out.print(" @@@@@@@@@@@@@@  Current TIME = " + Checkedin);
+
 
 
     }
 
-    // 25th JAN Implementation for nextCheckinTime
-    //Todo
+    //Calculates the next checkin Time
     void nextCheckinTime(){
 
         long interval = ((MyApplication) this.getApplication()).getinterval();
-        DateFormat timeFormat = android.text.format.DateFormat.getTimeFormat(getApplicationContext()); // Gets system time format
+        //DateFormat timeFormat = android.text.format.DateFormat.getTimeFormat(getApplicationContext()); // Gets system time format
+        SimpleDateFormat formatter = new SimpleDateFormat("HH:mm");
 
         if(ForegroundService.LAST_CHECKIN){
             long nextTime = System.currentTimeMillis() + ForegroundService.jobTimerCurrentValue;
-            NextCheckin = timeFormat.format(nextTime);
+            NextCheckin = formatter.format(nextTime);
             ((MyApplication) this.getApplication()).setNextCheckin(NextCheckin);
 
         } else{
             long nextTime = System.currentTimeMillis() + interval;
-            NextCheckin = timeFormat.format(nextTime);
+            NextCheckin = formatter.format(nextTime);
             ((MyApplication) this.getApplication()).setNextCheckin(NextCheckin);
         }
 
         System.out.print(" @@@@@@@@@@@@@@@@@@ ## NEXT CHECKIN TIME = " + NextCheckin);
 
     }
+
+    //Calculates the next checkin time if escalation (3mins)
     void nextCheckinOnEscalationTime(){
 
-        DateFormat timeFormat = android.text.format.DateFormat.getTimeFormat(getApplicationContext()); // Gets system time format
+        //DateFormat timeFormat = android.text.format.DateFormat.getTimeFormat(getApplicationContext()); // Gets system time format
+        SimpleDateFormat formatter = new SimpleDateFormat("HH:mm");
 
         long nextTime = System.currentTimeMillis() + 180000; //+3mins
-        NextCheckin = timeFormat.format(nextTime);
+        NextCheckin = formatter.format(nextTime);
         ((MyApplication) this.getApplication()).setNextCheckin(NextCheckin);
         System.out.print(" @@@@@@@@@@@@@@@@@@ ## NEXT CHECKIN ESC TIME = " + NextCheckin);
 
     }
 
 
+    //Saves the checkin Value in variable
     void setCheckinValue(){
 
         if(ForegroundService.counter == 1){
@@ -688,6 +681,9 @@ public class CheckinNotification extends AppCompatActivity {
             Log.i("** COUNTER", "++++++++++++++++++++++++++++++++++++++++++++++++++++++++>> Checkin counter is: " + ForegroundService.counter);
         }
     }
+    //...setCheckinValue
+
+
     void getCheckinValue(){
         //get all current checkin Value
         checkin1 = ((MyApplication) this.getApplication()).getCheckin1();
@@ -703,6 +699,7 @@ public class CheckinNotification extends AppCompatActivity {
 
     void SaveToDataBase(){
 
+        //If no network coverage available
         if (!NetworkChangeReceiver.isNetworkStatusAvialable(context)) {
             ForegroundService.NEED_TO_SEND_CHECKIN = true;
         }

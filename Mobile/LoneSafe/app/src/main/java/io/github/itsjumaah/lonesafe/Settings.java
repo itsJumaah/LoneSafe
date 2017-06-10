@@ -33,6 +33,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
@@ -636,10 +637,11 @@ public class Settings extends AppCompatActivity {
 
         //Set NextCheckin Value
         long interval = ((MyApplication) this.getApplication()).getinterval();
-        DateFormat timeFormat = android.text.format.DateFormat.getTimeFormat(getApplicationContext()); // Gets system time format
+        //DateFormat timeFormat = android.text.format.DateFormat.getTimeFormat(getApplicationContext()); // Gets system time format
+        SimpleDateFormat formatter = new SimpleDateFormat("HH:mm");
 
         long nextTime = System.currentTimeMillis() + interval;
-        String NextCheckin = timeFormat.format(nextTime);
+        String NextCheckin = formatter.format(nextTime);
         System.out.print(" @@@@@@@@@@@@@@@@@@ ## NEXT CHECKIN TIME = " + NextCheckin);
 
 
