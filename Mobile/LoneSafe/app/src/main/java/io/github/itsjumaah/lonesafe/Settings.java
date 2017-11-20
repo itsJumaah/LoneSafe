@@ -28,11 +28,14 @@ import android.widget.TextView;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.toolbox.Volley;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -43,10 +46,15 @@ public class Settings extends AppCompatActivity {
     private SharedPreference sharedPreference;
     Activity context = this; //For shared Pref
 
+
     int Hours = 1;
     int RiskLevel = 1;
     String FinishTime;
+    String jobID;
     ProgressBar loadProgressBar;
+
+    String currentTime;
+    long milliseconds;
 
 
 
@@ -70,6 +78,9 @@ public class Settings extends AppCompatActivity {
         final TextView tvWelcomeMsg = (TextView) findViewById(R.id.tvUser);
         String message = "Welcome " + sharedPreference.getValue(context,"Name");
         tvWelcomeMsg.setText(message);
+
+        SaveVersion();
+
 
 
         //------------------------------------------------------------------------------------------
@@ -203,6 +214,14 @@ public class Settings extends AppCompatActivity {
                             setCheckinnull();
                             checkForActiveJobs();
                             createJobDB();
+
+                            String username = sharedPreference.getValue(context,"User");
+                            String starttime = sharedPreference.getValue(context,"TimeStart");
+                            String endtime = sharedPreference.getValue(context,"FinishTime");
+                            String workinghours = sharedPreference.getValue(context,"Hours");
+                            String risklevel = sharedPreference.getValue(context,"SaveRiskLevel");
+
+                            SavetoFirebase(username, starttime,endtime,workinghours,risklevel);
                            // setNextCheckinInit();
                           //  updateOnJob();
 
@@ -231,6 +250,41 @@ public class Settings extends AppCompatActivity {
     /*
     * Creates a new entry in jobs table, and starts the foreground service
     */
+
+    void SaveVersion(){
+
+        Response.Listener<String> responseListener = new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                try {
+
+                    Log.i("tagconvertstr", "["+response+"]");
+
+                    JSONObject jsonResponse = new JSONObject(response);
+                    boolean success = jsonResponse.getBoolean("success");
+
+                    if (success) {
+                        Log.i("JSON: ", "Response true");
+
+                    } else {
+
+                        Log.i("JSON: ", "Response false");
+
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        };
+
+        String username = sharedPreference.getValue(context,"User");
+        String version = BuildConfig.VERSION_NAME;
+
+        SaveVersionRequest saveVersionRequest = new SaveVersionRequest(username, version, responseListener);
+        RequestQueue queue = Volley.newRequestQueue(Settings.this);
+        queue.add(saveVersionRequest);
+
+    }
 
     void createJobDB(){
         final long interval = checkinInterval (Hours, RiskLevel);
@@ -261,7 +315,8 @@ public class Settings extends AppCompatActivity {
                         updateOnJob();
                         updateJobActive();
                         SaveLocationToDB();
-                        setNextCheckinInit();
+                        getTimeFromServer();
+                       // setNextCheckinInit();
                         setCoverage();
 
 
@@ -310,6 +365,7 @@ public class Settings extends AppCompatActivity {
         String endtime = sharedPreference.getValue(context,"FinishTime");
         String workinghours = sharedPreference.getValue(context,"Hours");
         String risklevel = sharedPreference.getValue(context,"SaveRiskLevel");
+
 
         InsertDataRequest insertDataRequest = new InsertDataRequest(username,starttime,endtime, workinghours, risklevel ,responseListener);
         RequestQueue queue = Volley.newRequestQueue(Settings.this);
@@ -497,6 +553,56 @@ public class Settings extends AppCompatActivity {
         RequestQueue queue = Volley.newRequestQueue(Settings.this);
         queue.add(deleteJobRequest);
     }
+
+    //----------------------------------------------------------------------------------------------
+    //------------------------------------- Save Job to FIREBASE Database --------------------------
+    //TODO FIREBASE
+    //----------------------------------------------------------------------------------------------
+
+    FirebaseDatabase database = FirebaseDatabase.getInstance();
+
+    DatabaseReference myRef = database.getReference();
+
+    private void SavetoFirebase (String username, String starttime, String endtime, String workinghours, String risklevel){
+
+        String checkin1 = "null";
+        String checkin2 = "null";
+        String checkin3 = "null";
+        String checkin4 = "null";
+        String checkin5 = "null";
+        String checkin6 = "null";
+        String checkin7 = "null";
+        String checkin8 = "null";
+        String NextCheckin = "null";
+
+        jobInfo job = new jobInfo(username, starttime,endtime, workinghours, risklevel, checkin1, checkin2, checkin3, checkin4, checkin5,
+                checkin6, checkin7, checkin8, NextCheckin);
+
+        /*
+        myRef.child("Job").push().child("user").child(username);
+        myRef.child("Job").child("startTime").child(starttime);
+        myRef.child("Job").child("endTime").child(endtime);
+        myRef.child("Job").child("workingHours").child(workinghours);
+        myRef.child("Job").child("riskLevel").child(risklevel);
+        myRef.setValue(job);
+        */
+        jobID = myRef.push().getKey();
+        sharedPreference.saveJobID(context,jobID);
+
+        myRef.child("Job").child(jobID).setValue(job);
+
+
+
+
+
+        // myRef.child("Job").child(endtime).setValue(job);
+        //myRef.child("Job").child(workinghours).setValue(job);
+        //myRef.child("Job").child(risklevel).setValue(job);
+
+
+
+    }
+
     //----------------------------------------------------------------------------------------------
     //----------------------------- Calculate Checkin Interval  + Time   ---------------------------
     //----------------------------------------------------------------------------------------------
@@ -633,16 +739,82 @@ public class Settings extends AppCompatActivity {
 
     //------------->>>>
 
+    void getTimeFromServer(){
+
+        System.out.print(" $$$getTimeFromServer() inCALLED  ");
+
+        // Response received from the server
+        Response.Listener<String> responseListener = new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                try {
+
+                    Log.i("tagconvertstr", "["+response+"]");
+                    JSONObject jsonResponse = new JSONObject(response);
+                    boolean success = jsonResponse.getBoolean("success");
+                    currentTime = jsonResponse.getString("time");
+
+                    setNextCheckinInit();
+
+                    System.out.print(" @@@@@@@@@@@@@@@@@@ ## CURRENT TIME IS = " + currentTime);
+
+
+                    if (success) {
+                        Log.i("JSON: ", "Response true");
+
+
+
+                    } else {
+                        Log.i("JSON: ", "Response false");
+
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        };
+
+        ServerTimeRequest serverTimeRequest = new ServerTimeRequest(responseListener);
+        RequestQueue queue = Volley.newRequestQueue(Settings.this);
+        queue.add(serverTimeRequest);
+
+
+
+    }
+
+
+
+
+
+
+
     void setNextCheckinInit(){
+
+        System.out.print(" $$$setNextCheckin() inCALLED  ");
+
+        SimpleDateFormat sdformat = new SimpleDateFormat("HH:mm:ss");
+        try {
+            Date date = sdformat.parse(currentTime);
+            milliseconds = date.getTime(); //<--here gets the milliseconds
+            System.out.println("******  Milliseconds==" + milliseconds);
+        }
+        catch (ParseException e){
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+
 
         //Set NextCheckin Value
         long interval = ((MyApplication) this.getApplication()).getinterval();
         //DateFormat timeFormat = android.text.format.DateFormat.getTimeFormat(getApplicationContext()); // Gets system time format
         SimpleDateFormat formatter = new SimpleDateFormat("HH:mm");
 
-        long nextTime = System.currentTimeMillis() + interval;
+        long TestnextTime = System.currentTimeMillis() + interval;
+        long nextTime = milliseconds + interval;
         String NextCheckin = formatter.format(nextTime);
+        String TestNextCheckin = formatter.format(TestnextTime);
         System.out.print(" @@@@@@@@@@@@@@@@@@ ## NEXT CHECKIN TIME = " + NextCheckin);
+        System.out.print(" @@@@@@@@@@@@@@@@@@ ## ACTUAL NEXT CHECKIN TIME = " + TestNextCheckin);
 
 
         //Save to db
@@ -673,6 +845,7 @@ public class Settings extends AppCompatActivity {
         Log.i("JSON: ", "JOB NUM IS: " + job_num);
 
         //get all current checkin Value
+        /*
         String checkin1 = ((MyApplication) this.getApplication()).getCheckin1();
         String checkin2 = ((MyApplication) this.getApplication()).getCheckin2();
         String checkin3 = ((MyApplication) this.getApplication()).getCheckin3();
@@ -681,12 +854,12 @@ public class Settings extends AppCompatActivity {
         String checkin6 = ((MyApplication) this.getApplication()).getCheckin6();
         String checkin7 = ((MyApplication) this.getApplication()).getCheckin7();
         String checkin8 = ((MyApplication) this.getApplication()).getCheckin8();
+        */
         //  String NextCheckin = ((MyApplication) this.getApplication()).getNextCheckin();
 
-        CheckinRequest checkinRequest = new CheckinRequest(job_num,checkin1, checkin2, checkin3, checkin4, checkin5,
-                checkin6, checkin7, checkin8, NextCheckin, responseListener);
+        nextCheckinRequest nextCheckinRequest = new nextCheckinRequest(job_num, NextCheckin, responseListener);
         RequestQueue queue = Volley.newRequestQueue(Settings.this);
-        queue.add(checkinRequest);
+        queue.add(nextCheckinRequest);
 
     }
 

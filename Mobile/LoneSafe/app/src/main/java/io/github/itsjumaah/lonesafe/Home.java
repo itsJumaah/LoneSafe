@@ -398,7 +398,7 @@ public class Home extends AppCompatActivity {
 
 
         CheckinRequest checkinRequest = new CheckinRequest(job_num,checkin1, checkin2, checkin3, checkin4, checkin5,
-                checkin6, checkin7, checkin8, NextCheckin, responseListener);
+                checkin6, checkin7, checkin8, responseListener);
         RequestQueue queue = Volley.newRequestQueue(Home.this);
         queue.add(checkinRequest);
 
@@ -435,6 +435,39 @@ public class Home extends AppCompatActivity {
         UpdateEndTimeRequest updateEndTimeRequest = new UpdateEndTimeRequest(job_num, endtime, responseListener2);
         RequestQueue queue2 = Volley.newRequestQueue(Home.this);
         queue2.add(updateEndTimeRequest);
+
+        //----
+        //Update nextCheckin
+        // Response received from the server
+        Response.Listener<String> responseListener3 = new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                try {
+
+                    Log.i("tagconvertstr_NEXTCHECK", "["+response+"]");
+                    JSONObject jsonResponse = new JSONObject(response);
+                    boolean success = jsonResponse.getBoolean("success");
+
+                    if (success) {
+                        Log.i("JSON: ", "Response true");
+
+                    } else {
+                        Log.i("JSON: ", "Response false");
+
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        };
+
+        Log.i("JSON: ", "JOB NUM IS: " + job_num);
+        NextCheckin = endtime;
+
+        nextCheckinRequest nextCheckinRequest = new nextCheckinRequest(job_num, NextCheckin, responseListener3);
+        RequestQueue queue3 = Volley.newRequestQueue(Home.this);
+        queue3.add(nextCheckinRequest);
+        //----
     }
 
     void updateOnJobtoZero(){

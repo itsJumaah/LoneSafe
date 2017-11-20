@@ -28,10 +28,13 @@ import android.widget.Toast;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.toolbox.Volley;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -69,6 +72,11 @@ public class CheckinNotification extends AppCompatActivity {
     String Escalation3 = "3";
     CountDownTimer countDownTimer;
 
+    String jobID;
+
+    String currentTime;
+    long milliseconds;
+
     private LocationManager locationManager;
     private LocationListener listener;
     String lng;
@@ -95,6 +103,8 @@ public class CheckinNotification extends AppCompatActivity {
         setContentView(R.layout.activity_checkin);
 
         sharedPreference = new SharedPreference();
+
+        jobID = sharedPreference.getValue(context,"JobID");
 
      //   checkinCounter = ((MyApplication) this.getApplication()).getCheckinCounter();
        // ForegroundService.counter = 1;
@@ -234,6 +244,7 @@ public class CheckinNotification extends AppCompatActivity {
                     SaveToDataBase();
                     SaveLocationToDB();
 
+
                     Log.i("*** Escalation3", "++++++++++++++++++++++++++++++++++++++++++++++++++++++++>> ESCAl counter is: " + ForegroundService.EscalationCounter);
                     ForegroundService.EscalationCounter = 0;
                     Log.i("*** Escalation3->0", "++++++++++++++++++++++++++++++++++++++++++++++++++++++++>> ESCAl counter is: " + ForegroundService.EscalationCounter);
@@ -359,48 +370,331 @@ public class CheckinNotification extends AppCompatActivity {
         // Checkedin = timeFormat.format(time);
         System.out.print(" @@@@@@@@@@@@@@  Current TIME = " + Checkedin);
 
+    }
+/*
+    void getTimeFromServer(){
+
+        System.out.print(" $$$getTimeFromServer() inCALLED  ");
+
+        // Response received from the server
+        Response.Listener<String> responseListener = new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                try {
+
+                    Log.i("tagconvertstr", "["+response+"]");
+                    JSONObject jsonResponse = new JSONObject(response);
+                    boolean success = jsonResponse.getBoolean("success");
+                    currentTime = jsonResponse.getString("time");
+
+                   // nextCheckinTime();
+                   // convertToMilli();
+
+
+                    if (success) {
+                        Log.i("JSON: ", "Response true");
+
+                        System.out.print(" @@@@@@@@@@@@@@@@@@ ## CURRENT TIME IS = " + currentTime);
+
+                        SimpleDateFormat sdformat = new SimpleDateFormat("HH:mm:ss");
+                        try {
+                            Date date = sdformat.parse(currentTime);
+                            milliseconds = date.getTime(); //<--here gets the milliseconds
+                            System.out.println("******  Milliseconds==" + milliseconds);
+                        }
+                        catch (ParseException e){
+                            // TODO Auto-generated catch block
+                            e.printStackTrace();
+                        }
+
+
+
+                    } else {
+                        Log.i("JSON: ", "Response false");
+
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        };
+
+        ServerTimeRequest serverTimeRequest = new ServerTimeRequest(responseListener);
+        RequestQueue queue = Volley.newRequestQueue(CheckinNotification.this);
+        queue.add(serverTimeRequest);
+
 
 
     }
+/
+    void convertToMilli(){
+        //Convert time string from server to milliseconds
+        SimpleDateFormat sdformat = new SimpleDateFormat("HH:mm:ss");
+        try {
+            Date date = sdformat.parse(currentTime);
+            milliseconds = date.getTime(); //<--here gets the milliseconds
+            System.out.println("******  Milliseconds==" + milliseconds);
+        }
+        catch (ParseException e){
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        //--|
+    }
+    */
+
 
     //Calculates the next checkin Time
     void nextCheckinTime(){
+
+        //getTimeFromServer();
+        //convertToMilli();
+
+        //--------------------------------------------------------------------
+        System.out.print(" $$$getTimeFromServer() CALLED for NextCheckin ");
+
+        // Response received from the server
+        Response.Listener<String> responseListener = new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                try {
+
+                    Log.i("tagconvertstr", "["+response+"]");
+                    JSONObject jsonResponse = new JSONObject(response);
+                    boolean success = jsonResponse.getBoolean("success");
+                    currentTime = jsonResponse.getString("time");
+
+                    setNextCheckinTimer();
+
+
+                    if (success) {
+                        Log.i("JSON: ", "Response true");
+
+
+                    } else {
+                        Log.i("JSON: ", "Response false");
+
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        };
+
+        ServerTimeRequest serverTimeRequest = new ServerTimeRequest(responseListener);
+        RequestQueue queue = Volley.newRequestQueue(CheckinNotification.this);
+        queue.add(serverTimeRequest);
+
+
+        //--------------------------------------------------------------------
+
+    }
+
+    void setNextCheckinTimer(){
+
+        System.out.print(" @@@@@@@@@@@@@@@@@@ ## CURRENT TIME IS = " + currentTime);
+
+        SimpleDateFormat sdformat = new SimpleDateFormat("HH:mm:ss");
+        try {
+            Date date = sdformat.parse(currentTime);
+            milliseconds = date.getTime(); //<--here gets the milliseconds
+            System.out.println("******  Milliseconds==" + milliseconds);
+        }
+        catch (ParseException e){
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+
 
         long interval = ((MyApplication) this.getApplication()).getinterval();
         //DateFormat timeFormat = android.text.format.DateFormat.getTimeFormat(getApplicationContext()); // Gets system time format
         SimpleDateFormat formatter = new SimpleDateFormat("HH:mm");
 
         if(ForegroundService.LAST_CHECKIN){
-            long nextTime = System.currentTimeMillis() + ForegroundService.jobTimerCurrentValue;
+            // long nextTime = System.currentTimeMillis() + ForegroundService.jobTimerCurrentValue;
+            long nextTime = milliseconds + ForegroundService.jobTimerCurrentValue;
             NextCheckin = formatter.format(nextTime);
             ((MyApplication) this.getApplication()).setNextCheckin(NextCheckin);
 
         } else{
-            long nextTime = System.currentTimeMillis() + interval;
+            long TestNext = System.currentTimeMillis() + interval;
+            long nextTime = milliseconds + interval;
             NextCheckin = formatter.format(nextTime);
+            String TestNextCheckin = formatter.format(TestNext);
             ((MyApplication) this.getApplication()).setNextCheckin(NextCheckin);
+
+            System.out.print(" @@@@@@@@@@@@@@@@@@ ## ACTUAL NEXT CHECKIN TIME = " + TestNextCheckin);
+
         }
 
-        System.out.print(" @@@@@@@@@@@@@@@@@@ ## NEXT CHECKIN TIME = " + NextCheckin);
 
+        //----
+        //Save to db
+        // Response received from the server
+        Response.Listener<String> responseListener = new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                try {
+
+                    Log.i("tagconvertstr_NEXTCHECK", "["+response+"]");
+                    JSONObject jsonResponse = new JSONObject(response);
+                    boolean success = jsonResponse.getBoolean("success");
+
+                    if (success) {
+                        Log.i("JSON: ", "Response true");
+
+                    } else {
+                        Log.i("JSON: ", "Response false");
+
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        };
+
+        String job_num = sharedPreference.getValue(context,"UserID");
+        Log.i("JSON: ", "JOB NUM IS: " + job_num);
+
+        nextCheckinRequest nextCheckinRequest = new nextCheckinRequest(job_num, NextCheckin, responseListener);
+        RequestQueue queue = Volley.newRequestQueue(CheckinNotification.this);
+        queue.add(nextCheckinRequest);
+        //----
+
+        System.out.print(" @@@@@@@@@@@@@@@@@@ ## NEXT CHECKIN TIME = " + NextCheckin);
     }
 
     //Calculates the next checkin time if escalation (3mins)
     void nextCheckinOnEscalationTime(){
 
+        //getTimeFromServer();
+        //convertToMilli();
+
+        //--------------------------------------------------------------------
+        System.out.print(" $$$getTimeFromServer() CALLED for ESCcheckIn ");
+
+        // Response received from the server
+        Response.Listener<String> responseListener = new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                try {
+
+                    Log.i("tagconvertstr", "["+response+"]");
+                    JSONObject jsonResponse = new JSONObject(response);
+                    boolean success = jsonResponse.getBoolean("success");
+                    currentTime = jsonResponse.getString("time");
+
+                    // nextCheckinTime();
+                    // convertToMilli();
+                    setNextEscTime();
+
+
+                    if (success) {
+                        Log.i("JSON: ", "Response true");
+
+                        System.out.print(" @@@@@@@@@@@@@@@@@@ ## CURRENT TIME IS = " + currentTime);
+
+                        //setNextEscTime();
+
+                    } else {
+                        Log.i("JSON: ", "Response false");
+
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        };
+
+        ServerTimeRequest serverTimeRequest = new ServerTimeRequest(responseListener);
+        RequestQueue queue = Volley.newRequestQueue(CheckinNotification.this);
+        queue.add(serverTimeRequest);
+
+
+        //--------------------------------------------------------------------
+
+
+    }
+
+    void setNextEscTime(){
+
+        System.out.print(" $$$setESCtimer CALLED ");
+        System.out.print(" @@@@@@@@@@@@@@@@@@ ## CURRENT TIME IS = " + currentTime);
+        SimpleDateFormat sdformat = new SimpleDateFormat("HH:mm:ss");
+        try {
+            Date date = sdformat.parse(currentTime);
+            milliseconds = date.getTime(); //<--here gets the milliseconds
+            System.out.println("******  Milliseconds==" + milliseconds);
+        }
+        catch (ParseException e){
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+
+
         //DateFormat timeFormat = android.text.format.DateFormat.getTimeFormat(getApplicationContext()); // Gets system time format
         SimpleDateFormat formatter = new SimpleDateFormat("HH:mm");
 
-        long nextTime = System.currentTimeMillis() + 180000; //+3mins
+        long TestnextTime = System.currentTimeMillis() + 180000; //+3mins
+        long nextTime = milliseconds + 180000; //+3mins
         NextCheckin = formatter.format(nextTime);
+        String TestNextTime = formatter.format(TestnextTime);
         ((MyApplication) this.getApplication()).setNextCheckin(NextCheckin);
+
+        System.out.print(" @@@@@@@@@@@@@@@@@@ ## ACTUAL NEXT CHECKIN TIME = " + TestNextTime);
+
+
+        //init firebase -- TODO make global
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        DatabaseReference myRef = database.getReference();
+        myRef.child("Job").child(jobID).child("nextCheckin").setValue(NextCheckin);
+
         System.out.print(" @@@@@@@@@@@@@@@@@@ ## NEXT CHECKIN ESC TIME = " + NextCheckin);
+
+
+        //----
+        //Save to db
+        // Response received from the server
+        Response.Listener<String> responseListener = new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                try {
+
+                    Log.i("tagconvertstr_NEXTCHECK", "["+response+"]");
+                    JSONObject jsonResponse = new JSONObject(response);
+                    boolean success = jsonResponse.getBoolean("success");
+
+                    if (success) {
+                        Log.i("JSON: ", "Response true");
+
+                    } else {
+                        Log.i("JSON: ", "Response false");
+
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        };
+
+        String job_num = sharedPreference.getValue(context,"UserID");
+        Log.i("JSON: ", "JOB NUM IS: " + job_num);
+
+        nextCheckinRequest nextCheckinRequest = new nextCheckinRequest(job_num, NextCheckin, responseListener);
+        RequestQueue queue = Volley.newRequestQueue(CheckinNotification.this);
+        queue.add(nextCheckinRequest);
+        //----
 
     }
 
 
     //Saves the checkin Value in variable
     void setCheckinValue(){
+
+        //init firebase -- TODO make global
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        DatabaseReference myRef = database.getReference();
+
 
         if(ForegroundService.counter == 1){
             if (!NetworkChangeReceiver.isNetworkStatusAvialable(context)) {
@@ -410,23 +704,33 @@ public class CheckinNotification extends AppCompatActivity {
 
             else if(ForegroundService.EscalationCounter == 0){
                getCurrentTime();
-              // nextCheckinTime();
-               ((MyApplication) this.getApplication()).setNextCheckin(NextCheckin);
+
+              // ((MyApplication) this.getApplication()).setNextCheckin(NextCheckin);
                ((MyApplication) this.getApplication()).setCheckin1(Checkedin);
+
+                myRef.child("Job").child(jobID).child("checkin1").setValue(Checkedin);
+                myRef.child("Job").child(jobID).child("nextCheckin").setValue(NextCheckin);
+
+               // System.out.print(" @@@@@@@@@@@@@@ ## ACTUAL NEXT CHECKIN TIME @ SET= " + NextCheckin);
+
+
                 //ForegroundService.counter = 2;
             }
             else if(ForegroundService.EscalationCounter == 1){
               // nextCheckinOnEscalationTime();
                ((MyApplication) this.getApplication()).setCheckin1(Escalation1);
+                myRef.child("Job").child(jobID).child("checkin1").setValue(Escalation1);
             }
             else if(ForegroundService.EscalationCounter == 2){
                //nextCheckinOnEscalationTime();
                 ((MyApplication) this.getApplication()).setCheckin1(Escalation2);
+                myRef.child("Job").child(jobID).child("checkin1").setValue(Escalation2);
 
             }
             else if(ForegroundService.EscalationCounter == 3){
                //nextCheckinOnEscalationTime();
                 ((MyApplication) this.getApplication()).setCheckin1(Escalation3);
+                myRef.child("Job").child(jobID).child("checkin1").setValue(Escalation3);
 
                // ForegroundService.EscalationCounter = 0;
                 ForegroundService.counter = 2;
@@ -452,19 +756,25 @@ public class CheckinNotification extends AppCompatActivity {
 
                 ((MyApplication) this.getApplication()).setNextCheckin(NextCheckin);
                 ((MyApplication) this.getApplication()).setCheckin2(Checkedin);
+
+                myRef.child("Job").child(jobID).child("checkin2").setValue(Checkedin);
+                myRef.child("Job").child(jobID).child("nextCheckin").setValue(NextCheckin);
                // ForegroundService.counter = 3;
             }
             else if(ForegroundService.EscalationCounter == 1){
                 //nextCheckinOnEscalationTime();
                 ((MyApplication) this.getApplication()).setCheckin2(Escalation1);
+                myRef.child("Job").child(jobID).child("checkin2").setValue(Escalation1);
             }
             else if(ForegroundService.EscalationCounter == 2){
                 //nextCheckinOnEscalationTime();
                 ((MyApplication) this.getApplication()).setCheckin2(Escalation2);
+                myRef.child("Job").child(jobID).child("checkin2").setValue(Escalation2);
             }
             else if(ForegroundService.EscalationCounter == 3){
                 //nextCheckinOnEscalationTime();
                 ((MyApplication) this.getApplication()).setCheckin2(Escalation3);
+                myRef.child("Job").child(jobID).child("checkin2").setValue(Escalation3);
               //  ForegroundService.EscalationCounter = 0;
                 ForegroundService.counter = 3;
             }
@@ -487,19 +797,25 @@ public class CheckinNotification extends AppCompatActivity {
                 Log.i("CheckinVal", "++++++++++++++++++++++++++++++++++++++++++++++++++++++++>> Checkedin = : " + Checkedin);
                 ((MyApplication) this.getApplication()).setNextCheckin(NextCheckin);
                 ((MyApplication) this.getApplication()).setCheckin3(Checkedin);
+
+                myRef.child("Job").child(jobID).child("checkin3").setValue(Checkedin);
+                myRef.child("Job").child(jobID).child("nextCheckin").setValue(NextCheckin);
                 //ForegroundService.counter = 4;
             }
             else if(ForegroundService.EscalationCounter == 1){
                 //nextCheckinOnEscalationTime();
                 ((MyApplication) this.getApplication()).setCheckin3(Escalation1);
+                myRef.child("Job").child(jobID).child("checkin3").setValue(Escalation1);
             }
             else if(ForegroundService.EscalationCounter == 2){
                 //nextCheckinOnEscalationTime();
                 ((MyApplication) this.getApplication()).setCheckin3(Escalation2);
+                myRef.child("Job").child(jobID).child("checkin3").setValue(Escalation2);
             }
             else if(ForegroundService.EscalationCounter == 3){
                 //nextCheckinOnEscalationTime();
                 ((MyApplication) this.getApplication()).setCheckin3(Escalation3);
+                myRef.child("Job").child(jobID).child("checkin3").setValue(Escalation3);
               //  ForegroundService.EscalationCounter = 0;
                 ForegroundService.counter = 4;
             }
@@ -523,20 +839,29 @@ public class CheckinNotification extends AppCompatActivity {
                 Log.i("CheckinVal", "++++++++++++++++++++++++++++++++++++++++++++++++++++++++>> Checkedin = : " + Checkedin);
                 ((MyApplication) this.getApplication()).setNextCheckin(NextCheckin);
                 ((MyApplication) this.getApplication()).setCheckin4(Checkedin);
+
+                myRef.child("Job").child(jobID).child("checkin4").setValue(Checkedin);
+                myRef.child("Job").child(jobID).child("nextCheckin").setValue(NextCheckin);
                // ForegroundService.counter = 5;
             }
             else if(ForegroundService.EscalationCounter == 1){
                 //nextCheckinOnEscalationTime();
                 ((MyApplication) this.getApplication()).setCheckin4(Escalation1);
+                myRef.child("Job").child(jobID).child("checkin4").setValue(Escalation1);
+
             }
             else if(ForegroundService.EscalationCounter == 2){
                 //nextCheckinOnEscalationTime();
                 ((MyApplication) this.getApplication()).setCheckin4(Escalation2);
+                myRef.child("Job").child(jobID).child("checkin4").setValue(Escalation2);
+
             }
             else if(ForegroundService.EscalationCounter == 3){
                 //nextCheckinOnEscalationTime();
                 ((MyApplication) this.getApplication()).setCheckin4(Escalation3);
-              //  ForegroundService.EscalationCounter = 0;
+                myRef.child("Job").child(jobID).child("checkin4").setValue(Escalation3);
+
+                //  ForegroundService.EscalationCounter = 0;
                 ForegroundService.counter = 5;
             }
             Log.i("****4 COUNTER", "++++++++++++++++++++++++++++++++++++++++++++++++++++++++>> Checkin counter is: " + ForegroundService.counter);
@@ -558,20 +883,30 @@ public class CheckinNotification extends AppCompatActivity {
                // nextCheckinTime();
                 ((MyApplication) this.getApplication()).setNextCheckin(NextCheckin);
                 ((MyApplication) this.getApplication()).setCheckin5(Checkedin);
-               // ForegroundService.counter = 6;
+
+                myRef.child("Job").child(jobID).child("checkin5").setValue(Checkedin);
+                myRef.child("Job").child(jobID).child("nextCheckin").setValue(NextCheckin);
+
+                // ForegroundService.counter = 6;
             }
             else if(ForegroundService.EscalationCounter == 1){
                 //nextCheckinOnEscalationTime();
                 ((MyApplication) this.getApplication()).setCheckin5(Escalation1);
+                myRef.child("Job").child(jobID).child("checkin5").setValue(Escalation1);
+
             }
             else if(ForegroundService.EscalationCounter == 2){
                 //nextCheckinOnEscalationTime();
                 ((MyApplication) this.getApplication()).setCheckin5(Escalation2);
+                myRef.child("Job").child(jobID).child("checkin5").setValue(Escalation2);
+
             }
             else if(ForegroundService.EscalationCounter == 3){
                 //nextCheckinOnEscalationTime();
                 ((MyApplication) this.getApplication()).setCheckin5(Escalation3);
-              //  ForegroundService.EscalationCounter = 0;
+                myRef.child("Job").child(jobID).child("checkin5").setValue(Escalation3);
+
+                //  ForegroundService.EscalationCounter = 0;
                 ForegroundService.counter = 6;
             }
             Log.i("** COUNTER", "++++++++++++++++++++++++++++++++++++++++++++++++++++++++>> Checkin counter is: " + ForegroundService.counter);
@@ -592,20 +927,30 @@ public class CheckinNotification extends AppCompatActivity {
               //  nextCheckinTime();
                 ((MyApplication) this.getApplication()).setNextCheckin(NextCheckin);
                 ((MyApplication) this.getApplication()).setCheckin6(Checkedin);
-              //  ForegroundService.counter = 7;
+
+                myRef.child("Job").child(jobID).child("checkin6").setValue(Checkedin);
+                myRef.child("Job").child(jobID).child("nextCheckin").setValue(NextCheckin);
+
+                //  ForegroundService.counter = 7;
             }
             else if(ForegroundService.EscalationCounter == 1){
                 //nextCheckinOnEscalationTime();
                 ((MyApplication) this.getApplication()).setCheckin6(Escalation1);
+                myRef.child("Job").child(jobID).child("checkin6").setValue(Escalation1);
+
             }
             else if(ForegroundService.EscalationCounter == 2){
                 //nextCheckinOnEscalationTime();
                 ((MyApplication) this.getApplication()).setCheckin6(Escalation2);
+                myRef.child("Job").child(jobID).child("checkin6").setValue(Escalation2);
+
             }
             else if(ForegroundService.EscalationCounter == 3){
                 //nextCheckinOnEscalationTime();
                 ((MyApplication) this.getApplication()).setCheckin6(Escalation3);
-             //   ForegroundService.EscalationCounter = 0;
+                myRef.child("Job").child(jobID).child("checkin6").setValue(Escalation3);
+
+                //   ForegroundService.EscalationCounter = 0;
                 ForegroundService.counter = 7;
             }
             Log.i("** COUNTER", "++++++++++++++++++++++++++++++++++++++++++++++++++++++++>> Checkin counter is: " + ForegroundService.counter);
@@ -627,20 +972,30 @@ public class CheckinNotification extends AppCompatActivity {
               //  nextCheckinTime();
                 ((MyApplication) this.getApplication()).setNextCheckin(NextCheckin);
                 ((MyApplication) this.getApplication()).setCheckin7(Checkedin);
-               // ForegroundService.counter = 8;
+
+                myRef.child("Job").child(jobID).child("checkin7").setValue(Checkedin);
+                myRef.child("Job").child(jobID).child("nextCheckin").setValue(NextCheckin);
+
+                // ForegroundService.counter = 8;
             }
             else if(ForegroundService.EscalationCounter == 1){
                 //nextCheckinOnEscalationTime();
                 ((MyApplication) this.getApplication()).setCheckin7(Escalation1);
+                myRef.child("Job").child(jobID).child("checkin7").setValue(Escalation1);
+
             }
             else if(ForegroundService.EscalationCounter == 2){
                 //nextCheckinOnEscalationTime();
                 ((MyApplication) this.getApplication()).setCheckin7(Escalation2);
+                myRef.child("Job").child(jobID).child("checkin7").setValue(Escalation2);
+
             }
             else if(ForegroundService.EscalationCounter == 3){
                 //nextCheckinOnEscalationTime();
                 ((MyApplication) this.getApplication()).setCheckin7(Escalation3);
-              //  ForegroundService.EscalationCounter = 0;
+                myRef.child("Job").child(jobID).child("checkin7").setValue(Escalation3);
+
+                //  ForegroundService.EscalationCounter = 0;
                 ForegroundService.counter = 8;
             }
             Log.i("** COUNTER", "++++++++++++++++++++++++++++++++++++++++++++++++++++++++>> Checkin counter is: " + ForegroundService.counter);
@@ -662,20 +1017,29 @@ public class CheckinNotification extends AppCompatActivity {
                // NextCheckin = "Job Ended";
                 ((MyApplication) this.getApplication()).setNextCheckin(NextCheckin);
                 ((MyApplication) this.getApplication()).setCheckin8(Checkedin);
-               // ForegroundService.counter = -1;
+
+                myRef.child("Job").child(jobID).child("checkin8").setValue(Checkedin);
+                myRef.child("Job").child(jobID).child("nextCheckin").setValue(NextCheckin);
+                // ForegroundService.counter = -1;
             }
             else if(ForegroundService.EscalationCounter == 1){
                 //nextCheckinOnEscalationTime();
                 ((MyApplication) this.getApplication()).setCheckin8(Escalation1);
+                myRef.child("Job").child(jobID).child("checkin8").setValue(Escalation1);
+
             }
             else if(ForegroundService.EscalationCounter == 2){
                 //nextCheckinOnEscalationTime();
                 ((MyApplication) this.getApplication()).setCheckin8(Escalation2);
+                myRef.child("Job").child(jobID).child("checkin8").setValue(Escalation2);
+
             }
             else if(ForegroundService.EscalationCounter == 3){
                 //nextCheckinOnEscalationTime();
                 ((MyApplication) this.getApplication()).setCheckin8(Escalation3);
-              //  ForegroundService.EscalationCounter = 0;
+                myRef.child("Job").child(jobID).child("checkin8").setValue(Escalation3);
+
+                //  ForegroundService.EscalationCounter = 0;
                 ForegroundService.counter = 9;
             }
             Log.i("** COUNTER", "++++++++++++++++++++++++++++++++++++++++++++++++++++++++>> Checkin counter is: " + ForegroundService.counter);
@@ -694,8 +1058,30 @@ public class CheckinNotification extends AppCompatActivity {
         checkin6 = ((MyApplication) this.getApplication()).getCheckin6();
         checkin7 = ((MyApplication) this.getApplication()).getCheckin7();
         checkin8 = ((MyApplication) this.getApplication()).getCheckin8();
+        NextCheckin = ((MyApplication) this.getApplication()).getNextCheckin();
 
     }
+
+    //-------------
+    //TODO FIREBASE --------------------------------------------|
+    /*
+
+    FirebaseDatabase database = FirebaseDatabase.getInstance();
+    DatabaseReference myRef = database.getReference();
+
+    void SaveToFirebase(){
+
+        getCheckinValue();
+        CheckinInfo checkin = new CheckinInfo(checkin1, checkin2, checkin3, checkin4, checkin5,
+                checkin6, checkin7, checkin8, NextCheckin);
+
+        String jobID = sharedPreference.getValue(context,"JobID");
+        myRef.child("Job").child(jobID).setValue(checkin);
+
+
+    }
+    */
+    //-------------------------
 
     void SaveToDataBase(){
 
@@ -730,10 +1116,13 @@ public class CheckinNotification extends AppCompatActivity {
         String job_num = sharedPreference.getValue(context,"UserID");
         Log.i("JSON: ", "JOB NUM IS: " + job_num);
 
+       // ((MyApplication) this.getApplication()).setNextCheckin(NextCheckin);
         getCheckinValue();
 
+        //System.out.print(" @@@@@@@@@@@@@@ ## NEXT CHECKIN TIME @ SET= " + NextCheckin);
+
         CheckinRequest checkinRequest = new CheckinRequest(job_num,checkin1, checkin2, checkin3, checkin4, checkin5,
-                checkin6, checkin7, checkin8,NextCheckin, responseListener);
+                checkin6, checkin7, checkin8, responseListener);
         RequestQueue queue = Volley.newRequestQueue(CheckinNotification.this);
         queue.add(checkinRequest);
     }

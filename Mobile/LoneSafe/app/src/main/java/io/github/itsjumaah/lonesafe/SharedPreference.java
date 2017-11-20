@@ -13,11 +13,13 @@ public class SharedPreference {
     public static final String Name = "Name";
     public static final String Pass = "Pass";
     public static final String UserID = "UserID";
+    public static final String JobID = "JobID";
 
     public static final String TimeStart = "TimeStart";
     public static final String FinishTime = "FinishTime";
     public static final String SaveRiskLevel = "SaveRiskLevel";
     public static final String Hours = "Hours";
+
 
 
 
@@ -41,6 +43,10 @@ public class SharedPreference {
 
     public void saveUserID (Context context, String text){
         save(context,UserID,text);
+    }
+
+    public void saveJobID (Context context, String text){
+        save(context,JobID,text);
     }
 
     public void saveHours (Context context, String text){

@@ -20,7 +20,9 @@ import com.android.volley.toolbox.Volley;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -55,6 +57,9 @@ public class ForegroundService extends Service {
     String username;
     String job_num;
     String NextCheckin;
+
+    String currentTime;
+    long milliseconds;
 
     public static long jobTimerCurrentValue = 9000000;
 
@@ -276,7 +281,9 @@ public class ForegroundService extends Service {
             if(jobTimerCurrentValue <= checkInterval){ //checkInterval
                 System.out.println("LAST CHECKIN: " + checkInterval + "jobRemaining: " + jobTimerCurrentValue);
                 LAST_CHECKIN = true;
-                nextCheckinTime();
+               // nextCheckinTime();
+                getServerTime();
+
                // bi.putExtra("DisplayCheckin",true);
                // sendBroadcast(bi);
             }
@@ -374,20 +381,72 @@ public class ForegroundService extends Service {
 
     //---------------------
 
-    void getCheckinValue(){
-        //get all current checkin Value
+    void getServerTime(){
 
+        //--------------------------------------------------------------------
+        System.out.print(" $$$getTimeFromServer() CALLED for NextCheckin ");
+
+        // Response received from the server
+        Response.Listener<String> responseListener = new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                try {
+
+                    Log.i("tagconvertstr", "["+response+"]");
+                    JSONObject jsonResponse = new JSONObject(response);
+                    boolean success = jsonResponse.getBoolean("success");
+                    currentTime = jsonResponse.getString("time");
+
+                    nextCheckinTime();
+
+
+                    if (success) {
+                        Log.i("JSON: ", "Response true");
+
+
+                    } else {
+                        Log.i("JSON: ", "Response false");
+
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        };
+
+        ServerTimeRequest serverTimeRequest = new ServerTimeRequest(responseListener);
+        RequestQueue queue = Volley.newRequestQueue(ForegroundService.this);
+        queue.add(serverTimeRequest);
+
+
+        //--------------------------------------------------------------------
 
     }
 
     void nextCheckinTime(){
 
+        SimpleDateFormat sdformat = new SimpleDateFormat("HH:mm:ss");
+        try {
+            Date date = sdformat.parse(currentTime);
+            milliseconds = date.getTime(); //<--here gets the milliseconds
+            System.out.println("******  Milliseconds==" + milliseconds);
+        }
+        catch (ParseException e){
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+
+
         //long interval = ((MyApplication) this.getApplication()).getinterval();
-        DateFormat timeFormat = android.text.format.DateFormat.getTimeFormat(getApplicationContext()); // Gets system time format
+       // DateFormat timeFormat = android.text.format.DateFormat.getTimeFormat(getApplicationContext()); // Gets system time format
+
+        SimpleDateFormat formatter = new SimpleDateFormat("HH:mm");
 
         if(ForegroundService.LAST_CHECKIN) {
-            long nextTime = System.currentTimeMillis() + ForegroundService.jobTimerCurrentValue;
-            NextCheckin = timeFormat.format(nextTime);
+            // long nextTime = System.currentTimeMillis() + ForegroundService.jobTimerCurrentValue;
+            long nextTime = milliseconds + ForegroundService.jobTimerCurrentValue;
+            NextCheckin = formatter.format(nextTime);
+            ((MyApplication) this.getApplication()).setNextCheckin(NextCheckin);
         }
 
         SaveToDataBase();
@@ -422,20 +481,9 @@ public class ForegroundService extends Service {
         //String job_num = sharedPreference.getValue(context,"UserID");
         //Log.i("JSON: ", "JOB NUM IS: " + job_num);
 
-       // getCheckinValue();
-        String checkin1 = ((MyApplication) this.getApplication()).getCheckin1();
-        String checkin2 = ((MyApplication) this.getApplication()).getCheckin2();
-        String checkin3 = ((MyApplication) this.getApplication()).getCheckin3();
-        String checkin4 = ((MyApplication) this.getApplication()).getCheckin4();
-        String checkin5 = ((MyApplication) this.getApplication()).getCheckin5();
-        String checkin6 = ((MyApplication) this.getApplication()).getCheckin6();
-        String checkin7 = ((MyApplication) this.getApplication()).getCheckin7();
-        String checkin8 = ((MyApplication) this.getApplication()).getCheckin8();
-
-        CheckinRequest checkinRequest = new CheckinRequest(job_num,checkin1, checkin2, checkin3, checkin4, checkin5,
-                checkin6, checkin7, checkin8,NextCheckin, responseListener);
+        nextCheckinRequest nextCheckinRequest = new nextCheckinRequest(job_num, NextCheckin, responseListener);
         RequestQueue queue = Volley.newRequestQueue(ForegroundService.this);
-        queue.add(checkinRequest);
+        queue.add(nextCheckinRequest);
     }
 
     //---------
