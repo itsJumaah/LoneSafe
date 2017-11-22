@@ -38,6 +38,7 @@ public class PendingCheckin extends AppCompatActivity {
 
 
         SaveToDataBase();
+        NextCheckintoDB();
 
         ForegroundService.NEED_TO_SEND_CHECKIN = false;
         finish();
@@ -89,10 +90,47 @@ public class PendingCheckin extends AppCompatActivity {
         getCheckinValue();
 
         CheckinRequest checkinRequest = new CheckinRequest(job_num,checkin1, checkin2, checkin3, checkin4, checkin5,
-                checkin6, checkin7, checkin8,NextCheckin, responseListener);
+                checkin6, checkin7, checkin8, responseListener);
         RequestQueue queue = Volley.newRequestQueue(PendingCheckin.this);
         queue.add(checkinRequest);
     }
+
+    void NextCheckintoDB(){
+
+        //Save to db
+        // Response received from the server
+        Response.Listener<String> responseListener = new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                try {
+
+                    Log.i("tagconvertstr_NEXTCHECK", "["+response+"]");
+                    JSONObject jsonResponse = new JSONObject(response);
+                    boolean success = jsonResponse.getBoolean("success");
+
+                    if (success) {
+                        Log.i("JSON: ", "Response true");
+
+                    } else {
+                        Log.i("JSON: ", "Response false");
+
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        };
+
+        String job_num = sharedPreference.getValue(context,"UserID");
+        Log.i("JSON: ", "JOB NUM IS: " + job_num);
+        getCheckinValue();
+
+        nextCheckinRequest nextCheckinRequest = new nextCheckinRequest(job_num, NextCheckin, responseListener);
+        RequestQueue queue = Volley.newRequestQueue(PendingCheckin.this);
+        queue.add(nextCheckinRequest);
+        //----
+    }
+
 
 
 }

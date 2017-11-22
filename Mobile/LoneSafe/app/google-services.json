@@ -15,6 +15,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "871197951959-d85lpav3ilmuf0idi1t6hccckcnp2raa.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "io.github.itsjumaah.lonesafe",
+            "certificate_hash": "ea6da4ad3e8ddcbd9414a3c762b7b8f7e5b7bd66"
+          }
+        },
+        {
           "client_id": "871197951959-tv3lf9qkqv3m525e1m7gtil3s7pfglan.apps.googleusercontent.com",
           "client_type": 3
         }
